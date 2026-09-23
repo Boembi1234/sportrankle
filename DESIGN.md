@@ -1,5 +1,7 @@
 # Sportrankle – Design
 
+> **Stand 2026-09-23:** Die Klappkarten sind durch **LED-Kacheln** ersetzt: dunkle Panels mit Punktraster, Punktmatrix-Schrift «Doto» in der Akzentfarbe mit leichtem Leuchten. Das gilt für die Titel-Tafel unter dem Foto, die Rang-Kacheln in den Zeilen (blau; grün = richtig, rot = falsch), die Wert-Ziffern im Ergebnis und die Punkte-Tafel. Neue Zeichen flackern kurz auf statt umzublättern. Die Abschnitte zu Karten und Ringen unten beschreiben den früheren Stand.
+>
 Design-Richtung **«Tischanzeige»**. Die Website sieht aus wie eine altmodische Klapp-Anzeigetafel zum Umblättern, wie sie am Spielfeldrand steht: graue Karten mit weissen Zeichen an Metallringen, im dunklen Modus. Diese Datei ist die verbindliche Designvorgabe für alle Screens.
 
 ---

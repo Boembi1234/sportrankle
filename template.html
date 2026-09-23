@@ -74,16 +74,17 @@ a{color:inherit}
 .kind-art .tile-cards{display:flex;gap:5px;--w:40px;--h:54px;--f:36px}
 .kind-art .card{--r:6px}
 .kind-art .card::before{content:"";position:absolute;left:50%;top:-8px;width:10px;height:14px;margin-left:-5px;border:2px solid var(--ring);border-radius:50%}
-.kind-body{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:16px}
-.kind-name{font-weight:800;font-size:22px}
-.kind-blurb{flex-basis:100%;order:1;color:var(--muted);font-size:14px}
+/* Name left, button right, always on the same line; the blurb underneath */
+.kind-body{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 12px;padding:16px}
+.kind-name{font-weight:800;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kind-blurb{grid-column:1/-1;color:var(--muted);font-size:14px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:28px}
 .tile{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
 .tile:active{transform:translateY(2px)}
 .tile-art{position:relative;aspect-ratio:3 / 2;background:var(--card-stack)}
 .tile-art img{width:100%;height:100%;object-fit:cover;display:block}
 /* Title and button share one line under the picture */
-.tile-body{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}
+.tile-body{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px 16px}
 .tile-name{font-weight:800;font-size:20px}
 .tile-status{flex:none;white-space:nowrap;font-weight:800;font-size:15px;border-radius:6px;padding:8px 14px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge)}
 .tile-status.done{background:none;box-shadow:none;padding-inline:0;color:var(--muted);font-weight:600}
@@ -216,7 +217,7 @@ a{color:inherit}
   .kind-name{font-size:19px}
   .tiles{grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
   /* Narrow tiles: title on top, button underneath, the same on every tile */
-  .tile-body{flex-direction:column;align-items:flex-start;padding:12px}
+  .tile-body{grid-template-columns:1fr;justify-items:start;gap:8px;padding:12px}
   .tile-name{font-size:17px}
   .tile-status{font-size:14px;padding:7px 12px}
   .photo{border-radius:8px}

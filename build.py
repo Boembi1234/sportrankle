@@ -43,7 +43,36 @@ GAMES = {
             "cover": "covers/nfl.png"},
     "ski": {"file": "Ski_Alpin*.xlsx", "tab": "Alpine skiers", "noun": "skier", "plural": "skiers", "word": "SKI", "english": True, "short": "surname",
             "cover": "covers/ski.png"},
+    # "wide" format: one sheet, one row per player, value and rank columns side by side (ranks are recomputed).
+    # "cats" maps the value columns to use -> (English name, unit, format, "Rank 1 =" direction);
+    # "sub" columns go in brackets after the name and appear under the title; "filter" keeps matching rows only.
+    "cl": {"file": "CL_Players*.xlsx", "tab": "Champions League players", "noun": "player", "plural": "players", "word": "CL",
+           "english": True, "short": "surname", "cover": "covers/cl.png",
+           "format": "wide", "name_col": "Player", "sub": ["Club", "Nationality"], "filter": ("Top 101 by MV", "yes"),
+           "cats": {
+               "Market value (€)": ("Market value", "M €", "mio", "highest"),
+               "Highest market value (€)": ("Peak market value", "M €", "mio", "highest"),
+               "Height (cm)": ("Height", "cm", "", "tallest"),
+               "Age (1.9.2026)": ("Age", "years", "dec1", "oldest"),
+               "Shirt number": ("Shirt number", "", "", "highest"),
+               "Intl caps": ("International caps", "caps", "", "most"),
+               "Intl goals": ("International goals", "goals", "", "most"),
+               "Club apps": ("Club appearances since 2012/13", "games", "", "most"),
+               "Club goals": ("Club goals since 2012/13", "goals", "", "most"),
+               "Club assists": ("Club assists since 2012/13", "assists", "", "most"),
+               "Club minutes": ("Club minutes since 2012/13", "min", "", "most"),
+               "CL apps": ("Champions League appearances", "games", "", "most"),
+               "CL goals": ("Champions League goals", "goals", "", "most"),
+               "Highest transfer fee (€)": ("Record transfer fee", "M €", "mio", "highest"),
+               "Total transfer fees (€)": ("Transfer fees, all careers", "M €", "mio", "highest"),
+               "Senior clubs": ("Senior clubs", "clubs", "", "most"),
+               "G+A 2025/26": ("Goals + assists 2025/26", "", "", "most"),
+           }},
 }
+# Title-board names that the surname rule gets wrong
+SHORT_NAMES = {"Vinicius Junior": "Vinicius"}
+# "Rank 1 =" directions in the wide format where the smallest value wins
+WIDE_LOW = {"lowest", "youngest", "fewest", "earliest", "shortest", "smallest", "lightest"}
 
 # Supabase project for daily results (public "anon" key: it can only insert rows and read aggregates).
 # Without a key the page runs without the online comparison.
@@ -305,8 +334,13 @@ def load_game(key, cfg):
             words = it["name"].split()
             it["short"] = words[-1] if cfg["short"] == "last" else " ".join(words[1:])
 
-    # Own photos beat spreadsheet URLs. A file matches the German or English name, the name without
-    # its bracket, any " / " part of it, or the short name: Monaco.jpg fits "Monaco (Monaco)".
+    attach_photos(key, cfg, names, items)
+    return game(key, cfg, path, items, cats)
+
+
+def attach_photos(key, cfg, names, items):
+    """Own photos beat spreadsheet URLs. A file matches the German or English name, the name without
+    its bracket, any " / " part of it, or the short name: Monaco.jpg fits "Monaco (Monaco)"."""
     own = local_photos(key)
     used = set()
     for n, it in zip(names, items):
@@ -319,13 +353,50 @@ def load_game(key, cfg):
     for stem in own:
         if stem not in used:
             print(f"  photos/{key}: '{stem}' matches no {cfg['noun']}")
-    return {**{k: v for k, v in cfg.items() if k not in ("file", "english", "short", "cover")}, "source": path.name,
-            **({"cover": cover(cfg["cover"])} if cfg.get("cover") else {}),
+
+
+def game(key, cfg, path, items, cats):
+    has_cover = cfg.get("cover") and next(HERE.glob(cfg["cover"]), None)
+    return {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word")}, "source": path.name,
+            **({"cover": cover(cfg["cover"])} if has_cover else {}),
             "items": items, "cats": cats}
 
 
+def load_wide(key, cfg):
+    """One sheet, one row per item, the stats in named columns (rank columns are ignored and recomputed)."""
+    path = next(HERE.glob(cfg["file"]))
+    ws = openpyxl.load_workbook(path, data_only=True).worksheets[0]
+    col = {h: i for i, h in enumerate(c.value for c in ws[1]) if h}
+    missing = [h for h in cfg["cats"] if h not in col]
+    if missing:
+        raise SystemExit(f"{path.name}: columns not found: {missing}")
+    rows = [r for r in ws.iter_rows(min_row=2, values_only=True) if r[col[cfg["name_col"]]]]
+    if cfg.get("filter"):
+        fcol, fval = cfg["filter"]
+        rows = [r for r in rows if r[col[fcol]] == fval]
+
+    cats = [{"name": en, "unit": unit, "fmt": fmt, "dir": d} for en, unit, fmt, d in cfg["cats"].values()]
+    items = []
+    for r in rows:
+        name = str(r[col[cfg["name_col"]]]).strip()
+        sub = " · ".join(str(r[col[c]]) for c in cfg.get("sub", []) if r[col[c]])
+        vals = [r[col[h]] if isinstance(r[col[h]], (int, float)) else None for h in cfg["cats"]]
+        words = name.split()
+        short = SHORT_NAMES.get(name) or (" ".join(words[1:]) if cfg.get("short") == "surname" and len(words) > 1 else name)
+        items.append({"name": f"{name} ({sub})" if sub else name, "short": short, "values": vals, "ranks": [None] * len(cats)})
+    for i, cat in enumerate(cats):
+        low = cat["dir"] in WIDE_LOW
+        vals = [it["values"][i] for it in items if it["values"][i] is not None]
+        for it in items:
+            v = it["values"][i]
+            if v is not None:
+                it["ranks"][i] = 1 + sum(1 for w in vals if (w < v if low else w > v))
+    attach_photos(key, cfg, [it["name"].split(" (")[0] for it in items], items)
+    return game(key, cfg, path, items, cats)
+
+
 def main():
-    data = {key: load_game(key, cfg) for key, cfg in GAMES.items()}
+    data = {key: (load_wide if cfg.get("format") == "wide" else load_game)(key, cfg) for key, cfg in GAMES.items()}
     for key, g in data.items():
         if len(g["items"]) < 8 or any(all(it["ranks"][i] is None for it in g["items"]) for i in range(len(g["cats"]))):
             raise SystemExit(f"{g['source']}: fewer than 8 rows or a category without values, build stopped.")

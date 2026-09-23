@@ -353,8 +353,8 @@ const GAMES = {
 };
 const KIND_ART = __KINDS__;
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
-const ORDER = ['rankle-sports', 'rankle-f1', 'rankle-nfl', 'rankle-ski', 'blind-sports', 'blind-f1', 'blind-nfl', 'blind-ski',
-  'sort-sports', 'sort-f1', 'sort-nfl', 'sort-ski'];
+const ORDER = ['rankle-sports', 'rankle-f1', 'rankle-nfl', 'rankle-ski', 'rankle-cl', 'blind-sports', 'blind-f1', 'blind-nfl', 'blind-ski', 'blind-cl',
+  'sort-sports', 'sort-f1', 'sort-nfl', 'sort-ski', 'sort-cl'];
 const BLIND_PTS = [5, 3, 1];   // exact slot, one off, two off
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = id => document.getElementById(id);
@@ -410,6 +410,7 @@ function blindDraw(m, kind = 'blind'){
 }
 
 function split(name){ const m = name.match(/^(.*?) \((.*)\)$/); return m ? [m[1], m[1] === m[2] ? '' : m[2]] : [name, '']; }
+const nm = s => split(D.items[s].name)[0];   // the name without its bracket, for the rows
 function fmt(s, c){
   const v = D.items[s].values[c], {unit, fmt} = D.cats[c];
   if (v == null) return null;
@@ -419,6 +420,7 @@ function fmt(s, c){
   if (fmt === 'lon') return [Math.abs(v).toFixed(2), v < 0 ? '° E' : '° W'];
   if (fmt === 'pct') return [(v * 100).toFixed(1), '%'];
   if (fmt === 'dec1') return [Number(v).toFixed(1), unit];
+  if (fmt === 'mio') return [(v / 1e6).toLocaleString('en-US', {maximumFractionDigits: 1}), unit];
   if (fmt === 'date') return [new Date(v + 'T00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'}), ''];
   return [Number(v).toLocaleString('en-US'), unit];
 }
@@ -683,7 +685,7 @@ function renderHome(kind){
     : `<section class="hero">
         <p class="eyebrow">Daily sports puzzles · ${date}</p>
         <h1>How much of a sports freak are you?</h1>
-        <p class="lead">Three daily games, four sports, twelve new puzzles a day. Everyone gets the same cards — find out where you stand. Or pass the phone round for a game of Ringer.</p>
+        <p class="lead">Three daily games, ${pools.length} pools, ${ORDER.length} new puzzles a day. Everyone gets the same cards — find out where you stand. Or pass the phone round for a game of Ringer.</p>
         <div class="cta">${next ? `<a class="btn" href="#${next}">${progress(...next.split('-')) ? 'Continue' : 'Play now'}</a>` : ''}
           <span class="meta">${next ? `Next up: <b>${nextName}</b> · ` : `<b>All played for today</b> · `}${facts}</span></div>
       </section>
@@ -853,7 +855,7 @@ function rankleFill(i){
   row.classList.add('done');
   row.classList.remove('sel');
   row.disabled = true;
-  row.querySelector('.who').textContent = D.items[s].name;
+  row.querySelector('.who').textContent = nm(s);
   row.querySelector('.unit').textContent = v ? v[1] : 'no value';
   row.querySelector('.pts').textContent = `+${pts(s, c)}`;
   row.setAttribute('aria-label', `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
@@ -918,7 +920,7 @@ function rankleResults(){
   // The perfect board: the same rows, each category with the item that belongs there
   showAlt('Perfect board', `Perfect board, ${opt} points`, G.cats.map((c, k) => {
     const s = idealFor[k], r = D.items[s].ranks[c], v = fmt(s, c);
-    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', D.cats[c].name, D.items[s].name, v, `+${pts(s, c)}`,
+    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', D.cats[c].name, nm(s), v, `+${pts(s, c)}`,
       `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
   }));
   announce(`${titleText[1]}, ${$('led-note').textContent}`);
@@ -995,7 +997,7 @@ function blindFill(i){
   row.classList.remove('sel');
   row.disabled = true;
   const name = row.querySelector('.cat');
-  name.textContent = D.items[s].name;
+  name.textContent = nm(s);
   name.classList.remove('empty');
   row.querySelector('.hint')?.remove();
   row.setAttribute('aria-label', `Spot ${i + 1}: ${D.items[s].name}`);
@@ -1059,7 +1061,7 @@ function blindResults(){
   for (const [k, s] of Object.entries(G.placed)) yourSpot[s] = +k;
   showAlt('True order', `True order by ${c.name}`, order.map((s, i) => {
     const [p, d] = blindPts(s, yourSpot[s]), v = fmt(s, G.cat);
-    return altRow(String(i + 1), d ? '' : 'ok', D.items[s].name, '', v, `+${p}`,
+    return altRow(String(i + 1), d ? '' : 'ok', nm(s), '', v, `+${p}`,
       `Spot ${i + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, you put it on spot ${yourSpot[s] + 1}`,
       d ? `· you: spot <b>${yourSpot[s] + 1}</b>` : '');
   }));
@@ -1097,7 +1099,7 @@ function startSort(){
 function sortRows(){
   G.order.forEach((s, i) => {
     const row = $(`row-${i}`);
-    row.querySelector('.cat').textContent = D.items[s].name;
+    row.querySelector('.cat').textContent = nm(s);
     row.setAttribute('aria-label', `Spot ${i + 1}: ${D.items[s].name}`);
   });
 }

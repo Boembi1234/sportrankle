@@ -2,7 +2,7 @@
 
 Daily sports ranking puzzles, live at <https://sportrankle.netlify.app>.
 
-Three games, four pools (team sports, F1 circuits, NFL teams, alpine skiers), one attempt per game and day. Every player gets the same cards; the daily draw is seeded by the date in the browser, so the site is a single static page with no backend.
+Three games, five pools (team sports, F1 circuits, NFL teams, alpine skiers, Champions League players), one attempt per game and day. Every player gets the same cards; the daily draw is seeded by the date in the browser, so the site is a single static page with no backend.
 
 | Game | Idea |
 |---|---|
@@ -40,6 +40,8 @@ Each pool is one workbook with three sheets:
 3. **Kategorien** – `#`, `Kategorie`, `Einheit`, `Rang 1 =` (direction, e.g. `meiste`, `frühestes`, `nördlichstes`). Rows whose `#` is a number are used.
 
 Values may be numbers or dates. Ties share a rank; empty cells get no rank and score 0 in Rankle.
+
+**Wide format** (used by the Champions League players): one sheet, one row per item, the stats in named columns, rank columns optional (they are ignored and recomputed). The `GAMES` entry sets `"format": "wide"`, the name column, which columns become categories (with English name, unit, format and direction), optional `"sub"` columns shown under the name, and an optional `"filter"` column/value to keep a subset of rows.
 
 ## Adding a pool
 

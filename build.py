@@ -47,7 +47,7 @@ GAMES = {
     # "cats" maps the value columns to use -> (English name, unit, format, "Rank 1 =" direction);
     # "sub" columns go in brackets after the name and appear under the title; "filter" keeps matching rows only.
     "cl": {"file": "CL_Players*.xlsx", "tab": "Champions League players", "noun": "player", "plural": "players", "word": "CL",
-           "english": True, "short": "surname", "cover": "covers/cl.png",
+           "english": True, "short": "surname", "cover": {"file": "covers/cl.png", "width": 0.8, "cy": 0.46},
            "format": "wide", "name_col": "Player", "sub": ["Club", "Nationality"], "filter": ("Top 101 by MV", "yes"),
            "cats": {
                "Market value (€)": ("Market value", "M €", "mio", "highest"),

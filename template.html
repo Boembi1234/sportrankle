@@ -505,14 +505,14 @@ function deviceId(){
   if (!id) { id = crypto.randomUUID(); store('device', id); }
   return id;
 }
-async function sb(path, body, prefer){
+async function sb(path, body, okStatus = []){
   const r = await fetch(`${SB.url}/rest/v1/${path}`, {
     method: 'POST',
-    headers: {apikey: SB.key, Authorization: `Bearer ${SB.key}`, 'Content-Type': 'application/json', ...(prefer ? {Prefer: prefer} : {})},
+    headers: {apikey: SB.key, 'Content-Type': 'application/json', Prefer: 'return=minimal'},
     body: JSON.stringify(body),
   });
-  if (!r.ok) throw new Error(`${path}: ${r.status}`);
-  return prefer ? null : r.json();
+  if (!r.ok && !okStatus.includes(r.status)) throw new Error(`${path}: ${r.status}`);
+  return r.status === 200 ? r.json() : null;
 }
 async function reportResult(score, max){
   const el = $('social');
@@ -520,7 +520,8 @@ async function reportResult(score, max){
   if (!SB || !crypto.randomUUID) return;
   const game = `${KIND}-${MODE}`, day = G.day;
   try {
-    await sb('results?on_conflict=day,game,device', {day, game, device: deviceId(), score, max}, 'resolution=ignore-duplicates,return=minimal');
+    // 409 = this device already recorded this game today (the page was reopened)
+    await sb('results', {day, game, device: deviceId(), score, max}, [409]);
     const rows = await sb('rpc/daily_stats', {p_day: day, p_game: game});
     if (G.day !== day || `${KIND}-${MODE}` !== game) return;   // the player moved on meanwhile
     const total = rows.reduce((a, r) => a + Number(r.n), 0);

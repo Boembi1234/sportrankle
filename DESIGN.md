@@ -123,7 +123,7 @@ Die Karte ist eine graue Fläche mit abgerundeten Ecken und einem grossen weisse
 
 - Jede Sportart hat ein Foto, eine echte Spielszene (kein Logo, keine Illustration).
 - Format: volle Breite, Höhe 140px auf dem Handy bzw. 220px auf dem Desktop, Radius 8px, `object-fit: cover`.
-- Die Titelkarten mit dem Namen der Sportart **überlappen die Unterkante des Fotos** um die halbe Kartenhöhe. So hängen die Karten wie an einer Tafel vor dem Bild.
+- Unter dem Foto steht der Name der Sportart auf einer **LED-Tafel** (seit 2026-09-23, ersetzt die Titelkarten): dunkles Panel mit Punktraster, Punktmatrix-Schrift «Doto» in der Akzentfarbe mit leichtem Leuchten, Grossbuchstaben. Bei einem neuen Namen leuchten die Buchstaben nacheinander auf (45 ms pro Zeichen). Dieselbe Tafel zeigt auf dem Ergebnis-Screen die Punkte («85 / 141», Anteil vom Maximum).
 - Ohne Foto (oder während des Ladens) zeigt die Fläche `--surface` und einen dezenten Hinweis. Das Layout springt dabei nicht.
 - Das Foto bekommt einen `alt`-Text wie «Wasserball, Spielszene».
 - Bildrechte klären: Wikimedia Commons (Lizenz und Urheber angeben) oder lizenzierte Fotos.
@@ -145,7 +145,7 @@ Der Spiel-Screen (Kopfzeile, Foto, Titel, Frage, **alle 8 Kategorien**, Button) 
 |---|---|
 | Kopfzeile | 52px |
 | Foto | 140px |
-| Titelkarten (überlappen Foto) | + 22px |
+| LED-Tafel mit dem Namen | 48px |
 | Frage | ca. 60px |
 | 8 Kategorien à 52px | 416px |
 | Button | 52px |
@@ -158,7 +158,7 @@ Umsetzung:
 - Die Zeilenhöhe skaliert: `height: clamp(44px, 6.2dvh, 56px)`.
 - Das Foto schrumpft zuerst: `height: clamp(72px, 17dvh, 160px)`.
 - Wird es trotzdem zu eng, fällt die Hinweiszeile («Rang 1 = …») weg. **Scrollen ist der allerletzte Ausweg.**
-- Bei langen Sportnamen (mehr als 10 Buchstaben) werden die Titelkarten schmaler (min. 26px). Reicht das nicht, bricht der Name auf zwei Kartenreihen um.
+- Lange Namen brechen auf der LED-Tafel auf eine zweite Zeile um (Desktop 34px, Handy 26px Schrift).
 
 ### Mobile (< 640px), Innenabstand 16px
 

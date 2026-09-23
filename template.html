@@ -1,4 +1,4 @@
-<title>Sportrankle</title>
+﻿<title>Sportrankle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Doto:wght@600..900&display=swap">
@@ -126,10 +126,13 @@ a{color:inherit}
 .photo{position:relative;flex:none;height:var(--ph,200px);border-radius:8px;background:var(--surface);display:block;overflow:hidden}
 .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px}
 .photo .ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px}
-.title{position:relative;z-index:2;flex:none;display:flex;flex-wrap:wrap;gap:12px 16px;padding-inline:14px;margin-top:calc(var(--h, 78px) / -2);min-height:var(--h, 78px)}
-.word{display:flex;gap:5px}
+/* Item name as an LED board under the photo: dot-matrix letters light up one by one */
+.title{flex:none;display:block;margin-top:10px;padding:11px 16px;border-radius:10px;border:1px solid var(--line-strong);
+  background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px;
+  font-family:"Doto",var(--font);font-weight:900;font-size:34px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance;color:var(--signal)}
+.title i{font-style:normal;color:#1C2126;transition:color .12s}
+.title i.lit{color:inherit;text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
 /* Two rows of cards: the first row hangs fully on the photo, so the screen stays the same height */
-.title.wrapped{margin-top:calc(var(--h) * -1.5 - 12px)}
 .question{flex:none;font-weight:700;font-stretch:85%;font-size:32px;line-height:1.1;margin:16px 0 0;text-wrap:balance}
 .question.sub{font-weight:400;font-stretch:100%;font-size:15px;color:var(--muted);margin-top:12px}
 .question .qdir{display:block;font-weight:400;font-stretch:100%;font-size:15px;color:var(--muted);margin-top:4px}
@@ -144,8 +147,6 @@ a{color:inherit}
 .card.ok{background:var(--correct)} .card.no{background:var(--wrong)}
 .card .leaf{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border-radius:inherit;transform-origin:50% 0;backface-visibility:hidden;color:var(--glyph)}
 .card .leaf.was-open{inset:-1.5px;border:1.5px dashed var(--card-open)}
-.title .card{--r:8px}
-.title .card::before{content:"";position:absolute;z-index:3;left:50%;top:-9px;width:12px;height:18px;margin-left:-6px;border:3px solid var(--ring);border-radius:50%}
 .rank{--w:44px;--h:52px;--f:30px;--r:6px}
 .mini{--w:18px;--h:24px;--f:14px;--r:3px;background:var(--card-mini);box-shadow:none}
 
@@ -249,10 +250,7 @@ a{color:inherit}
   .tile-name{font-size:17px}
   .tile-status{font-size:14px;padding:7px 12px}
   .photo{border-radius:8px}
-  .title{gap:10px 12px;padding-inline:10px}
-  .title.wrapped{margin-top:calc(var(--h) * -1.5 - 10px)}
-  .title .card{--r:5px}
-  .title .card::before{top:-6px;width:8px;height:11px;margin-left:-4px;border-width:2px}
+  .title{margin-top:8px;padding:9px 12px;font-size:26px}
   .led{gap:2px 16px;padding:12px 14px 10px}
   .led-num{font-size:46px}
   .led-side .led-num{font-size:34px}
@@ -295,13 +293,13 @@ a{color:inherit}
 
   <main class="party" id="party" hidden>
     <section id="party-setup">
-      <p class="eyebrow">Party game · one phone</p>
+      <p class="eyebrow">Party game Â· one phone</p>
       <h1>Ringer</h1>
-      <p class="lead">Everyone gets the same secret from a pool — except the ringer, who has to bluff along. Talk, listen, and find out who it is.</p>
+      <p class="lead">Everyone gets the same secret from a pool â€” except the ringer, who has to bluff along. Talk, listen, and find out who it is.</p>
       <div class="field"><span class="field-l">Players</span>
-        <span class="stepper"><button type="button" data-k="players" data-d="-1" aria-label="Fewer players">−</button><b id="p-players">5</b><button type="button" data-k="players" data-d="1" aria-label="More players">+</button></span></div>
+        <span class="stepper"><button type="button" data-k="players" data-d="-1" aria-label="Fewer players">âˆ’</button><b id="p-players">5</b><button type="button" data-k="players" data-d="1" aria-label="More players">+</button></span></div>
       <div class="field"><span class="field-l">Ringers</span>
-        <span class="stepper"><button type="button" data-k="ringers" data-d="-1" aria-label="Fewer ringers">−</button><b id="p-ringers">1</b><button type="button" data-k="ringers" data-d="1" aria-label="More ringers">+</button></span></div>
+        <span class="stepper"><button type="button" data-k="ringers" data-d="-1" aria-label="Fewer ringers">âˆ’</button><b id="p-ringers">1</b><button type="button" data-k="ringers" data-d="1" aria-label="More ringers">+</button></span></div>
       <div class="field"><span class="field-l">Pool</span><span class="picks" id="p-pools"></span></div>
       <div class="bar"><button class="main" id="p-start" type="button">Deal the cards</button><p class="note">Pass the phone round: each player looks at their card alone.</p></div>
     </section>
@@ -416,8 +414,8 @@ function fmt(s, c){
   if (v == null) return null;
   if (fmt === 'year') return [String(v), ''];
   if (fmt === 'laptime') { const m = Math.floor(v / 60); return [`${m}:${(v - m * 60).toFixed(3).padStart(6, '0')}`, '']; }
-  if (fmt === 'lat') return [Math.abs(v).toFixed(2), v < 0 ? '° S' : '° N'];
-  if (fmt === 'lon') return [Math.abs(v).toFixed(2), v < 0 ? '° E' : '° W'];
+  if (fmt === 'lat') return [Math.abs(v).toFixed(2), v < 0 ? 'Â° S' : 'Â° N'];
+  if (fmt === 'lon') return [Math.abs(v).toFixed(2), v < 0 ? 'Â° E' : 'Â° W'];
   if (fmt === 'pct') return [(v * 100).toFixed(1), '%'];
   if (fmt === 'dec1') return [Number(v).toFixed(1), unit];
   if (fmt === 'date') return [new Date(v + 'T00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'}), ''];
@@ -463,46 +461,24 @@ function miniCards(box, text, delay = 0){
   }));
 }
 
-// Title cards: one row if the cards stay at least 26px wide, otherwise wrap per word.
-let prevTitle = [];
+// Title board: the item name in LED letters; a new name lights up letter by letter
+let prevTitle = '';
 function titleCards(text, label){
   const box = $('title');
   box.setAttribute('aria-label', label || text);
-  const words = text.toUpperCase().split(/ +|(?<=-)/).filter(Boolean);
-  const mobile = innerWidth < 640, max = mobile ? 32 : 58, gap = 5, wgap = mobile ? 12 : 16;
-  const avail = (box.clientWidth || 300) - (mobile ? 20 : 28);
-  const total = words.reduce((a, w) => a + [...w].length, 0);
-  let w = (avail - (total - words.length) * gap - (words.length - 1) * wgap) / total;
-  let wrap = false;
-  if (w < 26) {
-    wrap = true;
-    const longest = Math.max(...words.map(x => [...x].length));
-    w = (avail - (longest - 1) * gap) / longest;
-  }
-  w = Math.min(max, Math.floor(w));
-  box.style.flexWrap = wrap ? 'wrap' : 'nowrap';
-  box.classList.toggle('wrapped', wrap && words.length > 1);
-  box.style.setProperty('--w', `${w}px`);
-  box.style.setProperty('--h', `${Math.round(w * (mobile ? 1.375 : 1.345))}px`);
-  box.style.setProperty('--f', `${Math.round(w * (mobile ? .9 : .96))}px`);
+  const up = text.toUpperCase(), lit = up === prevTitle || RM || instant;
+  prevTitle = up;
   box.innerHTML = '';
-  const jobs = [], chars = [];
-  let k = 0;
-  for (const word of words) {
-    const wd = document.createElement('span');
-    wd.className = 'word';
-    box.append(wd);
-    for (const ch of word) {
-      const c = card();
-      paint(c, prevTitle[k] || '');
-      if (!prevTitle[k]) c.classList.add('open');
-      wd.append(c);
-      jobs.push(turn(c, ch, k * 60));
-      chars.push(ch); k++;
-    }
+  const chars = [];
+  for (const ch of up) {
+    if (ch === ' ') { box.append(' '); continue; }
+    const i = document.createElement('i');
+    i.textContent = ch;
+    if (lit) i.className = 'lit';
+    box.append(i); chars.push(i);
   }
-  prevTitle = chars;
-  return Promise.all(jobs);
+  if (lit) return Promise.resolve();
+  return Promise.all(chars.map((i, k) => wait(120 + k * 45).then(() => i.classList.add('lit'))));
 }
 let titleText = ['', ''];
 addEventListener('resize', () => {
@@ -647,7 +623,7 @@ async function reportResult(score, max){
     $('today-bars').innerHTML = bins.map((n, i) => `<i${i === mine ? ' class="me"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('');
     $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, you scored ${score} of ${max}${total < 10 ? '' : `, better than ${pct} %`}`);
     $('today-axis').innerHTML = `<span${mine === 0 ? ' hidden' : ''}>0</span>`
-      + `<span class="you" style="--x:${(mine + .5) / nb * 100}%">You · ${score}</span>`
+      + `<span class="you" style="--x:${(mine + .5) / nb * 100}%">You Â· ${score}</span>`
       + `<span${mine === nb - 1 ? ' hidden' : ''}>${max}</span>`;
     el.hidden = false;
   } catch (e) { /* offline or blocked: the game works without it */ }
@@ -679,7 +655,7 @@ function renderHome(kind){
     const img = g.cover || g.items[first].img;
     const h = load(`${kind}-history-${m}`) || {};
     const status = n >= PICK
-      ? `<span class="tile-status done">✓ ${h[today()] ? h[today()][0] : ''} pts</span>`
+      ? `<span class="tile-status done">âœ“ ${h[today()] ? h[today()][0] : ''} pts</span>`
       : `<span class="tile-status">${n ? `Continue ${n}/${PICK}` : 'Play'}</span>`;
     return `<a class="tile" href="#${kind}-${m}" aria-label="${GAMES[kind].name}, ${g.tab}">
       <span class="tile-art">${img ? `<img src="${img}" alt="">` : ''}</span>
@@ -691,7 +667,7 @@ function renderHome(kind){
   const kindCard = (kind, g) => {
     const done = pools.filter(m => progress(kind, m) >= PICK).length;
     const started = pools.filter(m => progress(kind, m) > 0).length;
-    const status = done === pools.length ? `<span class="tile-status done">✓ All played</span>`
+    const status = done === pools.length ? `<span class="tile-status done">âœ“ All played</span>`
       : `<span class="tile-status">${started ? `Continue ${done}/${pools.length}` : 'Play'}</span>`;
     return `<a class="kind" href="#${kind}" aria-label="${g.name}">
       <span class="kind-art">${KIND_ART[kind] ? `<img src="${KIND_ART[kind]}" alt="">` : `<span class="tile-cards" data-word="${g.word}"></span>`}</span>
@@ -701,19 +677,19 @@ function renderHome(kind){
   // Hero: the next open game is one tap away
   const played = ORDER.filter(k => progress(...k.split('-')) >= PICK).length;
   const next = ORDER.find(k => progress(...k.split('-')) < PICK);
-  const nextName = next && `${GAMES[next.split('-')[0]].name} · ${DATA[next.split('-')[1]].tab}`;
+  const nextName = next && `${GAMES[next.split('-')[0]].name} Â· ${DATA[next.split('-')[1]].tab}`;
   const streak = streakDays();
-  const facts = [`<b>${played} of ${ORDER.length}</b> played today`, streak > 1 ? `<b>${streak}-day</b> streak` : '', `<span style="white-space:nowrap">new cards in <span id="next">${countdown()}</span></span>`].filter(Boolean).join(' · ');
+  const facts = [`<b>${played} of ${ORDER.length}</b> played today`, streak > 1 ? `<b>${streak}-day</b> streak` : '', `<span style="white-space:nowrap">new cards in <span id="next">${countdown()}</span></span>`].filter(Boolean).join(' Â· ');
   $('home').innerHTML = kind
     ? `<h1>${GAMES[kind].name}</h1>
       <p class="today">${GAMES[kind].blurb} Pick a pool:</p>
       <div class="tiles">${pools.map(m => tile(kind, m)).join('')}</div>`
     : `<section class="hero">
-        <p class="eyebrow">Daily sports puzzles · ${date}</p>
+        <p class="eyebrow">Daily sports puzzles Â· ${date}</p>
         <h1>How much of a sports freak are you?</h1>
-        <p class="lead">Three daily games, four sports, twelve new puzzles a day. Everyone gets the same cards — find out where you stand. Or pass the phone round for a game of Ringer.</p>
+        <p class="lead">Three daily games, four sports, twelve new puzzles a day. Everyone gets the same cards â€” find out where you stand. Or pass the phone round for a game of Ringer.</p>
         <div class="cta">${next ? `<a class="btn" href="#${next}">${progress(...next.split('-')) ? 'Continue' : 'Play now'}</a>` : ''}
-          <span class="meta">${next ? `Next up: <b>${nextName}</b> · ` : `<b>All played for today</b> · `}${facts}</span></div>
+          <span class="meta">${next ? `Next up: <b>${nextName}</b> Â· ` : `<b>All played for today</b> Â· `}${facts}</span></div>
       </section>
       <div class="kinds">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
         <a class="kind" href="#ringer" aria-label="Ringer, party game">
@@ -721,9 +697,9 @@ function renderHome(kind){
           <span class="kind-body"><span class="kind-name">Ringer</span><span class="tile-status">Play</span><span class="kind-blurb">Party game on one phone, 3 to 12 players. Everyone knows the secret except the ringer. Find them.</span></span>
         </a></div>
       <section class="how">
-        <div><b>1 · Pick a game</b><span>Rankle, Blind ranking or Sort it — or Ringer with friends.</span></div>
-        <div><b>2 · Rank eight cards</b><span>${pools.map(m => DATA[m].tab).join(', ')}. One attempt per game and day.</span></div>
-        <div><b>3 · Compare</b><span>Your score against everyone who played today, plus your own stats and streak.</span></div>
+        <div><b>1 Â· Pick a game</b><span>Rankle, Blind ranking or Sort it â€” or Ringer with friends.</span></div>
+        <div><b>2 Â· Rank eight cards</b><span>${pools.map(m => DATA[m].tab).join(', ')}. One attempt per game and day.</span></div>
+        <div><b>3 Â· Compare</b><span>Your score against everyone who played today, plus your own stats and streak.</span></div>
       </section>`;
   document.querySelectorAll('.tile-cards').forEach(box => {
     for (const ch of box.dataset.word) { const c = card(); paint(c, ch); box.append(c); }
@@ -778,11 +754,11 @@ function partyRender(){
   card.className = 'deal';
   note.innerHTML = '';
   if (P.phase === 'pass') {
-    $('pp-step').textContent = `${who(P.i)} · ${P.i + 1} of ${n}`;
+    $('pp-step').textContent = `${who(P.i)} Â· ${P.i + 1} of ${n}`;
     card.innerHTML = `<p class="deal-k">Your turn</p><p class="deal-h">${who(P.i)}</p><p class="deal-t">Hold the phone so only you can see it, then tap the button.</p>`;
     partyButton('Show my card', () => { P.phase = 'peek'; partyRender(); });
   } else if (P.phase === 'peek') {
-    $('pp-step').textContent = `${who(P.i)} · ${P.i + 1} of ${n}`;
+    $('pp-step').textContent = `${who(P.i)} Â· ${P.i + 1} of ${n}`;
     if (P.roles[P.i]) {
       card.className = 'deal ringer';
       card.innerHTML = `<p class="deal-k">You are</p><p class="deal-h">the Ringer</p><p class="deal-t">The others share a secret from <b>${g.tab}</b>. Bluff along and don't get caught.</p>`;
@@ -791,16 +767,16 @@ function partyRender(){
         <p class="deal-k">${g.tab}</p><p class="deal-h">${it.name}</p><p class="deal-t">Keep it to yourself. ${plural ? 'Some of you don\'t' : 'One of you doesn\'t'} know it.</p>`;
     }
     const last = P.i === n - 1;
-    partyButton(last ? 'Hide it — everyone is in' : 'Hide it and pass on', () => { if (last) P.phase = 'talk'; else { P.i++; P.phase = 'pass'; } partyRender(); });
+    partyButton(last ? 'Hide it â€” everyone is in' : 'Hide it and pass on', () => { if (last) P.phase = 'talk'; else { P.i++; P.phase = 'pass'; } partyRender(); });
   } else if (P.phase === 'talk') {
     $('pp-step').textContent = 'Everyone has a card';
-    card.innerHTML = `<p class="deal-k">Talk</p><p class="deal-h">${who(P.first)} starts</p><p class="deal-t">Go round the table: each of you says one word or short hint about the secret — precise enough to show you know it, vague enough to give the ${plural ? 'ringers' : 'ringer'} nothing. After a round or two, vote on who is bluffing.</p>`;
+    card.innerHTML = `<p class="deal-k">Talk</p><p class="deal-h">${who(P.first)} starts</p><p class="deal-t">Go round the table: each of you says one word or short hint about the secret â€” precise enough to show you know it, vague enough to give the ${plural ? 'ringers' : 'ringer'} nothing. After a round or two, vote on who is bluffing.</p>`;
     partyButton(`Reveal the ${plural ? 'ringers' : 'ringer'}`, () => { P.phase = 'reveal'; partyRender(); });
     note.innerHTML = '<button type="button" class="linkbtn" id="pp-setup">Start over</button>';
   } else {
     $('pp-step').textContent = 'The truth';
     card.className = 'deal ringer';
-    card.innerHTML = `<p class="deal-k">The ${plural ? 'ringers were' : 'ringer was'}</p><p class="deal-h">${list(ringers)}</p><p class="deal-t">The secret was <b>${it.name}</b>. The group wins if it named ${plural ? 'a ringer' : 'the ringer'}; ${plural ? 'the ringers win' : 'the ringer wins'} by staying hidden — or by guessing the secret now.</p>`;
+    card.innerHTML = `<p class="deal-k">The ${plural ? 'ringers were' : 'ringer was'}</p><p class="deal-h">${list(ringers)}</p><p class="deal-t">The secret was <b>${it.name}</b>. The group wins if it named ${plural ? 'a ringer' : 'the ringer'}; ${plural ? 'the ringers win' : 'the ringer wins'} by staying hidden â€” or by guessing the secret now.</p>`;
     partyButton('Deal again', partyDeal);
     note.innerHTML = '<button type="button" class="linkbtn" id="pp-setup">Change setup</button>';
   }
@@ -858,7 +834,7 @@ addEventListener('hashchange', route);
 function startRankle(){
   const {cats, items} = rankleDraw(MODE);
   G = {day: today(), cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
-  prevTitle = [];
+  prevTitle = '';
   $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${D.cats[c].name}, rank 1 = ${D.cats[c].dir}, open">
       <span class="c-rank"></span>
       <span class="body"><span class="cat">${D.cats[c].name}</span><span class="hint">Rank 1 = ${D.cats[c].dir}</span>
@@ -888,7 +864,7 @@ function rankleFill(i){
   row.querySelector('.unit').textContent = v ? v[1] : 'no value';
   row.querySelector('.pts').textContent = `+${pts(s, c)}`;
   row.setAttribute('aria-label', `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
-  return Promise.all([turn(row.querySelector('.rank'), r == null ? '–' : String(r)), miniCards(row.querySelector('.vals'), v ? v[0] : '', 140)]);
+  return Promise.all([turn(row.querySelector('.rank'), r == null ? 'â€“' : String(r)), miniCards(row.querySelector('.vals'), v ? v[0] : '', 140)]);
 }
 
 function rankleRound(){
@@ -949,7 +925,7 @@ function rankleResults(){
   // The perfect board: the same rows, each category with the item that belongs there
   showAlt('Perfect board', `Perfect board, ${opt} points`, G.cats.map((c, k) => {
     const s = idealFor[k], r = D.items[s].ranks[c], v = fmt(s, c);
-    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', D.cats[c].name, D.items[s].name, v, `+${pts(s, c)}`,
+    return altRow(r == null ? 'â€“' : String(r), s === G.placed[k] ? 'ok' : '', D.cats[c].name, D.items[s].name, v, `+${pts(s, c)}`,
       `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
   }));
   announce(`${titleText[1]}, ${$('led-note').textContent}`);
@@ -963,7 +939,7 @@ function scoreboard(score, max, note){
   $('led-num').innerHTML = `${score}<i>/</i>${max}`;
   $('led-pct').textContent = `${pct}%`;
   $('led-note').innerHTML = score === max
-    ? `<b>Perfect</b> — the maximum, ${note}.`
+    ? `<b>Perfect</b> â€” the maximum, ${note}.`
     : `You got <b>${pct} %</b> of the maximum points, ${note}.`;
   $('led').hidden = false;
 }
@@ -999,7 +975,7 @@ $('seg-alt').addEventListener('click', () => segView(true));
 function startBlind(){
   const {cat, items} = blindDraw(MODE);
   G = {day: today(), cat, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
-  prevTitle = [];
+  prevTitle = '';
   const dir = D.cats[cat].dir;
   $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}" aria-label="Spot ${i + 1}, open">
       <span class="c-rank"></span>
@@ -1079,7 +1055,7 @@ function blindResults(){
     miniCards(row.querySelector('.vals'), v ? v[0] : '', 300 + k * 90);
     turn(row.querySelector('.rank'), String(k + 1), 300 + k * 90, d ? 'no' : 'ok');
     const belongs = lo === hi ? String(lo + 1) : `${lo + 1} to ${hi + 1}`;
-    if (d) row.querySelector('.res').insertAdjacentHTML('beforeend', `<span class="more">· belongs on <b>${belongs}</b></span>`);
+    if (d) row.querySelector('.res').insertAdjacentHTML('beforeend', `<span class="more">Â· belongs on <b>${belongs}</b></span>`);
     row.setAttribute('aria-label', `Spot ${k + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, plus ${p} points${d ? `, belongs on spot ${belongs}` : ''}`);
   });
   finishFooter();
@@ -1092,7 +1068,7 @@ function blindResults(){
     const [p, d] = blindPts(s, yourSpot[s]), v = fmt(s, G.cat);
     return altRow(String(i + 1), d ? '' : 'ok', D.items[s].name, '', v, `+${p}`,
       `Spot ${i + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, you put it on spot ${yourSpot[s] + 1}`,
-      d ? `· you: spot <b>${yourSpot[s] + 1}</b>` : '');
+      d ? `Â· you: spot <b>${yourSpot[s] + 1}</b>` : '');
   }));
   announce(`${titleText[1]}, ${$('led-note').textContent}`);
 }
@@ -1102,7 +1078,7 @@ function blindResults(){
 function startSort(){
   const {cat, items} = blindDraw(MODE, 'sort');
   G = {day: today(), cat, sports: items, order: [...items], placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
-  prevTitle = [];
+  prevTitle = '';
   const rec = record('sort', MODE);
   if (rec && rec.order && rec.order.length === PICK && rec.order.every(s => items.includes(s))) G.order = rec.order;
   const dir = D.cats[cat].dir;

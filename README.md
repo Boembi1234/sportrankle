@@ -9,6 +9,7 @@ Three games, four pools (team sports, F1 circuits, NFL teams, alpine skiers), on
 | **Rankle** | 8 categories, 8 items arriving one by one. Put each item in the category where it ranks highest among the whole pool. Each category can be used once. |
 | **Blind ranking** | One attribute, 8 items arriving one by one. Place each on spot 1–8 without knowing what comes next. |
 | **Sort it** | One attribute, all 8 items in view. Swap them into the right order, then reveal. |
+| **Ringer** | Party game on one phone (3–12 players, not daily): everyone sees the same item from a pool except the ringer(s), who only learn the pool. Hints go round, the group votes, then the reveal. |
 
 ## How it is built
 

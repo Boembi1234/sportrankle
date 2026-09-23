@@ -50,7 +50,7 @@ SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "s
             if (HERE / "supabase" / "anon.key").exists() else None}
 
 # Pictures on the two game-type cards of the home page (tall subjects: cropped 2:1 around them)
-KIND_COVERS = {"rankle": "covers/rankle.png", "blind": "covers/blind.png", "sort": "covers/sort.png"}
+KIND_COVERS = {"rankle": "covers/rankle.png", "blind": "covers/blind.png", "sort": "covers/sort.png", "ringer": "covers/ringer.png"}
 
 NAMES_EN = {
     # Team sports
@@ -320,7 +320,8 @@ def main():
     for key, g in data.items():
         if len(g["items"]) < 8 or any(all(it["ranks"][i] is None for it in g["items"]) for i in range(len(g["cats"]))):
             raise SystemExit(f"{g['source']}: fewer than 8 rows or a category without values, build stopped.")
-    kinds = {k: cover(f, ratio=2, width=0.8, cy=0.52, size=1000) for k, f in KIND_COVERS.items()}
+    # A game without a picture yet gets its name as cards on the home page
+    kinds = {k: cover(f, ratio=2, width=0.8, cy=0.52, size=1000) for k, f in KIND_COVERS.items() if next(HERE.glob(f), None)}
     html = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))

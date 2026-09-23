@@ -61,12 +61,40 @@ a{color:inherit}
 .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--signal-edge)}
 .meta{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
 .meta b{color:var(--text);font-weight:600}
+/* Ringer: setup form, then one big card per turn */
+.page.at-home.at-party{max-width:560px}
+.party{padding-block:28px 56px}
+.party h1{font-weight:800;font-stretch:80%;font-size:40px;line-height:1;margin:0}
+.party .lead{margin:12px 0 0;font-size:16px;line-height:1.4;color:var(--muted);text-wrap:pretty}
+.field{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;border-bottom:1px solid var(--line)}
+.field:first-of-type{margin-top:20px;border-top:1px solid var(--line)}
+.field-l{font-weight:700;font-size:17px}
+.stepper{display:flex;align-items:center;gap:4px}
+.stepper button{width:44px;height:44px;border:1px solid var(--line-strong);border-radius:7px;background:none;font:800 22px/1 var(--font);cursor:pointer}
+.stepper button:disabled{color:var(--line-strong);cursor:default}
+.stepper b{min-width:40px;text-align:center;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.picks{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;padding-block:10px}
+.pick{font:600 14px var(--font);padding:8px 12px;border-radius:999px;border:1px solid var(--line-strong);background:none;cursor:pointer}
+.pick[aria-pressed="true"]{background:var(--signal);border-color:var(--signal);color:var(--bg)}
+.party .bar{padding-top:24px}
+.party .note{display:block}
+.party .eyebrow{margin-top:8px}
+.deal{margin-top:12px;padding:24px;border-radius:12px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);min-height:280px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.deal.ringer{background:var(--selected-bg);box-shadow:inset 0 0 0 2px var(--signal),0 3px 0 var(--signal-edge)}
+.deal-img{width:calc(100% + 48px);margin:-24px -24px 20px;aspect-ratio:16 / 9;object-fit:cover;display:block}
+.deal-k{margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.deal-h{margin:4px 0 0;font-weight:800;font-stretch:85%;font-size:36px;line-height:1.05;text-wrap:balance}
+.deal.ringer .deal-h{color:var(--signal)}
+.deal-t{margin:14px 0 0;font-size:15px;line-height:1.45;color:var(--muted)}
+.deal-t b{color:var(--text);font-weight:600}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--text);text-decoration:underline;cursor:pointer}
+
 /* Three steps, one line each */
 .how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
 .how b{display:block;font-size:15px;margin-bottom:3px}
 .how span{color:var(--muted);font-size:14px}
 /* Level 1: the game types as big cards; level 2: the pools of one game type as tiles */
-.kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:28px}
+.kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:28px}
 .kind{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
 .kind:active{transform:translateY(2px)}
 .kind-art{display:grid;place-items:center;aspect-ratio:2 / 1;background:var(--card-stack)}
@@ -264,6 +292,25 @@ a{color:inherit}
   </header>
 
   <main class="home" id="home"></main>
+
+  <main class="party" id="party" hidden>
+    <section id="party-setup">
+      <p class="eyebrow">Party game · one phone</p>
+      <h1>Ringer</h1>
+      <p class="lead">Everyone gets the same secret from a pool — except the ringer, who has to bluff along. Talk, listen, and find out who it is.</p>
+      <div class="field"><span class="field-l">Players</span>
+        <span class="stepper"><button type="button" data-k="players" data-d="-1" aria-label="Fewer players">−</button><b id="p-players">5</b><button type="button" data-k="players" data-d="1" aria-label="More players">+</button></span></div>
+      <div class="field"><span class="field-l">Ringers</span>
+        <span class="stepper"><button type="button" data-k="ringers" data-d="-1" aria-label="Fewer ringers">−</button><b id="p-ringers">1</b><button type="button" data-k="ringers" data-d="1" aria-label="More ringers">+</button></span></div>
+      <div class="field"><span class="field-l">Pool</span><span class="picks" id="p-pools"></span></div>
+      <div class="bar"><button class="main" id="p-start" type="button">Deal the cards</button><p class="note">Pass the phone round: each player looks at their card alone.</p></div>
+    </section>
+    <section id="party-play" hidden>
+      <p class="eyebrow" id="pp-step"></p>
+      <div class="deal" id="pp-card"></div>
+      <div class="bar"><button class="main" id="pp-main" type="button"></button><p class="note" id="pp-note"></p></div>
+    </section>
+  </main>
 
   <main class="game" id="game" hidden>
     <section class="left">
@@ -515,6 +562,8 @@ function rulesHTML(){
   const blind = `<p><b>Blind ranking.</b> Every day brings one attribute and, one after another, 8 items. Put each one on a spot from 1 to 8 without knowing what comes next; a spot can't be changed. The exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}. Tied values count as correct on any of their spots.</p>`;
   const common = `<p>One attempt per game, day and device. New cards at midnight. Keyboard: 1 to 8 or the arrow keys pick a row, Enter confirms.${Object.values(DATA).some(g => g.items.some(it => it.credit)) ? ' Click a photo for its source.' : ''}</p>`;
   const sort = `<p><b>Sort it.</b> Every day brings one attribute and 8 items, all in view from the start. Tap two rows to swap them until the order is right, then reveal. Scored like Blind ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;
+  const ringer = `<p><b>Ringer.</b> A party game for ${PLAYERS_MIN} to ${PLAYERS_MAX} people on one phone. Everyone gets the same secret from the chosen pool, except the ringer, who only learns the pool. Pass the phone round, then take turns giving one-word hints about the secret. Vote on who is bluffing, then reveal. The ringer wins by staying hidden or by guessing the secret.</p>`;
+  if (!$('party').hidden) return ringer;
   return (KIND ? {rankle, blind, sort}[KIND] : rankle + blind + sort) + common;
 }
 function togglePanel(id, btn){
@@ -662,13 +711,17 @@ function renderHome(kind){
     : `<section class="hero">
         <p class="eyebrow">Daily sports puzzles · ${date}</p>
         <h1>How much of a sports freak are you?</h1>
-        <p class="lead">Three games, four sports, twelve new puzzles a day. Everyone gets the same cards — find out where you stand.</p>
+        <p class="lead">Three daily games, four sports, twelve new puzzles a day. Everyone gets the same cards — find out where you stand. Or pass the phone round for a game of Ringer.</p>
         <div class="cta">${next ? `<a class="btn" href="#${next}">${progress(...next.split('-')) ? 'Continue' : 'Play now'}</a>` : ''}
           <span class="meta">${next ? `Next up: <b>${nextName}</b> · ` : `<b>All played for today</b> · `}${facts}</span></div>
       </section>
-      <div class="kinds">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}</div>
+      <div class="kinds">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
+        <a class="kind" href="#ringer" aria-label="Ringer, party game">
+          <span class="kind-art">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards" data-word="RINGER"></span>`}</span>
+          <span class="kind-body"><span class="kind-name">Ringer</span><span class="tile-status">Play</span><span class="kind-blurb">Party game on one phone, 3 to 12 players. Everyone knows the secret except the ringer. Find them.</span></span>
+        </a></div>
       <section class="how">
-        <div><b>1 · Pick a game</b><span>Rankle, Blind ranking or Sort it.</span></div>
+        <div><b>1 · Pick a game</b><span>Rankle, Blind ranking or Sort it — or Ringer with friends.</span></div>
         <div><b>2 · Rank eight cards</b><span>${pools.map(m => DATA[m].tab).join(', ')}. One attempt per game and day.</span></div>
         <div><b>3 · Compare</b><span>Your score against everyone who played today, plus your own stats and streak.</span></div>
       </section>`;
@@ -677,10 +730,98 @@ function renderHome(kind){
   });
 }
 
+// ---- Ringer: a pass-the-phone party game on the same pools. Nothing daily, nothing online. ----
+const PARTY = {players: 5, ringers: 1, pool: 'sports'};
+let P = null;   // the round in progress
+const PLAYERS_MIN = 3, PLAYERS_MAX = 12;
+const maxRingers = () => Math.max(1, Math.floor((PARTY.players - 1) / 2));   // always fewer ringers than honest players
+function partySetup(){
+  const s = load('ringer-setup');
+  if (s && DATA[s.pool]) Object.assign(PARTY, s);
+  P = null;
+  $('party-setup').hidden = false; $('party-play').hidden = true;
+  partyFields();
+}
+function partyFields(){
+  PARTY.players = Math.max(PLAYERS_MIN, Math.min(PLAYERS_MAX, PARTY.players));
+  PARTY.ringers = Math.max(1, Math.min(maxRingers(), PARTY.ringers));
+  $('p-players').textContent = PARTY.players;
+  $('p-ringers').textContent = PARTY.ringers;
+  $('p-pools').innerHTML = Object.keys(DATA).map(m => `<button type="button" class="pick" aria-pressed="${m === PARTY.pool}" data-pool="${m}">${DATA[m].tab}</button>`).join('');
+  document.querySelectorAll('.stepper button').forEach(b => {
+    const v = PARTY[b.dataset.k] + +b.dataset.d;
+    b.disabled = b.dataset.k === 'players' ? v < PLAYERS_MIN || v > PLAYERS_MAX : v < 1 || v > maxRingers();
+  });
+  store('ringer-setup', PARTY);
+}
+$('party-setup').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.k) { PARTY[b.dataset.k] += +b.dataset.d; partyFields(); }
+  else if (b.dataset.pool) { PARTY.pool = b.dataset.pool; partyFields(); }
+  else if (b.id === 'p-start') partyDeal();
+});
+function partyDeal(){
+  const g = DATA[PARTY.pool], n = PARTY.players, roles = Array(n).fill(false);
+  draw(range(n), PARTY.ringers, Math.random).forEach(i => { roles[i] = true; });
+  P = {pool: PARTY.pool, item: g.items[Math.random() * g.items.length | 0], roles, i: 0, first: Math.random() * n | 0, phase: 'pass'};
+  $('party-setup').hidden = true; $('party-play').hidden = false;
+  scrollTo(0, 0);
+  partyRender();
+}
+function partyRender(){
+  const n = P.roles.length, it = P.item, g = DATA[P.pool], card = $('pp-card'), note = $('pp-note');
+  const who = i => `Player ${i + 1}`;
+  const ringers = P.roles.map((r, i) => r ? who(i) : null).filter(Boolean);
+  const list = a => a.length > 1 ? `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}` : a[0];
+  const plural = ringers.length > 1;
+  card.className = 'deal';
+  note.innerHTML = '';
+  if (P.phase === 'pass') {
+    $('pp-step').textContent = `${who(P.i)} · ${P.i + 1} of ${n}`;
+    card.innerHTML = `<p class="deal-k">Your turn</p><p class="deal-h">${who(P.i)}</p><p class="deal-t">Hold the phone so only you can see it, then tap the button.</p>`;
+    partyButton('Show my card', () => { P.phase = 'peek'; partyRender(); });
+  } else if (P.phase === 'peek') {
+    $('pp-step').textContent = `${who(P.i)} · ${P.i + 1} of ${n}`;
+    if (P.roles[P.i]) {
+      card.className = 'deal ringer';
+      card.innerHTML = `<p class="deal-k">You are</p><p class="deal-h">the Ringer</p><p class="deal-t">The others share a secret from <b>${g.tab}</b>. Bluff along and don't get caught.</p>`;
+    } else {
+      card.innerHTML = `${it.img ? `<img class="deal-img" src="${it.img}" alt="" style="object-fit:${it.fit || 'cover'};background:${it.bg || 'transparent'}">` : ''}
+        <p class="deal-k">${g.tab}</p><p class="deal-h">${it.name}</p><p class="deal-t">Keep it to yourself. ${plural ? 'Some of you don\'t' : 'One of you doesn\'t'} know it.</p>`;
+    }
+    const last = P.i === n - 1;
+    partyButton(last ? 'Hide it — everyone is in' : 'Hide it and pass on', () => { if (last) P.phase = 'talk'; else { P.i++; P.phase = 'pass'; } partyRender(); });
+  } else if (P.phase === 'talk') {
+    $('pp-step').textContent = 'Everyone has a card';
+    card.innerHTML = `<p class="deal-k">Talk</p><p class="deal-h">${who(P.first)} starts</p><p class="deal-t">Go round the table: each of you says one word or short hint about the secret — precise enough to show you know it, vague enough to give the ${plural ? 'ringers' : 'ringer'} nothing. After a round or two, vote on who is bluffing.</p>`;
+    partyButton(`Reveal the ${plural ? 'ringers' : 'ringer'}`, () => { P.phase = 'reveal'; partyRender(); });
+    note.innerHTML = '<button type="button" class="linkbtn" id="pp-setup">Start over</button>';
+  } else {
+    $('pp-step').textContent = 'The truth';
+    card.className = 'deal ringer';
+    card.innerHTML = `<p class="deal-k">The ${plural ? 'ringers were' : 'ringer was'}</p><p class="deal-h">${list(ringers)}</p><p class="deal-t">The secret was <b>${it.name}</b>. The group wins if it named ${plural ? 'a ringer' : 'the ringer'}; ${plural ? 'the ringers win' : 'the ringer wins'} by staying hidden — or by guessing the secret now.</p>`;
+    partyButton('Deal again', partyDeal);
+    note.innerHTML = '<button type="button" class="linkbtn" id="pp-setup">Change setup</button>';
+  }
+}
+function partyButton(label, fn){ const b = $('pp-main'); b.textContent = label; b.onclick = fn; }
+$('party-play').addEventListener('click', e => { if (e.target.id === 'pp-setup') { partySetup(); scrollTo(0, 0); } });
+
 // ---- Routing ----
 function route(){
   closePanels();
+  $('party').hidden = true;
   const h = location.hash.slice(1);
+  if (h === 'ringer') {
+    KIND = null;
+    $('page').className = 'page at-home at-kind at-party';
+    $('back').href = '#';
+    $('home').hidden = true; $('game').hidden = true; $('alt').hidden = true; $('party').hidden = false;
+    partySetup();
+    scrollTo(0, 0);
+    return;
+  }
   const legacy = {sports: 'rankle-sports', f1: 'rankle-f1'};
   const m = (legacy[h] || h).match(/^(rankle|blind|sort)(?:-([a-z0-9]+))?$/);
   busy = false;

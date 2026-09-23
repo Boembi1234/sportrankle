@@ -1,0 +1,16 @@
+# Build outputs (python build.py regenerates them)
+sportrankle.html
+dist/
+img/
+img-cache/
+
+# Python
+__pycache__/
+*.pyc
+
+# Netlify site link (per machine)
+.netlify/
+
+# OS / editor
+.DS_Store
+Thumbs.db

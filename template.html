@@ -1,0 +1,950 @@
+<title>Sportrankle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#121210; --surface:#22282A; --line:#2A2A27; --line-strong:#34332F; --text:#EDEBE4; --muted:#9A968C;
+  --card:#6B6667; --card-edge:#4E4A4B; --card-stack:#3A3738; --card-mini:#3A3839; --card-open:#45443F;
+  --glyph:#FAFAF7; --ring:#A9ADB2;
+  --signal:#4FB3F6; --signal-edge:#2A86C4; --selected-bg:#151A1E;
+  --correct:#2F7D46; --wrong:#B8412A;
+  --font:"Archivo","Arial Narrow",sans-serif;
+  background:var(--bg);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:400 14px/1.4 var(--font);padding-inline:48px}
+:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+button{font-family:inherit;color:inherit}
+a{color:inherit}
+
+/* The play screen is exactly one viewport tall; home and results may scroll */
+.page{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;height:100vh;height:100dvh}
+.page.done,.page.at-home{height:auto;min-height:100dvh}
+
+/* Header */
+.top{position:relative;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:64px;border-bottom:1px solid var(--line)}
+.top-left{display:flex;align-items:center;gap:6px}
+.top-right{display:flex;align-items:center;justify-content:flex-end;gap:14px}
+.logo{font-weight:800;font-stretch:75%;font-size:24px;line-height:1;margin:0;text-decoration:none;display:flex;align-items:center;min-height:44px}
+.icon{width:44px;height:44px;background:none;border:0;padding:0;cursor:pointer;position:relative;flex:none;display:block}
+.back::before{content:"";position:absolute;left:17px;top:15px;width:11px;height:11px;border-left:2px solid var(--text);border-bottom:2px solid var(--text);transform:rotate(45deg)}
+.stats-btn::before{content:"";position:absolute;left:13px;bottom:13px;width:4px;height:9px;background:var(--text);box-shadow:7px -5px 0 var(--text),14px -2px 0 var(--text)}
+.counter{display:flex;align-items:center;gap:14px;font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
+.counter i{width:1px;height:20px;background:var(--line-strong)}
+.nav{font-size:14px;color:var(--muted);background:none;border:0;padding:0;min-height:44px;cursor:pointer;text-decoration:underline 2px transparent;text-underline-offset:6px}
+.nav[aria-expanded="true"]{color:var(--text);text-decoration-color:var(--text)}
+.panel{position:absolute;z-index:20;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--line-strong);padding:16px 0 18px}
+.panel p{margin:0 0 8px;max-width:68ch;color:var(--muted)}
+.panel p b{color:var(--text)}
+.panel .stats{display:flex;gap:28px;flex-wrap:wrap;margin:0 0 10px}
+.panel .stats b{display:block;font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+.panel .stats span{color:var(--muted);font-size:13px}
+.page.at-home .counter,.page.at-home #stats-btn,.page.at-home:not(.at-kind) .back{visibility:hidden}
+
+/* Home: today's games as tiles */
+.home{padding-block:32px 56px}
+.home h1{font-weight:800;font-stretch:80%;font-size:44px;line-height:1;margin:0}
+.home .today{margin:8px 0 0;color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums;max-width:60ch}
+/* Level 1: the game types as big cards; level 2: the pools of one game type as tiles */
+.kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:28px}
+.kind{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
+.kind:active{transform:translateY(2px)}
+.kind-art{display:grid;place-items:center;aspect-ratio:2 / 1;background:var(--card-stack)}
+.kind-art img{width:100%;height:100%;object-fit:cover;display:block}
+.kind-art .tile-cards{display:flex;gap:5px;--w:40px;--h:54px;--f:36px}
+.kind-art .card{--r:6px}
+.kind-art .card::before{content:"";position:absolute;left:50%;top:-8px;width:10px;height:14px;margin-left:-5px;border:2px solid var(--ring);border-radius:50%}
+.kind-body{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:16px}
+.kind-name{font-weight:800;font-size:22px}
+.kind-blurb{flex-basis:100%;order:1;color:var(--muted);font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:28px}
+.tile{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
+.tile:active{transform:translateY(2px)}
+.tile-art{position:relative;aspect-ratio:3 / 2;background:var(--card-stack)}
+.tile-art img{width:100%;height:100%;object-fit:cover;display:block}
+/* Title and button share one line under the picture */
+.tile-body{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}
+.tile-name{font-weight:800;font-size:20px}
+.tile-status{flex:none;white-space:nowrap;font-weight:800;font-size:15px;border-radius:6px;padding:8px 14px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge)}
+.tile-status.done{background:none;box-shadow:none;padding-inline:0;color:var(--muted);font-weight:600}
+.home .foot{margin-top:40px;color:var(--muted);font-size:13px;max-width:68ch}
+
+/* Game: photo side + list */
+.game{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,540px);gap:40px;padding-block:24px 24px}
+.left{min-height:auto;display:flex;flex-direction:column}
+.photo{position:relative;flex:1 1 0;min-height:120px;border-radius:8px;background:var(--surface);display:block;overflow:hidden}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px}
+.photo .ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px}
+.title{position:relative;z-index:2;flex:none;display:flex;flex-wrap:wrap;gap:12px 16px;padding-inline:14px;margin-top:calc(var(--h, 78px) / -2);min-height:var(--h, 78px)}
+.word{display:flex;gap:5px}
+/* Two rows of cards: the first row hangs fully on the photo, so the screen stays the same height */
+.title.wrapped{margin-top:calc(var(--h) * -1.5 - 12px)}
+.question{flex:none;font-weight:700;font-stretch:85%;font-size:32px;line-height:1.1;margin:16px 0 0;text-wrap:balance}
+.question.sub{font-weight:400;font-stretch:100%;font-size:15px;color:var(--muted);margin-top:12px}
+.question .qdir{display:block;font-weight:400;font-stretch:100%;font-size:15px;color:var(--muted);margin-top:4px}
+.right{min-height:0;display:flex;flex-direction:column}
+
+/* Card */
+.card{position:relative;flex:none;display:grid;place-items:center;width:var(--w);height:var(--h);border-radius:var(--r,8px);
+  background:var(--card);color:var(--glyph);box-shadow:0 2px 0 var(--card-edge),0 4px 0 var(--card-stack);
+  font-weight:800;font-size:var(--f);line-height:1;font-variant-numeric:tabular-nums}
+.card>b{font-weight:inherit}
+.card.open{background:none;box-shadow:none;border:1.5px dashed var(--card-open)}
+.card.ok{background:var(--correct)} .card.no{background:var(--wrong)}
+.card .leaf{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border-radius:inherit;transform-origin:50% 0;backface-visibility:hidden;color:var(--glyph)}
+.card .leaf.was-open{inset:-1.5px;border:1.5px dashed var(--card-open)}
+.title .card{--r:8px}
+.title .card::before{content:"";position:absolute;z-index:3;left:50%;top:-9px;width:12px;height:18px;margin-left:-6px;border:3px solid var(--ring);border-radius:50%}
+.rank{--w:44px;--h:52px;--f:30px;--r:6px}
+.mini{--w:18px;--h:24px;--f:14px;--r:3px;background:var(--card-mini);box-shadow:none}
+
+/* Rows */
+.board{flex:1 1 0;min-height:0;margin:0;padding:0;list-style:none;display:flex;flex-direction:column}
+.board>li{flex:1 1 0;min-height:44px;max-height:72px;display:flex;border-bottom:1px solid var(--line)}
+.row{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:14px;background:none;border:0;border-radius:6px;
+  font:inherit;text-align:left;padding:4px 10px;cursor:pointer}
+.row.sel{background:var(--selected-bg);box-shadow:inset 0 0 0 2px var(--signal)}
+.row:disabled{cursor:default}
+.body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.cat{font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat.empty{font-weight:400;color:var(--muted)}
+.hint,.who,.unit,.more{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res{display:none;align-items:center;gap:8px;min-width:0}
+.row.done .hint{display:none}
+.row.done .res{display:flex}
+.who{color:var(--text)}
+.vals{display:flex;gap:3px;flex:none}
+.vals .gap{width:4px}
+.pts{font-weight:800;font-size:18px;color:var(--signal);font-variant-numeric:tabular-nums;min-width:36px;text-align:right}
+.more b{color:var(--text);font-weight:600}
+.row:not(.done) .pts,.pts:empty{display:none}
+
+/* Main button */
+.bar{flex:none;padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.main{width:100%;min-height:52px;border:0;border-radius:7px;font-weight:800;font-size:22px;cursor:pointer;background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
+.main:disabled{background:var(--line);color:var(--muted);box-shadow:none;cursor:default}
+.note{margin:0;color:var(--muted);font-size:13px;text-align:center}
+.note a{color:var(--text)}
+
+/* Results: your board on the right, the perfect board (same rows) in the left column under the score.
+   On the phone a switch shows one of the two. */
+.alt{padding-bottom:48px}
+.alt-h{margin:0 0 4px;font-weight:700;font-size:15px;color:var(--muted)}
+.seg{display:none;gap:20px;margin-top:12px}
+.segbtn{background:none;border:0;padding:0;min-height:40px;font:inherit;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;text-decoration:underline 2px transparent;text-underline-offset:6px}
+.segbtn[aria-pressed="true"]{color:var(--text);text-decoration-color:var(--signal)}
+.page.done .photo{display:none}
+.page.done .title{margin-top:14px}
+/* Finished: nothing is viewport-bound any more, both boards take their natural height */
+.page.done .game{flex:none;grid-template-rows:auto 1fr;padding-bottom:0}
+.page.done .board{flex:none}
+.page.done .left{grid-area:1 / 1}
+.page.done .alt{grid-area:2 / 1}
+.page.done .right{min-height:auto;grid-column:2;grid-row:1 / span 2}
+.page.done .board>li{max-height:none;flex:none;min-height:56px}
+
+/* One column below desktop */
+@media (max-width:1023px){
+  body{padding-inline:24px}
+  .page{max-width:560px}
+  .page.at-home{max-width:1280px}
+  .game{display:flex;flex-direction:column;gap:0;padding-block:12px 0}
+  .left{flex:1 1 auto}
+  .photo{flex:1 1 0;min-height:72px;max-height:180px}
+  .question{font-size:24px;margin-top:10px}
+  .right{flex:none;margin-top:10px}
+  .board{flex:none}
+  .board>li{flex:none;height:clamp(44px,6.2dvh,56px)}
+  .note{display:none}
+  .page.done .note{display:block}
+  .page.done .left{flex:none}
+  /* Finished on the phone: switch between the two boards, the button stays below the visible one */
+  .page.done .seg{display:flex}
+  .page.done .right{display:contents}
+  .page.done #board{order:1} .page.done .alt{order:2} .page.done .bar{order:3;margin-top:16px}
+  .page.done .alt{display:none;padding-bottom:0}
+  .page.done .alt-h{display:none}
+  .page.done.show-alt .alt{display:block}
+  .page.done.show-alt #board{display:none}
+  .page.done .board>li{height:auto;min-height:52px}
+  .page:not(.at-home) .logo{display:none}
+}
+@media (max-width:639px){
+  body{padding-inline:16px}
+  .top{min-height:52px}
+  .counter{font-size:17px}
+  .home{padding-block:22px 40px}
+  .home h1{font-size:34px}
+  .kinds{grid-template-columns:1fr;gap:14px;margin-top:22px}
+  .kind-art .tile-cards{--w:32px;--h:44px;--f:29px;gap:4px}
+  .kind-art .card::before{top:-6px;width:8px;height:11px;margin-left:-4px}
+  .kind-body{padding:14px}
+  .kind-name{font-size:19px}
+  .tiles{grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+  /* Narrow tiles: title on top, button underneath, the same on every tile */
+  .tile-body{flex-direction:column;align-items:flex-start;padding:12px}
+  .tile-name{font-size:17px}
+  .tile-status{font-size:14px;padding:7px 12px}
+  .photo{max-height:160px;border-radius:8px}
+  .title{gap:10px 12px;padding-inline:10px}
+  .title.wrapped{margin-top:calc(var(--h) * -1.5 - 10px)}
+  .title .card{--r:5px}
+  .title .card::before{top:-6px;width:8px;height:11px;margin-left:-4px;border-width:2px}
+  .question{font-size:21px;line-height:1.15}
+  .question.sub,.question .qdir{font-size:13px}
+  .question.sub{margin-top:8px}
+  .row{grid-template-columns:36px minmax(0,1fr) auto;gap:10px;padding:3px 4px}
+  .rank{--w:36px;--h:42px;--f:24px;--r:5px}
+  .mini{--w:13px;--h:17px;--f:11px;--r:2px}
+  .cat{font-size:15px}
+  .hint,.who,.unit,.more{font-size:12px}
+  .pts{font-size:15px}
+  .main{font-size:20px}
+  .bar{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+}
+/* Very short screens: the hint line goes first */
+@media (max-height:620px){ .page:not(.done) .row:not(.done) .hint{display:none} }
+</style>
+
+<div class="page at-home" id="page">
+  <header class="top">
+    <div class="top-left">
+      <a class="icon back" id="back" href="#" aria-label="All games"></a>
+      <a class="logo" href="#">Sportrankle</a>
+    </div>
+    <div class="counter" id="counter"><span id="round">1/8</span><i id="csep"></i><span id="cpts"><span id="score">0</span> pts</span></div>
+    <div class="top-right">
+      <button class="nav" id="rules-btn" type="button" aria-expanded="false" aria-controls="rules-panel">Rules</button>
+      <button class="icon stats-btn" id="stats-btn" type="button" aria-label="Statistics" aria-expanded="false" aria-controls="stats-panel"></button>
+    </div>
+    <div class="panel" id="rules-panel" hidden></div>
+    <div class="panel" id="stats-panel" hidden></div>
+  </header>
+
+  <main class="home" id="home"></main>
+
+  <main class="game" id="game" hidden>
+    <section class="left">
+      <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
+      <div class="title" id="title" role="img"></div>
+      <h1 class="question" id="question"></h1>
+      <div class="seg" id="seg" role="group" aria-label="Board view">
+        <button class="segbtn" type="button" id="seg-mine" aria-pressed="true">Your board</button>
+        <button class="segbtn" type="button" id="seg-alt" aria-pressed="false">Perfect board</button>
+      </div>
+    </section>
+    <section class="right">
+      <ul class="board" id="board"></ul>
+      <div class="bar">
+        <button class="main" id="main" type="button"></button>
+        <p class="note" id="note"></p>
+      </div>
+    </section>
+    <section class="alt" id="alt" hidden><h2 class="alt-h" id="alt-h"></h2><ul class="board" id="board2"></ul></section>
+  </main>
+  <p class="sr" id="live" aria-live="polite"></p>
+</div>
+
+<script>
+const DATA = __DATA__;
+const PICK = 8;
+const GAMES = {
+  rankle: {name: 'Rankle', word: 'RANKLE', blurb: 'Eight categories, eight arrivals. Put each one where it ranks highest.'},
+  blind: {name: 'Blind ranking', word: 'BLIND', blurb: 'One attribute, eight arrivals. Rank them 1 to 8 without knowing what comes next.'},
+  sort: {name: 'Sort it', word: 'SORT', blurb: 'One attribute, all eight in view. Swap them into the right order, then reveal.'},
+};
+const KIND_ART = __KINDS__;
+const ORDER = ['rankle-sports', 'rankle-f1', 'rankle-nfl', 'rankle-ski', 'blind-sports', 'blind-f1', 'blind-nfl', 'blind-ski',
+  'sort-sports', 'sort-f1', 'sort-nfl', 'sort-ski'];
+const BLIND_PTS = [5, 3, 1];   // exact slot, one off, two off
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+let KIND, MODE, D, N, G, busy = false, instant = false;
+
+const pts = (s, c) => { const r = D.items[s].ranks[c]; return r == null ? 0 : N + 1 - r; };
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const announce = t => { $('live').textContent = t; };
+const cap = s => s[0].toUpperCase() + s.slice(1);
+
+// Daily games: the date seeds the draw, the device keeps its progress.
+function today(){ const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+function seeded(str){
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; }
+  return () => { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; };
+}
+function draw(pool, k, rnd){ const a = [...pool]; for (let i = a.length - 1; i > 0; i--) { const j = rnd() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, k); }
+const range = n => [...Array(n).keys()];
+function load(key){ try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
+function store(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
+function record(kind, m){ const r = load(`${kind}-daily-${m}`); return r && r.day === today() ? r : null; }
+// Sort it keeps the current arrangement and a done flag, the other games the placed items
+const save = () => store(`${KIND}-daily-${MODE}`, KIND === 'sort' ? {day: G.day, order: G.order, done: G.phase === 'done'} : {day: G.day, placed: G.placed});
+const progress = (kind, m) => { const r = record(kind, m); return !r ? 0 : kind === 'sort' ? (r.done ? PICK : 0) : Object.keys(r.placed).length; };
+function countdown(){
+  const now = new Date(), next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const m = Math.ceil((next - now) / 6e4);
+  return `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min`;
+}
+
+// Today's draw for each game, identical for everyone
+function rankleDraw(m){
+  const g = DATA[m], rnd = seeded(`${today()}|${m}`);
+  return {cats: draw(range(g.cats.length), PICK, rnd), items: draw(range(g.items.length), PICK, rnd)};
+}
+function blindDraw(m, kind = 'blind'){
+  const g = DATA[m], rnd = seeded(`${today()}|${kind}|${m}`);
+  const usable = range(g.cats.length).filter(c => g.items.filter(it => it.ranks[c] != null).length >= PICK);
+  const cat = usable[rnd() * usable.length | 0];
+  return {cat, items: draw(range(g.items.length).filter(i => g.items[i].ranks[cat] != null), PICK, rnd)};
+}
+
+function split(name){ const m = name.match(/^(.*?) \((.*)\)$/); return m ? [m[1], m[1] === m[2] ? '' : m[2]] : [name, '']; }
+function fmt(s, c){
+  const v = D.items[s].values[c], {unit, fmt} = D.cats[c];
+  if (v == null) return null;
+  if (fmt === 'year') return [String(v), ''];
+  if (fmt === 'laptime') { const m = Math.floor(v / 60); return [`${m}:${(v - m * 60).toFixed(3).padStart(6, '0')}`, '']; }
+  if (fmt === 'lat') return [Math.abs(v).toFixed(2), v < 0 ? '° S' : '° N'];
+  if (fmt === 'lon') return [Math.abs(v).toFixed(2), v < 0 ? '° E' : '° W'];
+  if (fmt === 'pct') return [(v * 100).toFixed(1), '%'];
+  if (fmt === 'dec1') return [Number(v).toFixed(1), unit];
+  if (fmt === 'date') return [new Date(v + 'T00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'}), ''];
+  return [Number(v).toLocaleString('en-US'), unit];
+}
+const valText = (s, c) => { const v = fmt(s, c); return v ? `${v[0]}${v[1] ? ' ' + v[1] : ''}` : 'no value'; };
+const rankText = r => r == null ? 'no rank' : `Rank ${r}`;
+
+// ---- Card: turned over its top edge like a flip chart on rings ----
+function card(cls = '', open = false){
+  const c = document.createElement('span');
+  c.className = `card ${cls}${open ? ' open' : ''}`;
+  c.setAttribute('aria-hidden', 'true');
+  c.innerHTML = '<b></b>';
+  c.dataset.ch = '';
+  return c;
+}
+function paint(c, ch, tone){
+  c.firstChild.textContent = ch;
+  c.dataset.ch = ch;
+  c.classList.remove('open', 'ok', 'no');
+  if (tone) c.classList.add(tone);
+}
+async function turn(c, ch, delay = 0, tone = ''){
+  if (RM || instant) { paint(c, ch, tone); return; }
+  if (delay) await wait(delay);
+  const leaf = document.createElement('span');
+  leaf.className = c.classList.contains('open') ? 'leaf was-open' : 'leaf';
+  leaf.textContent = c.dataset.ch;
+  leaf.style.background = getComputedStyle(c).backgroundColor;
+  paint(c, ch, tone);
+  c.append(leaf);
+  await leaf.animate(
+    [{transform: 'perspective(600px) rotateX(0deg)'}, {transform: 'perspective(600px) rotateX(-180deg)'}],
+    {duration: 280, easing: 'ease-in-out'}).finished;
+  leaf.remove();
+}
+function miniCards(box, text, delay = 0){
+  box.innerHTML = '';
+  return Promise.all([...text].map((ch, k) => {
+    if (ch === ' ') { box.insertAdjacentHTML('beforeend', '<i class="gap"></i>'); return; }
+    const m = card('mini'); box.append(m); return turn(m, ch, delay + k * 60);
+  }));
+}
+
+// Title cards: one row if the cards stay at least 26px wide, otherwise wrap per word.
+let prevTitle = [];
+function titleCards(text, label){
+  const box = $('title');
+  box.setAttribute('aria-label', label || text);
+  const words = text.toUpperCase().split(/ +|(?<=-)/).filter(Boolean);
+  const mobile = innerWidth < 640, max = mobile ? 32 : 58, gap = 5, wgap = mobile ? 12 : 16;
+  const avail = (box.clientWidth || 300) - (mobile ? 20 : 28);
+  const total = words.reduce((a, w) => a + [...w].length, 0);
+  let w = (avail - (total - words.length) * gap - (words.length - 1) * wgap) / total;
+  let wrap = false;
+  if (w < 26) {
+    wrap = true;
+    const longest = Math.max(...words.map(x => [...x].length));
+    w = (avail - (longest - 1) * gap) / longest;
+  }
+  w = Math.min(max, Math.floor(w));
+  box.style.flexWrap = wrap ? 'wrap' : 'nowrap';
+  box.classList.toggle('wrapped', wrap && words.length > 1);
+  box.style.setProperty('--w', `${w}px`);
+  box.style.setProperty('--h', `${Math.round(w * (mobile ? 1.375 : 1.345))}px`);
+  box.style.setProperty('--f', `${Math.round(w * (mobile ? .9 : .96))}px`);
+  box.innerHTML = '';
+  const jobs = [], chars = [];
+  let k = 0;
+  for (const word of words) {
+    const wd = document.createElement('span');
+    wd.className = 'word';
+    box.append(wd);
+    for (const ch of word) {
+      const c = card();
+      paint(c, prevTitle[k] || '');
+      if (!prevTitle[k]) c.classList.add('open');
+      wd.append(c);
+      jobs.push(turn(c, ch, k * 60));
+      chars.push(ch); k++;
+    }
+  }
+  prevTitle = chars;
+  return Promise.all(jobs);
+}
+let titleText = ['', ''];
+addEventListener('resize', () => { if (G && titleText[0] && !$('game').hidden) { const p = prevTitle; instant = true; titleCards(...titleText); instant = false; prevTitle = p; } });
+
+function setPhoto(it){
+  const a = $('photo'), img = $('photo-img');
+  if (it && it.img) {
+    img.src = it.img; img.alt = it.name; img.hidden = false; $('photo-ph').hidden = true;
+    img.style.objectFit = it.fit || 'cover';
+    a.style.background = it.bg || '';
+    if (it.credit) { a.href = it.credit; a.title = 'Photo source'; }
+    else { a.removeAttribute('href'); a.removeAttribute('title'); }
+  } else {
+    img.hidden = true; img.removeAttribute('src'); $('photo-ph').hidden = false;
+    a.style.background = '';
+    a.removeAttribute('href'); a.removeAttribute('title');
+  }
+}
+function showItem(s){
+  const [title, sub] = split(D.items[s].name), short = D.items[s].short || title.split(' / ').pop();
+  setPhoto(D.items[s]);
+  titleText = [short, D.items[s].name];
+  titleCards(short, D.items[s].name);
+  return [title, sub, short];
+}
+
+// ---- Header ----
+let shown = 0;
+function setScore(v){
+  const el = $('score'), from = shown;
+  shown = v;
+  if (RM || instant || from === v) { el.textContent = v; return; }
+  const t0 = performance.now();
+  const step = t => { const k = Math.min(1, (t - t0) / 450); el.textContent = Math.round(from + (v - from) * k); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function setCounter(showPts){
+  $('round').textContent = `${Math.min(G.round + 1, PICK)}/${PICK}`;
+  $('csep').hidden = $('cpts').hidden = !showPts;
+}
+function rulesHTML(){
+  const n = KIND ? N : null;
+  const rankle = `<p><b>Rankle.</b> Every day brings 8 categories and, one after another, 8 items. Put each one in the category where it ranks highest among all ${n || 'items in the pool'}. Each category can be used once. Rank 1 earns ${n ? `${n} points` : 'one point per item in the pool'}, the last rank earns 1, no value earns 0. At the end you see the perfect board.</p>`;
+  const blind = `<p><b>Blind ranking.</b> Every day brings one attribute and, one after another, 8 items. Put each one on a spot from 1 to 8 without knowing what comes next; a spot can't be changed. The exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}. Tied values count as correct on any of their spots.</p>`;
+  const common = `<p>One attempt per game, day and device. New cards at midnight. Keyboard: 1 to 8 or the arrow keys pick a row, Enter confirms.${Object.values(DATA).some(g => g.items.some(it => it.credit)) ? ' Click a photo for its source.' : ''}</p>`;
+  const sort = `<p><b>Sort it.</b> Every day brings one attribute and 8 items, all in view from the start. Tap two rows to swap them until the order is right, then reveal. Scored like Blind ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;
+  return (KIND ? {rankle, blind, sort}[KIND] : rankle + blind + sort) + common;
+}
+function togglePanel(id, btn){
+  const open = $(id).hidden;
+  closePanels();
+  if (open) {
+    $(id).innerHTML = id === 'stats-panel' ? statsHTML() : rulesHTML();
+    $(id).hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+function closePanels(){
+  for (const id of ['rules-panel', 'stats-panel']) $(id).hidden = true;
+  document.querySelectorAll('[aria-expanded]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+}
+$('rules-btn').addEventListener('click', e => togglePanel('rules-panel', e.currentTarget));
+$('stats-btn').addEventListener('click', e => togglePanel('stats-panel', e.currentTarget));
+
+function statsHTML(){
+  const h = load(`${KIND}-history-${MODE}`) || {};
+  const days = Object.keys(h).sort(), scores = days.map(d => h[d][0]);
+  let streak = 0;
+  for (let d = new Date(); h[`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`]; d.setDate(d.getDate() - 1)) streak++;
+  const name = `${GAMES[KIND].name}, ${D.tab}`;
+  return days.length
+    ? `<div class="stats">
+        <div><b>${days.length}</b><span>Played</span></div>
+        <div><b>${Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)}</b><span>Average</span></div>
+        <div><b>${Math.max(...scores)}</b><span>Best game</span></div>
+        <div><b>${days.filter(d => h[d][0] === h[d][1]).length}</b><span>Perfect</span></div>
+        <div><b>${streak}</b><span>Streak</span></div>
+      </div><p>${name} on this device.</p>`
+    : `<p>No ${name} game finished yet. Your stats fill up after the first one.</p>`;
+}
+function saveHistory(score, max){
+  const h = load(`${KIND}-history-${MODE}`) || {};
+  h[G.day] = [score, max];
+  store(`${KIND}-history-${MODE}`, h);
+}
+
+function mainButton(label, fn, disabled = false){
+  const b = $('main');
+  b.hidden = !label;
+  b.textContent = label || '';
+  b.disabled = disabled;
+  b.onclick = fn;
+}
+function nextGame(){
+  const cur = `${KIND}-${MODE}`;
+  return ORDER.find(k => k !== cur && progress(...k.split('-')) < PICK);
+}
+function finishFooter(){
+  const next = nextGame();
+  mainButton(next ? 'Next game' : '', next ? () => { location.hash = next; } : null);
+  $('note').innerHTML = `Played today. New cards at midnight, in <span id="next">${countdown()}</span>. <a href="#">All games</a>`;
+}
+
+// ---- Home ----
+function renderHome(kind){
+  const date = new Date().toLocaleDateString('en-GB', {weekday: 'long', day: 'numeric', month: 'long'});
+  const tile = (kind, m) => {
+    const g = DATA[m], n = progress(kind, m);
+    const first = (kind === 'rankle' ? rankleDraw(m) : blindDraw(m, kind)).items[0];
+    const img = g.cover || g.items[first].img;
+    const h = load(`${kind}-history-${m}`) || {};
+    const status = n >= PICK
+      ? `<span class="tile-status done">✓ ${h[today()] ? h[today()][0] : ''} pts</span>`
+      : `<span class="tile-status">${n ? `Continue ${n}/${PICK}` : 'Play'}</span>`;
+    return `<a class="tile" href="#${kind}-${m}" aria-label="${GAMES[kind].name}, ${g.tab}">
+      <span class="tile-art">${img ? `<img src="${img}" alt="">` : ''}</span>
+      <span class="tile-body"><span class="tile-name">${g.tab}</span>${status}</span>
+    </a>`;
+  };
+  // Level 1: one card per game type; level 2 (kind set): that game's pools
+  const kindCard = (kind, g) => {
+    const pools = Object.keys(DATA), done = pools.filter(m => progress(kind, m) >= PICK).length;
+    const started = pools.filter(m => progress(kind, m) > 0).length;
+    const status = done === pools.length ? `<span class="tile-status done">✓ All played</span>`
+      : `<span class="tile-status">${started ? `Continue ${done}/${pools.length}` : 'Play'}</span>`;
+    return `<a class="kind" href="#${kind}" aria-label="${g.name}">
+      <span class="kind-art">${KIND_ART[kind] ? `<img src="${KIND_ART[kind]}" alt="">` : `<span class="tile-cards" data-word="${g.word}"></span>`}</span>
+      <span class="kind-body"><span class="kind-name">${g.name}</span>${status}<span class="kind-blurb">${g.blurb}</span></span>
+    </a>`;
+  };
+  $('home').innerHTML = kind
+    ? `<h1>${GAMES[kind].name}</h1>
+      <p class="today">${GAMES[kind].blurb} Pick a pool:</p>
+      <div class="tiles">${Object.keys(DATA).map(m => tile(kind, m)).join('')}</div>`
+    : `<h1>Play today</h1>
+      <p class="today">${date}. New cards at midnight, in <span id="next">${countdown()}</span>.</p>
+      <div class="kinds">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}</div>
+      <p class="foot">One attempt per game and day on this device. Everyone gets the same cards.</p>`;
+  document.querySelectorAll('.tile-cards').forEach(box => {
+    for (const ch of box.dataset.word) { const c = card(); paint(c, ch); box.append(c); }
+  });
+}
+
+// ---- Routing ----
+function route(){
+  closePanels();
+  const h = location.hash.slice(1);
+  const legacy = {sports: 'rankle-sports', f1: 'rankle-f1'};
+  const m = (legacy[h] || h).match(/^(rankle|blind|sort)(?:-([a-z0-9]+))?$/);
+  busy = false;
+  if (!m || (m[2] && !DATA[m[2]])) {
+    KIND = null;
+    $('page').className = 'page at-home';
+    $('back').href = '#';
+    $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;
+    renderHome();
+    scrollTo(0, 0);
+    return;
+  }
+  if (!m[2]) {  // the pools of one game type
+    KIND = null;
+    $('page').className = 'page at-home at-kind';
+    $('back').href = '#';
+    $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;
+    renderHome(m[1]);
+    scrollTo(0, 0);
+    return;
+  }
+  KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
+  $('page').className = 'page';
+  $('back').href = `#${KIND}`;
+  $('home').hidden = true; $('game').hidden = false; $('alt').hidden = true;
+  scrollTo(0, 0);
+  ({rankle: startRankle, blind: startBlind, sort: startSort})[KIND]();
+}
+addEventListener('hashchange', route);
+
+// ================= Rankle =================
+function startRankle(){
+  const {cats, items} = rankleDraw(MODE);
+  G = {day: today(), cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  prevTitle = [];
+  $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${D.cats[c].name}, rank 1 = ${D.cats[c].dir}, open">
+      <span class="c-rank"></span>
+      <span class="body"><span class="cat">${D.cats[c].name}</span><span class="hint">Rank 1 = ${D.cats[c].dir}</span>
+        <span class="res"><span class="who"></span><span class="vals"></span><span class="unit"></span></span></span>
+      <span class="pts"></span>
+    </button></li>`).join('');
+  cats.forEach((c, i) => {
+    $(`row-${i}`).querySelector('.c-rank').append(card('rank', true));
+    $(`row-${i}`).addEventListener('click', () => select(i));
+  });
+  instant = true;
+  const rec = record('rankle', MODE);
+  if (rec) for (const [slot, s] of Object.entries(rec.placed)) {
+    G.placed[slot] = s; G.score += pts(s, G.cats[slot]); G.round++; rankleFill(+slot);
+  }
+  shown = G.score; $('score').textContent = G.score;
+  if (G.round >= PICK) rankleResults(); else rankleRound();
+  instant = false;
+}
+
+function rankleFill(i){
+  const row = $(`row-${i}`), s = G.placed[i], c = G.cats[i], r = D.items[s].ranks[c], v = fmt(s, c);
+  row.classList.add('done');
+  row.classList.remove('sel');
+  row.disabled = true;
+  row.querySelector('.who').textContent = D.items[s].name;
+  row.querySelector('.unit').textContent = v ? v[1] : 'no value';
+  row.querySelector('.pts').textContent = `+${pts(s, c)}`;
+  row.setAttribute('aria-label', `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
+  return Promise.all([turn(row.querySelector('.rank'), r == null ? '–' : String(r)), miniCards(row.querySelector('.vals'), v ? v[0] : '', 140)]);
+}
+
+function rankleRound(){
+  G.phase = 'round';
+  G.sel = null;
+  setCounter(true);
+  const s = G.sports[G.round], [title, sub, short] = showItem(s);
+  const line = [short !== title ? title : '', sub].filter(Boolean).join(', ');
+  $('question').className = 'question sub';
+  $('question').textContent = line;
+  $('question').hidden = !line;
+  mainButton('Reveal', confirmPick, true);
+  $('note').textContent = 'Tap a category, then reveal.';
+  announce(`Round ${G.round + 1} of ${PICK}: ${D.items[s].name}`);
+}
+
+// Best assignment of the 8 items to the 8 categories (bitmask DP, exact).
+function optimal(){
+  const memo = new Map();
+  function best(i, mask){
+    if (i === PICK) return [0, []];
+    const key = i * 256 + mask;
+    if (memo.has(key)) return memo.get(key);
+    let top = [-1, null];
+    for (let k = 0; k < PICK; k++) if (!(mask & 1 << k)) {
+      const [v, path] = best(i + 1, mask | 1 << k);
+      const total = v + pts(G.sports[i], G.cats[k]);
+      if (total > top[0]) top = [total, [k, ...path]];
+    }
+    memo.set(key, top);
+    return top;
+  }
+  return best(0, 0);
+}
+
+function rankleResults(){
+  G.phase = 'done';
+  $('page').classList.add('done');
+  setCounter(true);
+  const [opt, slots] = optimal();
+  saveHistory(G.score, opt);
+  const idealFor = {}, yourSlot = {};
+  slots.forEach((k, i) => { idealFor[k] = G.sports[i]; });
+  for (const [k, s] of Object.entries(G.placed)) yourSlot[s] = +k;
+  const matches = G.sports.filter((s, i) => yourSlot[s] === slots[i]).length;
+
+  setPhoto(null);
+  $('question').className = 'question sub';
+  $('question').hidden = false;
+  $('question').textContent = G.score === opt ? 'points · perfect' : `points · ${matches} of ${PICK} ${D.plural} placed ideally`;
+  titleText = [`${G.score} of ${opt}`, `${G.score} of ${opt} points`];
+  titleCards(...titleText);
+
+  G.cats.forEach((c, k) => {
+    const row = $(`row-${k}`), s = G.placed[k], ideal = idealFor[k], ok = s === ideal || pts(s, c) === pts(ideal, c);
+    const rank = row.querySelector('.rank');
+    turn(rank, rank.dataset.ch, 300 + k * 90, ok ? 'ok' : 'no');
+  });
+  finishFooter();
+
+  // The perfect board: the same rows, each category with the item that belongs there
+  showAlt('Perfect board', `Perfect board, ${opt} points`, G.cats.map((c, k) => {
+    const s = idealFor[k], r = D.items[s].ranks[c], v = fmt(s, c);
+    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', D.cats[c].name, D.items[s].name, v, `+${pts(s, c)}`,
+      `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
+  }));
+  announce(`${titleText[1]}, ${$('question').textContent.replace('points · ', '')}`);
+}
+
+// ---- Second board on the results screen (perfect board / true order) ----
+const miniHTML = text => [...text].map(ch => ch === ' ' ? '<i class="gap"></i>' : `<span class="card mini" aria-hidden="true"><b>${ch}</b></span>`).join('');
+function altRow(rankCh, tone, cat, who, v, pts, label, more = ''){
+  return `<li><button class="row done" type="button" disabled aria-label="${label}">
+      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>
+      <span class="body"><span class="cat">${cat}</span>
+        <span class="res">${who ? `<span class="who">${who}</span>` : ''}<span class="vals">${v ? miniHTML(v[0]) : ''}</span><span class="unit">${v ? v[1] : 'no value'}</span>${more ? `<span class="more">${more}</span>` : ''}</span></span>
+      <span class="pts">${pts}</span>
+    </button></li>`;
+}
+function showAlt(title, label, rows){
+  $('alt-h').textContent = title;
+  $('board2').innerHTML = rows.join('');
+  $('board2').setAttribute('aria-label', label);
+  $('alt').hidden = false;
+  $('seg-mine').textContent = KIND === 'rankle' ? 'Your board' : 'Your order';
+  $('seg-alt').textContent = title;
+  segView(false);
+}
+function segView(alt){
+  $('page').classList.toggle('show-alt', alt);
+  $('seg-mine').setAttribute('aria-pressed', String(!alt));
+  $('seg-alt').setAttribute('aria-pressed', String(alt));
+}
+$('seg-mine').addEventListener('click', () => segView(false));
+$('seg-alt').addEventListener('click', () => segView(true));
+
+// ================= Blind ranking =================
+function startBlind(){
+  const {cat, items} = blindDraw(MODE);
+  G = {day: today(), cat, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  prevTitle = [];
+  const dir = D.cats[cat].dir;
+  $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}" aria-label="Spot ${i + 1}, open">
+      <span class="c-rank"></span>
+      <span class="body"><span class="cat empty">Open</span>${i === 0 ? `<span class="hint">${cap(dir)}</span>` : ''}
+        <span class="res"><span class="vals"></span><span class="unit"></span></span></span>
+      <span class="pts"></span>
+    </button></li>`).join('');
+  range(PICK).forEach(i => {
+    const c = card('rank');
+    paint(c, String(i + 1));
+    $(`row-${i}`).querySelector('.c-rank').append(c);
+    $(`row-${i}`).addEventListener('click', () => select(i));
+  });
+  instant = true;
+  const rec = record('blind', MODE);
+  if (rec) for (const [slot, s] of Object.entries(rec.placed)) { G.placed[slot] = s; G.round++; blindFill(+slot); }
+  shown = 0; $('score').textContent = 0;
+  if (G.round >= PICK) blindResults(); else blindRound();
+  instant = false;
+}
+
+function blindFill(i){
+  const row = $(`row-${i}`), s = G.placed[i];
+  row.classList.remove('sel');
+  row.disabled = true;
+  const name = row.querySelector('.cat');
+  name.textContent = D.items[s].name;
+  name.classList.remove('empty');
+  row.querySelector('.hint')?.remove();
+  row.setAttribute('aria-label', `Spot ${i + 1}: ${D.items[s].name}`);
+}
+
+function blindRound(){
+  G.phase = 'round';
+  G.sel = null;
+  setCounter(false);
+  const s = G.sports[G.round], [title, sub] = showItem(s);
+  const c = D.cats[G.cat];
+  $('question').className = 'question';
+  $('question').hidden = false;
+  $('question').innerHTML = `${c.name}<span class="qdir">Spot 1 = ${c.dir}${sub ? `. ${title}, ${sub}` : ''}</span>`;
+  mainButton('Place', confirmPick, true);
+  $('note').textContent = 'Tap a spot, then place. Spots are final.';
+  announce(`${D.items[s].name}, ${G.round + 1} of ${PICK}. ${c.name}, spot 1 = ${c.dir}.`);
+}
+
+// Spots the item may hold in the true order (ties share a range)
+function trueSpots(s){
+  const r = D.items[s].ranks[G.cat];
+  const better = G.sports.filter(x => D.items[x].ranks[G.cat] < r).length;
+  const same = G.sports.filter(x => D.items[x].ranks[G.cat] === r).length;
+  return [better, better + same - 1];
+}
+const blindPts = (s, spot) => { const [lo, hi] = trueSpots(s); const d = spot < lo ? lo - spot : spot > hi ? spot - hi : 0; return [BLIND_PTS[d] || 0, d]; };
+
+function blindResults(){
+  G.phase = 'done';
+  $('page').classList.add('done');
+  setCounter(true);
+  let exact = 0;
+  G.score = 0;
+  for (const [k, s] of Object.entries(G.placed)) { const [p, d] = blindPts(s, +k); G.score += p; if (!d) exact++; }
+  const max = PICK * BLIND_PTS[0];
+  saveHistory(G.score, max);
+  setScore(G.score);
+
+  setPhoto(null);
+  const c = D.cats[G.cat];
+  $('question').className = 'question sub';
+  $('question').hidden = false;
+  $('question').textContent = G.score === max ? 'points · perfect' : `points · ${exact} of ${PICK} on the right spot`;
+  titleText = [`${G.score} of ${max}`, `${G.score} of ${max} points`];
+  titleCards(...titleText);
+
+  range(PICK).forEach(k => {
+    const row = $(`row-${k}`), s = G.placed[k], [p, d] = blindPts(s, k), [lo, hi] = trueSpots(s), v = fmt(s, G.cat);
+    row.classList.add('done');
+    row.querySelector('.unit').textContent = v ? v[1] : '';
+    row.querySelector('.pts').textContent = `+${p}`;
+    miniCards(row.querySelector('.vals'), v ? v[0] : '', 300 + k * 90);
+    turn(row.querySelector('.rank'), String(k + 1), 300 + k * 90, d ? 'no' : 'ok');
+    const belongs = lo === hi ? String(lo + 1) : `${lo + 1} to ${hi + 1}`;
+    if (d) row.querySelector('.res').insertAdjacentHTML('beforeend', `<span class="more">· belongs on <b>${belongs}</b></span>`);
+    row.setAttribute('aria-label', `Spot ${k + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, plus ${p} points${d ? `, belongs on spot ${belongs}` : ''}`);
+  });
+  finishFooter();
+
+  // The true order: the same rows, each spot with the item that belongs there and where you put it
+  const order = [...G.sports].sort((a, b) => D.items[a].ranks[G.cat] - D.items[b].ranks[G.cat]);
+  const yourSpot = {};
+  for (const [k, s] of Object.entries(G.placed)) yourSpot[s] = +k;
+  showAlt('True order', `True order by ${c.name}`, order.map((s, i) => {
+    const [p, d] = blindPts(s, yourSpot[s]), v = fmt(s, G.cat);
+    return altRow(String(i + 1), d ? '' : 'ok', D.items[s].name, '', v, `+${p}`,
+      `Spot ${i + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, you put it on spot ${yourSpot[s] + 1}`,
+      d ? `· you: spot <b>${yourSpot[s] + 1}</b>` : '');
+  }));
+  announce(`${titleText[1]}, ${$('question').textContent.replace('points · ', '')}`);
+}
+
+// ================= Sort it =================
+// All eight items are on the board from the start; two taps swap two rows. Results reuse Blind ranking.
+function startSort(){
+  const {cat, items} = blindDraw(MODE, 'sort');
+  G = {day: today(), cat, sports: items, order: [...items], placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  prevTitle = [];
+  const rec = record('sort', MODE);
+  if (rec && rec.order && rec.order.length === PICK && rec.order.every(s => items.includes(s))) G.order = rec.order;
+  const dir = D.cats[cat].dir;
+  $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}">
+      <span class="c-rank"></span>
+      <span class="body"><span class="cat"></span>${i === 0 ? `<span class="hint">${cap(dir)}</span>` : ''}
+        <span class="res"><span class="vals"></span><span class="unit"></span></span></span>
+      <span class="pts"></span>
+    </button></li>`).join('');
+  range(PICK).forEach(i => {
+    const c = card('rank');
+    paint(c, String(i + 1));
+    $(`row-${i}`).querySelector('.c-rank').append(c);
+    $(`row-${i}`).addEventListener('click', () => sortSelect(i));
+  });
+  sortRows();
+  shown = 0; $('score').textContent = 0;
+  $('round').textContent = '';
+  $('csep').hidden = $('cpts').hidden = true;
+  if (rec && rec.done) { instant = true; sortReveal(true); instant = false; }
+  else sortRound();
+}
+function sortRows(){
+  G.order.forEach((s, i) => {
+    const row = $(`row-${i}`);
+    row.querySelector('.cat').textContent = D.items[s].name;
+    row.setAttribute('aria-label', `Spot ${i + 1}: ${D.items[s].name}`);
+  });
+}
+function sortRound(){
+  G.phase = 'round';
+  G.sel = null;
+  const c = D.cats[G.cat];
+  showItem(G.order[0]);
+  $('question').className = 'question';
+  $('question').hidden = false;
+  $('question').innerHTML = `${c.name}<span class="qdir">Spot 1 = ${c.dir}. Tap two rows to swap them.</span>`;
+  mainButton('Reveal', () => sortReveal(), false);
+  $('note').textContent = 'Tap two rows to swap them. Reveal when the order is right.';
+  announce(`Sort ${PICK} ${D.plural} by ${c.name}, spot 1 = ${c.dir}. Tap two rows to swap them.`);
+}
+function sortSelect(i){
+  if (busy || G.phase !== 'round') return;
+  if (G.sel == null) {
+    G.sel = i;
+    $(`row-${i}`).classList.add('sel');
+    showItem(G.order[i]);
+    announce(`${D.items[G.order[i]].name} on spot ${i + 1} selected, tap another row to swap`);
+  } else if (G.sel === i) {
+    $(`row-${i}`).classList.remove('sel');
+    G.sel = null;
+  } else {
+    const j = G.sel;
+    [G.order[i], G.order[j]] = [G.order[j], G.order[i]];
+    $(`row-${j}`).classList.remove('sel');
+    G.sel = null;
+    sortRows();
+    save();
+    announce(`Swapped: ${D.items[G.order[i]].name} now on spot ${i + 1}, ${D.items[G.order[j]].name} on spot ${j + 1}`);
+  }
+}
+function sortReveal(restored = false){
+  if (busy || (G.phase !== 'round' && !restored)) return;
+  if (G.sel != null) { $(`row-${G.sel}`).classList.remove('sel'); G.sel = null; }
+  G.order.forEach((s, k) => { G.placed[k] = s; });
+  G.round = PICK;
+  G.phase = 'done';
+  save();
+  range(PICK).forEach(i => { $(`row-${i}`).disabled = true; $(`row-${i}`).querySelector('.hint')?.remove(); });
+  blindResults();
+}
+
+// ================= Shared play controls =================
+function select(i){
+  if (busy || G.phase !== 'round' || G.placed[i] != null) return;
+  if (G.sel === i) return confirmPick();
+  if (G.sel != null) $(`row-${G.sel}`).classList.remove('sel');
+  G.sel = i;
+  $(`row-${i}`).classList.add('sel');
+  $('main').disabled = false;
+  announce(KIND === 'blind' ? `Spot ${i + 1} selected` : `${D.cats[G.cats[i]].name} selected`);
+}
+
+async function confirmPick(){
+  if (busy || G.phase !== 'round' || G.sel == null) return;
+  busy = true;
+  const i = G.sel, s = G.sports[G.round];
+  G.placed[i] = s; G.round++; G.sel = null;
+  save();
+  $('main').disabled = true;
+  if (KIND === 'rankle') {
+    const c = G.cats[i];
+    G.score += pts(s, c);
+    await rankleFill(i);
+    setScore(G.score);
+    announce(`${D.items[s].name}: ${rankText(D.items[s].ranks[c])} in ${D.cats[c].name}, plus ${pts(s, c)} points`);
+    await wait(RM ? 0 : 500);
+  } else {
+    blindFill(i);
+    announce(`${D.items[s].name} on spot ${i + 1}`);
+    await wait(RM ? 0 : 250);
+  }
+  busy = false;
+  if (G.round >= PICK) (KIND === 'rankle' ? rankleResults : blindResults)();
+  else (KIND === 'rankle' ? rankleRound : blindRound)();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey || !KIND || !G) return;
+  if (e.key === 'Escape') { closePanels(); return; }
+  const rows = [...document.querySelectorAll('.row:not(:disabled)')];
+  if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && rows.length) {
+    e.preventDefault();
+    const at = rows.indexOf(document.activeElement);
+    const next = at < 0 ? 0 : (at + (e.key === 'ArrowDown' ? 1 : -1) + rows.length) % rows.length;
+    rows[next].focus();
+  } else if (G.phase === 'round' && /^[1-8]$/.test(e.key)) { e.preventDefault(); (KIND === 'sort' ? sortSelect : select)(+e.key - 1); }
+  else if (e.key === 'Enter' && document.activeElement?.tagName !== 'BUTTON' && document.activeElement?.tagName !== 'A') {
+    const b = $('main');
+    if (!b.hidden && !b.disabled) { e.preventDefault(); b.click(); }
+  }
+});
+
+let lastDay = today();
+setInterval(() => {
+  if (busy) return;
+  if (lastDay !== today()) { lastDay = today(); route(); return; }
+  if ($('next')) $('next').textContent = countdown();
+}, 30000);
+
+route();
+</script>

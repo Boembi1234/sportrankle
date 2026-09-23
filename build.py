@@ -72,7 +72,8 @@ GAMES = {
 GAMES["athletes"] = {
     # The flagship: Rankle only ("kinds"), shown as the big card on top of the home page ("flagship")
     "file": "Sportrankle_Top150*.xlsx", "tab": "Top 150 athletes", "noun": "athlete", "plural": "athletes", "word": "TOP 150",
-    "english": True, "short": "surname", "cover": "covers/athletes.png", "kinds": ["rankle"], "flagship": True,
+    "english": True, "short": "surname", "kinds": ["rankle"], "flagship": True,
+    "cover": {"file": "covers/athletes.png", "ratio": 1, "width": 1.0, "cy": 0.5, "bg": "#282c50"},   # whole square, shown on its own navy
     "format": "wide", "name_col": "Athlete", "sub": ["Sport", "Nationality"],
     "cats": {
         "Age (1.9.2026)": ("Age", "years", "dec1", "oldest"),
@@ -381,10 +382,16 @@ def attach_photos(key, cfg, names, items):
 
 
 def game(key, cfg, path, items, cats):
-    has_cover = cfg.get("cover") and next(HERE.glob(cfg["cover"]), None)
-    return {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word", "kinds", "flagship")}, "source": path.name,
-            **({"cover": cover(cfg["cover"])} if has_cover else {}),
-            "items": items, "cats": cats}
+    # "cover" is a file, or a dict with the file and crop options; "bg" shows the whole picture on that colour
+    c = cfg.get("cover")
+    opts = c if isinstance(c, dict) else {"file": c}
+    out = {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word", "kinds", "flagship")}, "source": path.name,
+           "items": items, "cats": cats}
+    if c and next(HERE.glob(opts["file"]), None):
+        out["cover"] = cover(opts["file"], ratio=opts.get("ratio", 1.5), width=opts.get("width", 0.6), cy=opts.get("cy", 0.53))
+        if opts.get("bg"):
+            out["cover_bg"] = opts["bg"]
+    return out
 
 
 def load_wide(key, cfg):

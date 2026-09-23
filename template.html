@@ -92,8 +92,8 @@ a{color:inherit}
 
 /* Flagship: today's Rankle as one big card under the headline */
 .flag{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);margin-top:22px;border-radius:12px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
-.flag-art{display:grid;place-items:center;min-height:240px;background:var(--card-stack)}
-.flag-art img{width:100%;height:100%;object-fit:cover;display:block}
+.flag-art{position:relative;display:grid;place-items:center;min-height:240px;background:var(--card-stack)}
+.flag-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .flag-art.led{background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
 .flag-art .tile-cards{font-family:"Doto",var(--font);font-weight:900;font-size:64px;line-height:1;letter-spacing:.08em;color:var(--signal);text-shadow:0 0 14px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
 .flag-body{padding:22px 28px 24px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
@@ -378,7 +378,8 @@ const SB = __SUPABASE__;   // {url, key} or null: results go online only with a 
 const ORDER = ['rankle-athletes', 'rankle-sports', 'rankle-f1', 'rankle-nfl', 'rankle-ski', 'rankle-cl',
   'blind-sports', 'blind-f1', 'blind-nfl', 'blind-ski', 'blind-cl', 'sort-sports', 'sort-f1', 'sort-nfl', 'sort-ski', 'sort-cl'];
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
-const poolsFor = kind => Object.keys(DATA).filter(m => !DATA[m].kinds || DATA[m].kinds.includes(kind));
+const poolsFor = kind => Object.keys(DATA).filter(m => !DATA[m].kinds || DATA[m].kinds.includes(kind))
+  .sort((a, b) => (DATA[b].flagship ? 1 : 0) - (DATA[a].flagship ? 1 : 0));
 const FLAG = Object.keys(DATA).find(m => DATA[m].flagship);
 const BLIND_PTS = [5, 3, 1];   // exact slot, one off, two off
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -708,7 +709,7 @@ function renderHome(kind){
     const g = DATA[FLAG], n = progress('rankle', FLAG), h = load(`rankle-history-${FLAG}`) || {}, res = h[today()];
     const label = n >= PICK ? 'See your result' : n ? `Continue · ${n}/${PICK}` : "Play today's Rankle";
     return `<section class="flag">
-      <a class="flag-art${g.cover ? '' : ' led'}" href="#rankle-${FLAG}" aria-label="Rankle, ${g.tab}">${g.cover ? `<img src="${g.cover}" alt="">` : `<span class="tile-cards">${g.word}</span>`}</a>
+      <a class="flag-art${g.cover ? '' : ' led'}" href="#rankle-${FLAG}" aria-label="Rankle, ${g.tab}"${g.cover_bg ? ` style="background:${g.cover_bg}"` : ''}>${g.cover ? `<img src="${g.cover}" alt=""${g.cover_bg ? ' style="object-fit:contain"' : ''}>` : `<span class="tile-cards">${g.word}</span>`}</a>
       <div class="flag-body">
         <p class="eyebrow">Today's Rankle · ${date}</p>
         <h2 class="flag-name">${g.tab}</h2>

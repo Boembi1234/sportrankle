@@ -56,8 +56,8 @@ a{color:inherit}
 .hero{max-width:64ch}
 .eyebrow{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--signal)}
 .home .lead{margin:12px 0 0;font-size:17px;line-height:1.4;color:var(--muted);text-wrap:pretty}
-.cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-top:22px}
-.btn{display:inline-flex;align-items:center;min-height:48px;padding:0 26px;border-radius:7px;font-weight:800;font-size:18px;text-decoration:none;background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
+.cta{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:22px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-width:220px;min-height:52px;padding:0 26px;border-radius:7px;font-weight:800;font-size:18px;text-decoration:none;background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
 .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--signal-edge)}
 .meta{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
 .meta b{color:var(--text);font-weight:600}
@@ -208,7 +208,7 @@ a{color:inherit}
   .home h1{font-size:34px}
   .kinds{grid-template-columns:1fr;gap:14px;margin-top:22px}
   .home .lead{font-size:15px}
-  .btn{width:100%;justify-content:center}
+  .btn{width:100%}
   .how{grid-template-columns:1fr;gap:14px;margin-top:28px}
   .kind-art .tile-cards{--w:32px;--h:44px;--f:29px;gap:4px}
   .kind-art .card::before{top:-6px;width:8px;height:11px;margin-left:-4px}

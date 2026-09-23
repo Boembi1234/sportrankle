@@ -138,7 +138,15 @@ a{color:inherit}
 /* Results: one board, two views. A switch under the score shows your board or the perfect board
    (the same rows); the main button stays below whichever is visible. */
 .alt-h{display:none}
-.social{margin:8px 0 0;font-weight:700;font-size:15px;color:var(--signal)}
+/* Today's scores: a small histogram, your score bucket in the accent colour */
+.today{margin:14px 0 0;max-width:460px}
+.today-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;color:var(--muted);margin-bottom:8px}
+.today-h b{color:var(--signal);font-weight:700;font-size:15px}
+.today-bars{display:flex;align-items:flex-end;gap:3px;height:56px;border-bottom:1px solid var(--line-strong)}
+.today-bars i{flex:1;min-height:2px;height:calc(var(--v) * 100%);background:var(--card-open);border-radius:3px 3px 0 0}
+.today-bars i.me{background:var(--signal)}
+.today-axis{position:relative;display:flex;justify-content:space-between;height:18px;margin-top:4px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.today-axis .you{position:absolute;left:var(--x);transform:translateX(-50%);color:var(--signal);font-weight:700;white-space:nowrap}
 .seg{display:flex;gap:20px;margin-top:12px}
 .segbtn{background:none;border:0;padding:0;min-height:40px;font:inherit;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;text-decoration:underline 2px transparent;text-underline-offset:6px}
 .segbtn[aria-pressed="true"]{color:var(--text);text-decoration-color:var(--signal)}
@@ -231,7 +239,11 @@ a{color:inherit}
       <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
       <div class="title" id="title" role="img"></div>
       <h1 class="question" id="question"></h1>
-      <p class="social" id="social" hidden></p>
+      <div class="today" id="today" hidden>
+        <div class="today-h" id="today-h"></div>
+        <div class="today-bars" id="today-bars" role="img"></div>
+        <div class="today-axis" id="today-axis" aria-hidden="true"></div>
+      </div>
       <div class="seg" id="seg" role="group" aria-label="Board view">
         <button class="segbtn" type="button" id="seg-mine" aria-pressed="true">Your board</button>
         <button class="segbtn" type="button" id="seg-alt" aria-pressed="false">Perfect board</button>
@@ -515,7 +527,7 @@ async function sb(path, body, okStatus = []){
   return r.status === 200 ? r.json() : null;
 }
 async function reportResult(score, max){
-  const el = $('social');
+  const el = $('today');
   el.hidden = true;
   if (!SB || !crypto.randomUUID) return;
   const game = `${KIND}-${MODE}`, day = G.day;
@@ -526,10 +538,21 @@ async function reportResult(score, max){
     if (G.day !== day || `${KIND}-${MODE}` !== game) return;   // the player moved on meanwhile
     const total = rows.reduce((a, r) => a + Number(r.n), 0);
     const below = rows.filter(r => r.score < score).reduce((a, r) => a + Number(r.n), 0);
-    const same = rows.filter(r => r.score === score).reduce((a, r) => a + Number(r.n), 0) - 1;
-    el.textContent = total < 10
-      ? `${total} played today so far`
-      : `Better than ${Math.round(100 * below / (total - 1))} % of today's ${total.toLocaleString('en-US')} players${same > 0 ? `, ${same} scored the same` : ''}`;
+    if (!total) return;
+    // Histogram in up to ten equal score buckets; a perfect score gets the last one
+    const width = Math.ceil((max + 1) / Math.min(10, max + 1)), nb = Math.ceil((max + 1) / width);
+    const bins = Array(nb).fill(0);
+    rows.forEach(r => { bins[Math.min(nb - 1, Math.floor(r.score / width))] += Number(r.n); });
+    const mine = Math.min(nb - 1, Math.floor(score / width)), top = Math.max(...bins);
+    const pct = Math.round(100 * below / (total - 1));
+    $('today-h').innerHTML = total < 10
+      ? `<b>${total === 1 ? 'First to play today' : `${total} played today so far`}</b>`
+      : `<b>Better than ${pct} %</b><span>${total.toLocaleString('en-US')} played today</span>`;
+    $('today-bars').innerHTML = bins.map((n, i) => `<i${i === mine ? ' class="me"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('');
+    $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, you scored ${score} of ${max}${total < 10 ? '' : `, better than ${pct} %`}`);
+    $('today-axis').innerHTML = `<span${mine === 0 ? ' hidden' : ''}>0</span>`
+      + `<span class="you" style="--x:${(mine + .5) / nb * 100}%">You · ${score}</span>`
+      + `<span${mine === nb - 1 ? ' hidden' : ''}>${max}</span>`;
     el.hidden = false;
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
@@ -619,7 +642,7 @@ function route(){
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
   $('page').className = 'page';
   $('back').href = `#${KIND}`;
-  $('social').hidden = true;
+  $('today').hidden = true;
   $('home').hidden = true; $('game').hidden = false; $('alt').hidden = true;
   scrollTo(0, 0);
   ({rankle: startRankle, blind: startBlind, sort: startSort})[KIND]();

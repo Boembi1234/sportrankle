@@ -52,6 +52,12 @@ Values may be numbers or dates. Ties share a rank; empty cells get no rank and s
 
 Own photos go into `photos/<pool>/<item name>.jpg` (see `photos/README.txt`); the build resizes them into `dist/img/` and serves them as files. A `credits.txt` next to them turns each photo into a link to its source. Photos from spreadsheet URLs are downloaded once into `img-cache/` and embedded.
 
+## Online results (optional)
+
+There are no logins. When a game ends, the page records `day, game, score, max` under a random device id kept in `localStorage`, then shows how the score compares with everyone else's that day ("Better than 73 % of today's 1,204 players"). The schema and policies are in `supabase/migrations/`: the public key can only insert one row per device, game and day and call `daily_stats()`, which returns a score histogram — individual rows are never readable from the browser.
+
+The build enables it when `supabase/anon.key` exists (the project's public "anon" key, one line). Without the file the page runs exactly the same, minus that one line on the results screen. To use your own project: `npx supabase link --project-ref <ref>`, `npx supabase db push`, then save the anon key to `supabase/anon.key` and rebuild.
+
 ## Deploying
 
 The site is a Netlify project: `netlify deploy --prod --dir dist` after a build. Only maintainers with access to the Netlify site can deploy; contributions go through pull requests.

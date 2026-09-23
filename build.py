@@ -44,6 +44,11 @@ GAMES = {
             "cover": "covers/ski.png"},
 }
 
+# Supabase project for daily results (public "anon" key: it can only insert rows and read aggregates).
+# Without a key the page runs without the online comparison.
+SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "supabase" / "anon.key").read_text().strip()
+            if (HERE / "supabase" / "anon.key").exists() else None}
+
 # Pictures on the two game-type cards of the home page (tall subjects: cropped 2:1 around them)
 KIND_COVERS = {"rankle": "covers/rankle.png", "blind": "covers/blind.png", "sort": "covers/sort.png"}
 
@@ -318,7 +323,8 @@ def main():
     kinds = {k: cover(f, ratio=2, width=0.8, cy=0.52, size=1000) for k, f in KIND_COVERS.items()}
     html = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
-            .replace("__KINDS__", json.dumps(kinds)))
+            .replace("__KINDS__", json.dumps(kinds))
+            .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None)))
     OUT.write_text(html, encoding="utf-8")
     DIST.parent.mkdir(exist_ok=True)
     DIST.write_text(

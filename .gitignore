@@ -11,6 +11,10 @@ __pycache__/
 # Netlify site link (per machine)
 .netlify/
 
+# Supabase: the public key of the maintainers' project (forks run without the online comparison)
+supabase/anon.key
+supabase/.temp/
+
 # OS / editor
 .DS_Store
 Thumbs.db

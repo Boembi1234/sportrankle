@@ -2,7 +2,7 @@
 
 Daily sports ranking puzzles, live at <https://sportrankle.netlify.app>.
 
-Three games, five pools (team sports, F1 circuits, NFL teams, alpine skiers, Champions League players), one attempt per game and day. Every player gets the same cards; the daily draw is seeded by the date in the browser, so the site is a single static page with no backend.
+Three games, six pools (Top 150 athletes, team sports, F1 circuits, NFL teams, alpine skiers, Champions League players), one attempt per game and day. The Top 150 athletes pool is the flagship: Rankle only, shown as the big card on top of the home page (`"kinds": ["rankle"], "flagship": True` in `GAMES`). Every player gets the same cards; the daily draw is seeded by the date in the browser, so the site is a single static page with no backend.
 
 | Game | Idea |
 |---|---|

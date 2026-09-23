@@ -69,8 +69,33 @@ GAMES = {
                "G+A 2025/26": ("Goals + assists 2025/26", "", "", "most"),
            }},
 }
+GAMES["athletes"] = {
+    # The flagship: Rankle only ("kinds"), shown as the big card on top of the home page ("flagship")
+    "file": "Sportrankle_Top150*.xlsx", "tab": "Top 150 athletes", "noun": "athlete", "plural": "athletes", "word": "TOP 150",
+    "english": True, "short": "surname", "cover": "covers/athletes.png", "kinds": ["rankle"], "flagship": True,
+    "format": "wide", "name_col": "Athlete", "sub": ["Sport", "Nationality"],
+    "cats": {
+        "Age (1.9.2026)": ("Age", "years", "dec1", "oldest"),
+        "Height (cm)": ("Height", "cm", "", "tallest"),
+        "Weight (kg)": ("Weight", "kg", "", "heaviest"),
+        "Pro debut (year)": ("Pro debut", "", "year", "earliest"),
+        "Age at pro debut": ("Age at pro debut", "years", "", "oldest"),
+        "Years as pro": ("Years as a pro", "years", "", "most"),
+        "Olympic Games participations": ("Olympic Games", "Games", "", "most"),
+        "Olympic medals": ("Olympic medals", "medals", "", "most"),
+        "Olympic golds": ("Olympic golds", "golds", "", "most"),
+        "Top-tier titles": ("Top-tier titles", "titles", "", "most"),
+        "First top-tier title (year)": ("First top-tier title", "", "year", "earliest"),
+        "Age at first top-tier title": ("Age at first top-tier title", "years", "", "oldest"),
+        "Career earnings (USD m)": ("Career earnings", "M USD", "", "highest"),
+        "Net worth (USD m)": ("Net worth", "M USD", "", "highest"),
+        "Instagram followers (m)": ("Instagram followers", "million", "", "most"),
+        "Children": ("Children", "children", "", "most"),
+        "Laureus awards": ("Laureus awards", "awards", "", "most"),
+    }}
 # Title-board names that the surname rule gets wrong
-SHORT_NAMES = {"Vinicius Junior": "Vinicius"}
+SHORT_NAMES = {"Vinicius Junior": "Vinicius", "Vinícius Júnior": "Vinícius", "Cristiano Ronaldo": "Cristiano", "Ronaldo Nazário": "Ronaldo",
+               "Son Heung-min": "Son", "Yao Ming": "Yao Ming", "Magic Johnson": "Magic", "Canelo Álvarez": "Canelo"}
 # "Rank 1 =" directions in the wide format where the smallest value wins
 WIDE_LOW = {"lowest", "youngest", "fewest", "earliest", "shortest", "smallest", "lightest"}
 
@@ -357,7 +382,7 @@ def attach_photos(key, cfg, names, items):
 
 def game(key, cfg, path, items, cats):
     has_cover = cfg.get("cover") and next(HERE.glob(cfg["cover"]), None)
-    return {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word")}, "source": path.name,
+    return {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word", "kinds", "flagship")}, "source": path.name,
             **({"cover": cover(cfg["cover"])} if has_cover else {}),
             "items": items, "cats": cats}
 

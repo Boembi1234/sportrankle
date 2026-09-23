@@ -90,6 +90,22 @@ a{color:inherit}
 .deal-t b{color:var(--text);font-weight:600}
 .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--text);text-decoration:underline;cursor:pointer}
 
+/* Flagship: today's Rankle as one big card under the headline */
+.flag{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);margin-top:22px;border-radius:12px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
+.flag-art{display:grid;place-items:center;min-height:240px;background:var(--card-stack)}
+.flag-art img{width:100%;height:100%;object-fit:cover;display:block}
+.flag-art.led{background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
+.flag-art .tile-cards{font-family:"Doto",var(--font);font-weight:900;font-size:64px;line-height:1;letter-spacing:.08em;color:var(--signal);text-shadow:0 0 14px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
+.flag-body{padding:22px 28px 24px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.flag-body .eyebrow{margin:0}
+.flag-name{margin:0;font-weight:800;font-stretch:85%;font-size:34px;line-height:1.05}
+.flag-blurb{margin:0;color:var(--muted);font-size:15px;line-height:1.4;text-wrap:pretty}
+.flag .btn{margin-top:6px}
+.flag .meta{margin:0}
+.hero:has(.flag){max-width:none}
+.more{margin:32px 0 0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.more+.kinds{margin-top:12px}
+
 /* Three steps, one line each */
 .how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
 .how b{display:block;font-size:15px;margin-bottom:3px}
@@ -241,6 +257,12 @@ a{color:inherit}
   .kinds{grid-template-columns:1fr;gap:14px;margin-top:22px}
   .home .lead{font-size:15px}
   .btn{width:100%}
+  .flag{grid-template-columns:1fr;margin-top:18px}
+  .flag-art{aspect-ratio:2 / 1;min-height:0}
+  .flag-art .tile-cards{font-size:48px}
+  .flag-body{padding:16px;gap:8px}
+  .flag-name{font-size:26px}
+  .more{margin-top:26px}
   .how{grid-template-columns:1fr;gap:14px;margin-top:28px}
   .kind-art .tile-cards{font-size:44px}
   .kind-body{padding:14px}
@@ -353,8 +375,11 @@ const GAMES = {
 };
 const KIND_ART = __KINDS__;
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
-const ORDER = ['rankle-sports', 'rankle-f1', 'rankle-nfl', 'rankle-ski', 'rankle-cl', 'blind-sports', 'blind-f1', 'blind-nfl', 'blind-ski', 'blind-cl',
-  'sort-sports', 'sort-f1', 'sort-nfl', 'sort-ski', 'sort-cl'];
+const ORDER = ['rankle-athletes', 'rankle-sports', 'rankle-f1', 'rankle-nfl', 'rankle-ski', 'rankle-cl',
+  'blind-sports', 'blind-f1', 'blind-nfl', 'blind-ski', 'blind-cl', 'sort-sports', 'sort-f1', 'sort-nfl', 'sort-ski', 'sort-cl'];
+// A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
+const poolsFor = kind => Object.keys(DATA).filter(m => !DATA[m].kinds || DATA[m].kinds.includes(kind));
+const FLAG = Object.keys(DATA).find(m => DATA[m].flagship);
 const BLIND_PTS = [5, 3, 1];   // exact slot, one off, two off
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = id => document.getElementById(id);
@@ -661,34 +686,50 @@ function renderHome(kind){
     </a>`;
   };
   // Level 1: one card per game type; level 2 (kind set): that game's pools
-  const pools = Object.keys(DATA);
+  const pools = poolsFor(kind || 'blind');   // level 2: this game's pools; level 1 texts: the regular pools
   const kindCard = (kind, g) => {
-    const done = pools.filter(m => progress(kind, m) >= PICK).length;
-    const started = pools.filter(m => progress(kind, m) > 0).length;
-    const status = done === pools.length ? `<span class="tile-status done">✓ All played</span>`
-      : `<span class="tile-status">${started ? `Continue ${done}/${pools.length}` : 'Play'}</span>`;
+    const kp = poolsFor(kind), done = kp.filter(m => progress(kind, m) >= PICK).length;
+    const started = kp.filter(m => progress(kind, m) > 0).length;
+    const status = done === kp.length ? `<span class="tile-status done">✓ All played</span>`
+      : `<span class="tile-status">${started ? `Continue ${done}/${kp.length}` : 'Play'}</span>`;
     return `<a class="kind" href="#${kind}" aria-label="${g.name}">
       <span class="kind-art${KIND_ART[kind] ? '' : ' led'}">${KIND_ART[kind] ? `<img src="${KIND_ART[kind]}" alt="">` : `<span class="tile-cards">${g.word}</span>`}</span>
       <span class="kind-body"><span class="kind-name">${g.name}</span>${status}<span class="kind-blurb">${g.blurb}</span></span>
     </a>`;
   };
-  // Hero: the next open game is one tap away
+  // Facts line: what is played, the streak, the countdown
   const played = ORDER.filter(k => progress(...k.split('-')) >= PICK).length;
   const next = ORDER.find(k => progress(...k.split('-')) < PICK);
   const nextName = next && `${GAMES[next.split('-')[0]].name} · ${DATA[next.split('-')[1]].tab}`;
   const streak = streakDays();
   const facts = [`<b>${played} of ${ORDER.length}</b> played today`, streak > 1 ? `<b>${streak}-day</b> streak` : '', `<span style="white-space:nowrap">new cards in <span id="next">${countdown()}</span></span>`].filter(Boolean).join(' · ');
+  // The flagship: today's Rankle on the big pool, the one card everyone plays first
+  const flagship = () => {
+    const g = DATA[FLAG], n = progress('rankle', FLAG), h = load(`rankle-history-${FLAG}`) || {}, res = h[today()];
+    const label = n >= PICK ? 'See your result' : n ? `Continue · ${n}/${PICK}` : "Play today's Rankle";
+    return `<section class="flag">
+      <a class="flag-art${g.cover ? '' : ' led'}" href="#rankle-${FLAG}" aria-label="Rankle, ${g.tab}">${g.cover ? `<img src="${g.cover}" alt="">` : `<span class="tile-cards">${g.word}</span>`}</a>
+      <div class="flag-body">
+        <p class="eyebrow">Today's Rankle · ${date}</p>
+        <h2 class="flag-name">${g.tab}</h2>
+        <p class="flag-blurb">Eight of the world's biggest athletes, eight categories, one board. The same cards for everyone, one attempt a day.</p>
+        <a class="btn" href="#rankle-${FLAG}">${label}</a>
+        <p class="meta">${res ? `<b>✓ ${res[0]} of ${res[1]} pts</b> today · ` : ''}${facts}<span id="flag-n"></span></p>
+      </div>
+    </section>`;
+  };
   $('home').innerHTML = kind
     ? `<h1>${GAMES[kind].name}</h1>
       <p class="today">${GAMES[kind].blurb} Pick a pool:</p>
       <div class="tiles">${pools.map(m => tile(kind, m)).join('')}</div>`
     : `<section class="hero">
-        <p class="eyebrow">Daily sports puzzles · ${date}</p>
+        <p class="eyebrow">Daily sports puzzles</p>
         <h1>How much of a sports freak are you?</h1>
-        <p class="lead">Three daily games, ${pools.length} pools, ${ORDER.length} new puzzles a day. Everyone gets the same cards — find out where you stand. Or pass the phone round for a game of Ringer.</p>
+        ${FLAG ? flagship() : `<p class="lead">Three daily games, ${pools.length} pools, ${ORDER.length} new puzzles a day. Everyone gets the same cards — find out where you stand.</p>
         <div class="cta">${next ? `<a class="btn" href="#${next}">${progress(...next.split('-')) ? 'Continue' : 'Play now'}</a>` : ''}
-          <span class="meta">${next ? `Next up: <b>${nextName}</b> · ` : `<b>All played for today</b> · `}${facts}</span></div>
+          <span class="meta">${next ? `Next up: <b>${nextName}</b> · ` : `<b>All played for today</b> · `}${facts}</span></div>`}
       </section>
+      <p class="more">More games</p>
       <div class="kinds">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
         <a class="kind" href="#ringer" aria-label="Ringer, party game">
           <span class="kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">RINGER</span>`}</span>
@@ -699,6 +740,16 @@ function renderHome(kind){
         <div><b>2 · Rank eight cards</b><span>${pools.map(m => DATA[m].tab).join(', ')}. One attempt per game and day.</span></div>
         <div><b>3 · Compare</b><span>Your score against everyone who played today, plus your own stats and streak.</span></div>
       </section>`;
+  if (!kind && FLAG) flagCount();
+}
+// How many have played today's flagship so far (the same histogram call the results screen uses)
+async function flagCount(){
+  if (!SB) return;
+  try {
+    const rows = await sb('rpc/daily_stats', {p_day: today(), p_game: `rankle-${FLAG}`});
+    const n = rows.reduce((a, r) => a + Number(r.n), 0), el = $('flag-n');
+    if (el && n) el.textContent = ` · ${n.toLocaleString('en-US')} played so far today`;
+  } catch (e) { /* offline: the line just stays shorter */ }
 }
 
 // ---- Ringer: a pass-the-phone party game on the same pools. Nothing daily, nothing online. ----
@@ -718,7 +769,8 @@ function partyFields(){
   PARTY.ringers = Math.max(1, Math.min(maxRingers(), PARTY.ringers));
   $('p-players').textContent = PARTY.players;
   $('p-ringers').textContent = PARTY.ringers;
-  $('p-pools').innerHTML = Object.keys(DATA).map(m => `<button type="button" class="pick" aria-pressed="${m === PARTY.pool}" data-pool="${m}">${DATA[m].tab}</button>`).join('');
+  if (!poolsFor('ringer').includes(PARTY.pool)) PARTY.pool = poolsFor('ringer')[0];
+  $('p-pools').innerHTML = poolsFor('ringer').map(m => `<button type="button" class="pick" aria-pressed="${m === PARTY.pool}" data-pool="${m}">${DATA[m].tab}</button>`).join('');
   document.querySelectorAll('.stepper button').forEach(b => {
     const v = PARTY[b.dataset.k] + +b.dataset.d;
     b.disabled = b.dataset.k === 'players' ? v < PLAYERS_MIN || v > PLAYERS_MAX : v < 1 || v > maxRingers();
@@ -796,7 +848,7 @@ function route(){
   const legacy = {sports: 'rankle-sports', f1: 'rankle-f1'};
   const m = (legacy[h] || h).match(/^(rankle|blind|sort)(?:-([a-z0-9]+))?$/);
   busy = false;
-  if (!m || (m[2] && !DATA[m[2]])) {
+  if (!m || (m[2] && !poolsFor(m[1]).includes(m[2]))) {
     KIND = null;
     $('page').className = 'page at-home';
     $('back').href = '#';

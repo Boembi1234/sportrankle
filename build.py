@@ -51,7 +51,9 @@ SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "s
             if (HERE / "supabase" / "anon.key").exists() else None}
 
 # Pictures on the two game-type cards of the home page (tall subjects: cropped 2:1 around them)
-KIND_COVERS = {"rankle": "covers/rankle.png", "blind": "covers/blind.png", "sort": "covers/sort.png", "ringer": "covers/ringer.png"}
+# Home page pictures per game type; a dict entry overrides the crop (see cover())
+KIND_COVERS = {"rankle": "covers/rankle.png", "blind": "covers/blind.png", "sort": "covers/sort.png",
+               "ringer": {"file": "covers/ringer.png", "width": 1.0, "cy": 0.45}}
 
 NAMES_EN = {
     # Team sports
@@ -328,7 +330,11 @@ def main():
         if len(g["items"]) < 8 or any(all(it["ranks"][i] is None for it in g["items"]) for i in range(len(g["cats"]))):
             raise SystemExit(f"{g['source']}: fewer than 8 rows or a category without values, build stopped.")
     # A game without a picture yet gets its name as cards on the home page
-    kinds = {k: cover(f, ratio=2, width=0.8, cy=0.52, size=1000) for k, f in KIND_COVERS.items() if next(HERE.glob(f), None)}
+    kinds = {}
+    for k, f in KIND_COVERS.items():
+        opts = f if isinstance(f, dict) else {"file": f}
+        if next(HERE.glob(opts["file"]), None):
+            kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000)
     html = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))

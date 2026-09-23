@@ -1,7 +1,7 @@
 <title>Sportrankle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Doto:wght@600..900&display=swap">
 <style>
 :root{
   color-scheme:dark;
@@ -138,6 +138,18 @@ a{color:inherit}
 /* Results: one board, two views. A switch under the score shows your board or the perfect board
    (the same rows); the main button stays below whichever is visible. */
 .alt-h{display:none}
+/* Score board: dot-matrix digits on a dark LED panel */
+.led{display:grid;grid-template-columns:1fr auto;gap:2px 28px;align-items:end;margin-top:14px;padding:14px 18px 12px;border-radius:10px;
+  border:1px solid var(--line-strong);background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
+.led-lbl{display:block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.led-num{display:block;font-family:"Doto",var(--font);font-weight:900;font-size:64px;line-height:1;margin-top:4px;color:var(--signal);
+  text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9);font-variant-numeric:tabular-nums;white-space:nowrap}
+.led-num i{font:400 .55em/1 var(--font);font-style:normal;color:var(--muted);text-shadow:none;margin-inline:6px;vertical-align:.15em}
+.led-side .led-num{font-size:44px;margin-bottom:2px}
+.led-note{grid-column:1/-1;margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.led-note b{color:var(--text);font-weight:600}
+.page.done .title{display:none}
+
 /* Today's scores: a small histogram, your score bucket in the accent colour */
 .today{margin:14px 0 0;max-width:460px}
 .today-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;color:var(--muted);margin-bottom:8px}
@@ -152,7 +164,6 @@ a{color:inherit}
 .segbtn[aria-pressed="true"]{color:var(--text);text-decoration-color:var(--signal)}
 .page:not(.done) .seg{display:none}
 .page.done .photo{display:none}
-.page.done .title{margin-top:14px}
 /* Finished: nothing is viewport-bound any more, the rows take their natural height */
 .page.done .game{flex:none}
 .page.done .left,.page.done .board{flex:none}
@@ -197,6 +208,9 @@ a{color:inherit}
   .title.wrapped{margin-top:calc(var(--h) * -1.5 - 10px)}
   .title .card{--r:5px}
   .title .card::before{top:-6px;width:8px;height:11px;margin-left:-4px;border-width:2px}
+  .led{gap:2px 16px;padding:12px 14px 10px}
+  .led-num{font-size:46px}
+  .led-side .led-num{font-size:34px}
   .question{font-size:21px;line-height:1.15}
   .question.sub,.question .qdir{font-size:13px}
   .question.sub{margin-top:8px}
@@ -238,6 +252,11 @@ a{color:inherit}
     <section class="left">
       <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
       <div class="title" id="title" role="img"></div>
+      <div class="led" id="led" hidden>
+        <div><span class="led-lbl">Points</span><span class="led-num" id="led-num"></span></div>
+        <div class="led-side"><span class="led-lbl">Of max</span><span class="led-num" id="led-pct"></span></div>
+        <p class="led-note" id="led-note"></p>
+      </div>
       <h1 class="question" id="question"></h1>
       <div class="today" id="today" hidden>
         <div class="today-h" id="today-h"></div>
@@ -643,6 +662,7 @@ function route(){
   $('page').className = 'page';
   $('back').href = `#${KIND}`;
   $('today').hidden = true;
+  $('led').hidden = true;
   $('home').hidden = true; $('game').hidden = false; $('alt').hidden = true;
   scrollTo(0, 0);
   ({rankle: startRankle, blind: startBlind, sort: startSort})[KIND]();
@@ -732,11 +752,7 @@ function rankleResults(){
   const matches = G.sports.filter((s, i) => yourSlot[s] === slots[i]).length;
 
   setPhoto(null);
-  $('question').className = 'question sub';
-  $('question').hidden = false;
-  $('question').textContent = G.score === opt ? 'points · perfect' : `points · ${matches} of ${PICK} ${D.plural} placed ideally`;
-  titleText = [`${G.score} of ${opt}`, `${G.score} of ${opt} points`];
-  titleCards(...titleText);
+  scoreboard(G.score, opt, G.score === opt ? `all ${PICK} ${D.plural} placed ideally` : `${matches} of ${PICK} ${D.plural} placed ideally`);
 
   G.cats.forEach((c, k) => {
     const row = $(`row-${k}`), s = G.placed[k], ideal = idealFor[k], ok = s === ideal || pts(s, c) === pts(ideal, c);
@@ -751,7 +767,20 @@ function rankleResults(){
     return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', D.cats[c].name, D.items[s].name, v, `+${pts(s, c)}`,
       `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
   }));
-  announce(`${titleText[1]}, ${$('question').textContent.replace('points · ', '')}`);
+  announce(`${titleText[1]}, ${$('led-note').textContent}`);
+}
+
+// Results header: the score as an LED board, with the share of the maximum and a one-line note
+function scoreboard(score, max, note){
+  const pct = Math.round(100 * score / max);
+  titleText = ['', `${score} of ${max} points`];
+  $('question').hidden = true;
+  $('led-num').innerHTML = `${score}<i>/</i>${max}`;
+  $('led-pct').textContent = `${pct}%`;
+  $('led-note').innerHTML = score === max
+    ? `<b>Perfect</b> — the maximum, ${note}.`
+    : `You got <b>${pct} %</b> of the maximum points, ${note}.`;
+  $('led').hidden = false;
 }
 
 // ---- Second board on the results screen (perfect board / true order) ----
@@ -855,11 +884,7 @@ function blindResults(){
 
   setPhoto(null);
   const c = D.cats[G.cat];
-  $('question').className = 'question sub';
-  $('question').hidden = false;
-  $('question').textContent = G.score === max ? 'points · perfect' : `points · ${exact} of ${PICK} on the right spot`;
-  titleText = [`${G.score} of ${max}`, `${G.score} of ${max} points`];
-  titleCards(...titleText);
+  scoreboard(G.score, max, G.score === max ? `all ${PICK} on the right spot` : `${exact} of ${PICK} on the right spot`);
 
   range(PICK).forEach(k => {
     const row = $(`row-${k}`), s = G.placed[k], [p, d] = blindPts(s, k), [lo, hi] = trueSpots(s), v = fmt(s, G.cat);
@@ -884,7 +909,7 @@ function blindResults(){
       `Spot ${i + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, you put it on spot ${yourSpot[s] + 1}`,
       d ? `· you: spot <b>${yourSpot[s] + 1}</b>` : '');
   }));
-  announce(`${titleText[1]}, ${$('question').textContent.replace('points · ', '')}`);
+  announce(`${titleText[1]}, ${$('led-note').textContent}`);
 }
 
 // ================= Sort it =================

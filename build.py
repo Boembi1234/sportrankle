@@ -80,7 +80,7 @@ GAMES["athletes"] = {
         "Height (cm)": ("Height", "cm", "", "tallest"),
         "Weight (kg)": ("Weight", "kg", "", "heaviest"),
         "Pro debut (year)": ("Pro debut", "", "year", "earliest"),
-        "Age at pro debut": ("Age at pro debut", "years", "", "oldest"),
+        "Age at pro debut": ("Age at pro debut", "years", "", "youngest"),
         "Years as pro": ("Years as a pro", "years", "", "most"),
         "Olympic Games participations": ("Olympic Games", "Games", "", "most"),
         "Olympic medals": ("Olympic medals", "medals", "", "most"),

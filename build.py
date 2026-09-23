@@ -28,6 +28,7 @@ IMG_WIDTH = 400
 PHOTOS = HERE / "photos"
 IMG_OUT = HERE / "img"
 IMG_LONG = 1200
+PHOTO_RATIO = 1.6   # own photos taller than this (w:h) are cropped to a centred band of this ratio
 
 # The spreadsheets are German; the page is English. Rows and categories are
 # translated through the tables below (missing entries fall back to German).
@@ -228,6 +229,12 @@ def local_photos(key):
         if not target.exists() or target.stat().st_mtime < f.stat().st_mtime:
             target.parent.mkdir(parents=True, exist_ok=True)
             img = Image.open(f).convert("RGB")
+            # The strip is wide: a square or portrait picture keeps only a centred band of PHOTO_RATIO,
+            # so the subject fills it instead of shrinking with the empty top and bottom
+            w, h = img.size
+            if h > w / PHOTO_RATIO:
+                band = round(w / PHOTO_RATIO)
+                img = img.crop((0, (h - band) // 2, w, (h - band) // 2 + band))
             img.thumbnail((IMG_LONG, IMG_LONG))
             img.save(target, "JPEG", quality=82, optimize=True, progressive=True)
         # Own pictures are shown whole, on a background in the picture's own edge colour

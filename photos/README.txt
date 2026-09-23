@@ -8,7 +8,9 @@ Drop a picture into the folder of its game, named like the item:
   photos/nfl/Dallas Cowboys.jpg
   photos/ski/Odermatt.jpg             (surname is enough)
 
-jpg, jpeg, png and webp are fine, any size (landscape works best, it is shown wide).
+jpg, jpeg, png and webp are fine, any size. The strip is wide: a square or portrait picture
+keeps only a centred band of 1.6:1, so keep the subject in the middle. Big PNGs are better
+saved as JPEG first (the folder is in the git repository).
 Capitals, spaces, accents and hyphens do not matter: "loic meillard.png" = "Loïc Meillard".
 
 Then run:  python build.py

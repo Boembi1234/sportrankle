@@ -61,6 +61,10 @@ There are no logins. When a game ends, the page records `day, game, score, max` 
 
 The build enables it when `supabase/anon.key` exists (the project's public "anon" key, one line). Without the file the page runs exactly the same, minus that one line on the results screen. To use your own project: `npx supabase link --project-ref <ref>`, `npx supabase db push`, then save the anon key to `supabase/anon.key` and rebuild.
 
+## Search engines
+
+The build writes one real page per topic, sport and game next to `index.html` (`nfl-teams.html`, `american-football.html`, `rankle.html`, ...; `_redirects` serves them as `/nfl-teams` etc.). Each is the full app opened on that view, with its own title, description, canonical URL, Open Graph tags and JSON-LD, plus a static intro that search engines read before the app renders. `sitemap.xml`, `robots.txt`, `og.jpg` and the icons are generated too, and a footer with real links to every page sits under the home page. Cover pictures are files under `img/covers/` with a content hash in the name (long cache), not data URIs.
+
 ## Deploying
 
 The site is a Netlify project: `netlify deploy --prod --dir dist` after a build. Only maintainers with access to the Netlify site can deploy; contributions go through pull requests.

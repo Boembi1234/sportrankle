@@ -311,22 +311,26 @@ def photo(url):
 
 
 def cover(pattern, ratio=1.5, width=0.6, cy=0.53, size=800):
-    """Tile picture from a local file, as a data URI: the middle `width` share of the image, cropped to
-    `ratio` (w:h) around the vertical centre `cy`, shrunk to `size` px."""
+    """Tile picture from a local file, as a file under img/covers/: the middle `width` share of the image,
+    cropped to `ratio` (w:h) around the vertical centre `cy`, shrunk to `size` px. Returns its page path."""
     from PIL import Image
 
     path = next(HERE.glob(pattern))
-    IMG_CACHE.mkdir(exist_ok=True)
-    cached = IMG_CACHE / f"cover-{path.stem}-{path.stat().st_mtime_ns}-{ratio}-{width}-{cy}-{size}.jpg"
-    if not cached.exists():
+    out_dir = IMG_OUT / "covers"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    tag = hashlib.sha1(f"{path.stat().st_mtime_ns}-{ratio}-{width}-{cy}-{size}".encode()).hexdigest()[:8]
+    target = out_dir / f"{path.stem}-{tag}.jpg"
+    if not target.exists():
+        for stale in out_dir.glob(f"{path.stem}-*.jpg"):
+            stale.unlink()
         img = Image.open(path).convert("RGB")
         w, h = img.size
         cw = round(w * width); ch = min(h, round(cw / ratio))
         x0, y0 = (w - cw) // 2, max(0, min(h - ch, round(h * cy - ch / 2)))
         img = img.crop((x0, y0, x0 + cw, y0 + ch))
         img.thumbnail((size, size))
-        img.save(cached, "JPEG", quality=80, optimize=True, progressive=True)
-    return "data:image/jpeg;base64," + base64.b64encode(cached.read_bytes()).decode()
+        img.save(target, "JPEG", quality=80, optimize=True, progressive=True)
+    return f"img/covers/{target.name}"
 
 
 def norm(s):
@@ -502,6 +506,91 @@ def load_wide(key, cfg):
     return game(key, cfg, path, items, cats)
 
 
+SITE = "https://sportrankle.netlify.app"
+GAME_PAGES = {
+    "rankle": ("Rankle", "Eight categories, eight items arriving one by one: put each one where it ranks highest among the whole pool. Each category can be used once. The perfect board is revealed at the end."),
+    "blind-ranking": ("Blind ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
+    "sort-it": ("Sort it", "One attribute, all eight items in view: swap them into the right order, then reveal."),
+    "ringer": ("Ringer", "The sports party game on one phone for 3 to 12 players: everyone gets the same secret except the ringer, who has to bluff along. Find out who it is."),
+}
+GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "ringer": "#ringer"}
+
+
+def slug(text):
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def esc(text):
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace('"', "&quot;")
+
+
+def pages(data, sports):
+    """Every crawlable page: (path, title, description, route hash, static intro html)."""
+    cats = lambda g: ", ".join(c["name"].lower() for c in g["cats"][:5])
+    topic_slug = {k: slug(g["tab"]) for k, g in data.items()}
+    out = []
+    for k, g in data.items():
+        kinds = g.get("kinds") or ["rankle", "blind", "sort"]
+        games = "Rankle, Blind ranking and Sort it" if len(kinds) == 3 else "Rankle"
+        desc = (f"{g['tab']} quiz: rank {len(g['items'])} {g['plural']} by {len(g['cats'])} real categories such as {cats(g)}. "
+                f"Play {games}, new cards every day, one attempt each, compare your score with everyone else's.")
+        intro = (f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Categories</h2><ul>"
+                 + "".join(f"<li>{esc(c['name'])} (rank 1 = {esc(c['dir'])})</li>" for c in g["cats"]) + "</ul>")
+        out.append((topic_slug[k], f"{g['tab']} quiz - daily ranking puzzle | Sportrankle", desc, f"#t/{k}", intro))
+    for sk, sp in sports.items():
+        topics = [g for g in data.values() if g["sport"] == sk]
+        if not topics:
+            continue
+        names = ", ".join(t["tab"] for t in topics)
+        desc = f"{sp['name']} quizzes: {names}. Daily ranking puzzles on real stats, three games per topic, one attempt a day."
+        intro = f"<h1>{esc(sp['name'])} quizzes</h1><p>{esc(desc)}</p><ul>" + "".join(
+            f'<li><a href="/{topic_slug[k]}">{esc(g["tab"])}</a></li>' for k, g in data.items() if g["sport"] == sk) + "</ul>"
+        out.append((slug(sp["name"]), f"{sp['name']} quizzes - {names} | Sportrankle", desc, f"#s/{sk}", intro))
+    for gs, (name, blurb) in GAME_PAGES.items():
+        desc = f"{name}: {blurb}" + ("" if gs == "ringer" else f" Play it on {len(data)} topics, from NFL teams to F1 circuits.")
+        intro = f"<h1>{esc(name)}</h1><p>{esc(desc)}</p>"
+        out.append((gs, f"{name} - daily sports ranking game | Sportrankle", desc, GAME_ROUTE[gs], intro))
+    return out
+
+
+def site_map(data, sports):
+    """Real links to every page, shown under the home page and crawled from there."""
+    lines = []
+    for sk, sp in sports.items():
+        topics = [(slug(g["tab"]), g["tab"]) for g in data.values() if g["sport"] == sk]
+        if topics:
+            lines.append(f'<p><b><a href="/{slug(sp["name"])}">{esc(sp["name"])}</a></b>: '
+                         + ", ".join(f'<a href="/{s}">{esc(t)}</a>' for s, t in topics) + "</p>")
+    lines.append('<p><b>Games</b>: ' + ", ".join(f'<a href="/{gs}">{esc(n)}</a>' for gs, (n, _) in GAME_PAGES.items()) + "</p>")
+    return '<p class="sec">All puzzles</p>' + "".join(lines)
+
+
+def ld_json(title, desc, url):
+    return json.dumps([
+        {"@context": "https://schema.org", "@type": "WebSite", "name": "Sportrankle", "url": SITE + "/"},
+        {"@context": "https://schema.org", "@type": "WebApplication", "name": title.split(" | ")[0], "url": url, "description": desc,
+         "applicationCategory": "GameApplication", "operatingSystem": "Any", "browserRequirements": "Requires JavaScript",
+         "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+         "publisher": {"@type": "Organization", "name": "Sportrankle", "url": SITE + "/"}},
+    ], ensure_ascii=False)
+
+
+def social_images():
+    """og.jpg (1200x630) and the icons, from the team-sports cover."""
+    from PIL import Image
+
+    src = Image.open(HERE / "covers" / "sports.png").convert("RGB")
+    w, h = src.size
+    band = round(w / 1.905)
+    y0 = max(0, round(h * 0.5 - band / 2))
+    src.crop((0, y0, w, y0 + band)).resize((1200, 630), Image.LANCZOS).save(DIST.parent / "og.jpg", "JPEG", quality=85, optimize=True)
+    side = round(w * 0.62)
+    x0, y0 = (w - side) // 2, round(h * 0.5 - side / 2)
+    icon = src.crop((x0, y0, x0 + side, y0 + side))
+    for name, px in (("icon-512.png", 512), ("apple-touch-icon.png", 180), ("favicon.png", 64)):
+        icon.resize((px, px), Image.LANCZOS).save(DIST.parent / name, "PNG", optimize=True)
+
+
 def main():
     data = {key: (load_wide if cfg.get("format") == "wide" else load_game)(key, cfg) for key, cfg in GAMES.items()}
     for key, g in data.items():
@@ -519,23 +608,52 @@ def main():
     for key, g in data.items():
         if g.get("sport") not in SPORTS:
             raise SystemExit(f"{key}: unknown sport '{g.get('sport')}'")
-    html = (TEMPLATE.read_text(encoding="utf-8")
+    base = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
-            .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None)))
-    OUT.write_text(html, encoding="utf-8")
+            .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None))
+            .replace("__SITEMAP__", site_map(data, sports)))
+
+    def page(title, desc, url, route, intro):
+        return (base.replace("__TITLE__", esc(title)).replace("__DESC__", esc(desc)).replace("__CANON__", url)
+                .replace("__ROUTE__", json.dumps(route)).replace("__STATIC__", intro)
+                .replace("__LDJSON__", ld_json(title, desc, url)))
+
+    home_title = "Sportrankle - daily sports ranking puzzles: NFL, F1, Champions League, skiing"
+    home_desc = ("Free daily sports quiz games. Rank NFL teams, Champions League players, F1 circuits, alpine skiers and the "
+                 "world's top athletes by their real stats. New puzzles every day, one attempt each, compare with everyone.")
+    home = page(home_title, home_desc, SITE + "/", "", "<h1>Daily sports ranking puzzles</h1><p>" + esc(home_desc) + "</p>")
+    OUT.write_text(home, encoding="utf-8")
     DIST.parent.mkdir(exist_ok=True)
-    DIST.write_text(
-        '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
-        f"{html}\n</html>\n", encoding="utf-8")
+    head = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n')
+    DIST.write_text(f"{head}{home}\n</html>\n", encoding="utf-8")
+    # One real URL per topic, sport and game: the same app, opened on that view, with its own title and description
+    urls = [SITE + "/"]
+    redirects = []
+    for path, title, desc, route, intro in pages(data, sports):
+        (DIST.parent / f"{path}.html").write_text(f"{head}{page(title, desc, f'{SITE}/{path}', route, intro)}\n</html>\n", encoding="utf-8")
+        urls.append(f"{SITE}/{path}")
+        redirects.append(f"/{path}  /{path}.html  200")
+    (DIST.parent / "_redirects").write_text("\n".join(redirects) + "\n", encoding="utf-8")
+    (DIST.parent / "_headers").write_text("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n", encoding="utf-8")
+    (DIST.parent / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n", encoding="utf-8")
+    (DIST.parent / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "".join(f"  <url><loc>{u}</loc><changefreq>daily</changefreq></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
+    (DIST.parent / "site.webmanifest").write_text(json.dumps({
+        "name": "Sportrankle", "short_name": "Sportrankle", "start_url": "/", "display": "standalone",
+        "background_color": "#121210", "theme_color": "#121210",
+        "icons": [{"src": "/icon-512.png", "sizes": "512x512", "type": "image/png"}]}), encoding="utf-8")
+    social_images()
     if IMG_OUT.is_dir():
         shutil.copytree(IMG_OUT, DIST.parent / "img", dirs_exist_ok=True)
     for key, g in data.items():
         own = sum(1 for it in g["items"] if it.get("img", "").startswith("img/"))
         pics = sum(1 for it in g["items"] if "img" in it)
         print(f"{key}: {len(g['items'])} items, {len(g['cats'])} categories, {pics} images ({own} own photos) from {g['source']}")
+    print(f"{len(urls)} pages, sitemap, robots, og.jpg, icons")
 
 
 if __name__ == "__main__":

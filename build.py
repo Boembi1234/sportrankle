@@ -506,7 +506,8 @@ def load_wide(key, cfg):
     return game(key, cfg, path, items, cats)
 
 
-SITE = "https://sportrankle.netlify.app"
+SITE = "https://sport-minigames.com"
+OLD_HOSTS = ["https://sportrankle.netlify.app"]   # old addresses: everything there redirects to SITE
 GAME_PAGES = {
     "rankle": ("Rankle", "Eight categories, eight items arriving one by one: put each one where it ranks highest among the whole pool. Each category can be used once. The perfect board is revealed at the end."),
     "blind-ranking": ("Blind ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
@@ -638,6 +639,7 @@ def main():
         (DIST.parent / f"{path}.html").write_text(f"{head}{page(title, desc, f'{SITE}/{path}', route, intro)}\n</html>\n", encoding="utf-8")
         urls.append(f"{SITE}/{path}")
         redirects.append(f"/{path}  /{path}.html  200")
+    redirects = [f"{h}/* {SITE}/:splat 301!" for h in OLD_HOSTS] + redirects
     (DIST.parent / "_redirects").write_text("\n".join(redirects) + "\n", encoding="utf-8")
     (DIST.parent / "_headers").write_text("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n", encoding="utf-8")
     (DIST.parent / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n", encoding="utf-8")

@@ -103,8 +103,21 @@ a{color:inherit}
 .flag .btn{margin-top:6px}
 .flag .meta{margin:0}
 .hero:has(.flag){max-width:none}
-.more{margin:32px 0 0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.more+.kinds{margin-top:12px}
+.sec{margin:32px 0 0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sec+.kinds,.sec+.tiles{margin-top:12px}
+
+/* Topic page: picture left, the games as rows right */
+.page.at-home.at-topic{max-width:960px}
+.topic{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:24px;align-items:start;margin-top:24px}
+.topic-art{position:relative;aspect-ratio:3 / 2;border-radius:10px;overflow:hidden;background:var(--card-stack)}
+.topic-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.games{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.grow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;padding:14px 16px;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);text-decoration:none}
+.grow:active{transform:translateY(2px)}
+.grow-name{font-weight:800;font-size:20px}
+.grow-blurb{grid-column:1/-1;color:var(--muted);font-size:14px}
+.topic .btn{margin-top:18px}
+.topic .meta{margin:18px 0 0}
 
 /* Three steps, one line each */
 .how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
@@ -257,12 +270,15 @@ a{color:inherit}
   .kinds{grid-template-columns:1fr;gap:14px;margin-top:22px}
   .home .lead{font-size:15px}
   .btn{width:100%}
+  .topic{grid-template-columns:1fr;gap:16px;margin-top:18px}
+  .grow{padding:12px 14px}
+  .grow-name{font-size:18px}
   .flag{grid-template-columns:1fr;margin-top:18px}
   .flag-art{aspect-ratio:2 / 1;min-height:0}
   .flag-art .tile-cards{font-size:48px}
   .flag-body{padding:16px;gap:8px}
   .flag-name{font-size:26px}
-  .more{margin-top:26px}
+  .sec{margin-top:26px}
   .how{grid-template-columns:1fr;gap:14px;margin-top:28px}
   .kind-art .tile-cards{font-size:44px}
   .kind-body{padding:14px}
@@ -382,8 +398,11 @@ const ORDER = ['rankle', 'blind', 'sort'].flatMap(k => POOLS.filter(m => !DATA[m
 const poolsFor = (kind, sport) => POOLS.filter(m => (!DATA[m].kinds || DATA[m].kinds.includes(kind)) && (!sport || DATA[m].sport === sport))
   .sort((a, b) => (DATA[b].flagship ? 1 : 0) - (DATA[a].flagship ? 1 : 0));
 const sportsFor = kind => Object.keys(SPORTS).filter(s => poolsFor(kind, s).length);
-// Where a pool's back arrow goes: its sport page when the sport has more than one pool, else the game page
-const upLink = (kind, m) => poolsFor(kind, DATA[m].sport).length > 1 ? `#${kind}/${DATA[m].sport}` : `#${kind}`;
+// Home page order: sport -> topic -> game. A topic's back arrow goes to its sport page when the sport has
+// more than one topic, else home; a game's back arrow goes to its topic page.
+const topicsOf = s => POOLS.filter(m => DATA[m].sport === s);
+const upLink = m => topicsOf(DATA[m].sport).length > 1 ? `#s/${DATA[m].sport}` : '#';
+const keysOf = pools => ORDER.filter(k => pools.includes(k.split('-')[1]));
 const FLAG = Object.keys(DATA).find(m => DATA[m].flagship);
 const BLIND_PTS = [5, 3, 1];   // exact slot, one off, two off
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -664,17 +683,57 @@ function mainButton(label, fn, disabled = false){
   b.disabled = disabled;
   b.onclick = fn;
 }
+// The next open game: the other games on this topic first, then the rest in order
 function nextGame(){
-  const cur = `${KIND}-${MODE}`;
-  return ORDER.find(k => k !== cur && progress(...k.split('-')) < PICK);
+  const cur = `${KIND}-${MODE}`, same = ['rankle', 'blind', 'sort'].map(k => `${k}-${MODE}`).filter(k => ORDER.includes(k));
+  return [...same, ...ORDER].find(k => k !== cur && progress(...k.split('-')) < PICK);
 }
 function finishFooter(){
   const next = nextGame();
-  mainButton(next ? 'Next game' : '', next ? () => { location.hash = next; } : null);
-  $('note').innerHTML = `Played today. New cards at midnight, in <span id="next">${countdown()}</span>. <a href="#">All games</a>`;
+  mainButton(next ? (next.endsWith(`-${MODE}`) ? `Next: ${GAMES[next.split('-')[0]].name}` : 'Next game') : '', next ? () => { location.hash = next; } : null);
+  $('note').innerHTML = `Played today. New cards at midnight, in <span id="next">${countdown()}</span>. <a href="#t/${MODE}">${D.tab}</a> · <a href="#">Home</a>`;
 }
 
 // ---- Home ----
+// A tile with a picture, a name and a Play / Continue n/m / All played status over some daily puzzles
+function statusOf(keys){
+  const done = keys.filter(k => progress(...k.split('-')) >= PICK).length, started = keys.some(k => progress(...k.split('-')) > 0);
+  if (done === keys.length && keys.length === 1) { const h = load(keys[0].replace('-', '-history-')) || {}; return `<span class="tile-status done">✓ ${h[today()]?.[0] ?? ''} pts</span>`; }
+  return done === keys.length ? '<span class="tile-status done">✓ All played</span>'
+    : `<span class="tile-status">${started ? `Continue ${done}/${keys.length}` : 'Play'}</span>`;
+}
+function bigTile(href, label, img, name, keys){
+  return `<a class="tile" href="${href}" aria-label="${label}">
+    <span class="tile-art">${img ? `<img src="${img}" alt="">` : ''}</span>
+    <span class="tile-body"><span class="tile-name">${name}</span>${statusOf(keys)}</span>
+  </a>`;
+}
+const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
+// Sport tile over all games: to the sport page, or straight to the topic when the sport has only one
+const sportCard = s => { const t = topicsOf(s); return bigTile(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(t)); };
+const topicCard = m => bigTile(`#t/${m}`, `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, DATA[m].cover, DATA[m].tab, keysOf([m]));
+
+// Sport page: its topics
+function renderSport(s){
+  $('home').innerHTML = `<h1>${SPORTS[s].name}</h1>
+    <p class="today">Pick a topic. Every topic has ${['rankle', 'blind', 'sort'].filter(k => poolsFor(k, s).length).length} daily games.</p>
+    <div class="tiles">${topicsOf(s).map(topicCard).join('')}</div>`;
+}
+// Topic page: the games on it side by side, with today's status, and a button to the next open one
+function renderTopic(m){
+  const g = DATA[m], kinds = ['rankle', 'blind', 'sort'].filter(k => poolsFor(k).includes(m));
+  const next = kinds.map(k => `${k}-${m}`).find(k => progress(...k.split('-')) < PICK);
+  const rows = kinds.map(k => `<li><a class="grow" href="#${k}-${m}" aria-label="${GAMES[k].name}, ${g.tab}">
+      <span class="grow-name">${GAMES[k].name}</span>${statusOf([`${k}-${m}`])}<span class="grow-blurb">${GAMES[k].blurb}</span></a></li>`).join('');
+  $('home').innerHTML = `<h1>${g.tab}</h1>
+    <p class="today">${SPORTS[g.sport].name} · ${g.items.length} ${g.plural} · ${g.cats.length} categories. ${kinds.length === 1 ? 'One daily game.' : `${kinds.length} daily games, one attempt each.`}</p>
+    <div class="topic">
+      <div class="topic-art">${g.cover ? `<img src="${g.cover}" alt="">` : ''}</div>
+      <div><ul class="games">${rows}</ul>
+        ${next ? `<a class="btn" href="#${next}">${progress(...next.split('-')) ? 'Continue' : 'Play'} ${GAMES[next.split('-')[0]].name}</a>` : '<p class="meta">All played for today. New cards at midnight.</p>'}</div>
+    </div>`;
+}
+
 function renderHome(kind, sport){
   const date = new Date().toLocaleDateString('en-GB', {weekday: 'short', day: 'numeric', month: 'long'});
   // Level 2: the sports of one game. A sport with a single pool links straight to that pool.
@@ -746,15 +805,17 @@ function renderHome(kind, sport){
         <div class="cta">${next ? `<a class="btn" href="#${next}">${progress(...next.split('-')) ? 'Continue' : 'Play now'}</a>` : ''}
           <span class="meta">${next ? `Next up: <b>${nextName}</b> · ` : `<b>All played for today</b> · `}${facts}</span></div>`}
       </section>
-      <p class="more">More games</p>
+      <p class="sec">Pick a sport</p>
+      <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length).map(sportCard).join('')}</div>
+      <p class="sec">The games</p>
       <div class="kinds">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
         <a class="kind" href="#ringer" aria-label="Ringer, party game">
           <span class="kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">RINGER</span>`}</span>
           <span class="kind-body"><span class="kind-name">Ringer</span><span class="tile-status">Play</span><span class="kind-blurb">Party game on one phone, 3 to 12 players. Everyone knows the secret except the ringer. Find them.</span></span>
         </a></div>
       <section class="how">
-        <div><b>1 · Pick a game</b><span>Rankle, Blind ranking or Sort it — or Ringer with friends.</span></div>
-        <div><b>2 · Rank eight cards</b><span>${Object.values(SPORTS).map(s => s.name).join(', ')} — ${POOLS.length} topics. One attempt per game and day.</span></div>
+        <div><b>1 · Pick a sport and a topic</b><span>${Object.values(SPORTS).map(s => s.name).join(', ')} — ${POOLS.length} topics.</span></div>
+        <div><b>2 · Play its games</b><span>Rankle, Blind ranking and Sort it on every topic, one attempt per game and day — or Ringer with friends.</span></div>
         <div><b>3 · Compare</b><span>Your score against everyone who played today, plus your own stats and streak.</span></div>
       </section>`;
   if (!kind && FLAG) flagCount();
@@ -864,8 +925,18 @@ function route(){
   }
   const legacy = {sports: 'rankle-sports', f1: 'rankle-f1'};
   const m = (legacy[h] || h).match(/^(rankle|blind|sort)(?:-([a-z0-9]+))?$/);
-  const ms = h.match(/^(rankle|blind|sort)\/([a-z]+)$/);   // the pools of one sport
+  const ms = h.match(/^(rankle|blind|sort)\/([a-z]+)$/);   // one game, the pools of one sport
+  const msp = h.match(/^s\/([a-z]+)$/), mt = h.match(/^t\/([a-z0-9]+)$/);   // a sport page, a topic page
   busy = false;
+  if ((msp && SPORTS[msp[1]]) || (mt && DATA[mt[1]])) {
+    KIND = null;
+    $('page').className = `page at-home at-kind${mt ? ' at-topic' : ''}`;
+    $('back').href = mt ? upLink(mt[1]) : '#';
+    $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;
+    if (mt) renderTopic(mt[1]); else renderSport(msp[1]);
+    scrollTo(0, 0);
+    return;
+  }
   if (ms && sportsFor(ms[1]).includes(ms[2])) {
     KIND = null;
     $('page').className = 'page at-home at-kind';
@@ -895,7 +966,7 @@ function route(){
   }
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
   $('page').className = 'page';
-  $('back').href = upLink(KIND, MODE);
+  $('back').href = `#t/${MODE}`;
   $('today').hidden = true;
   $('led').hidden = true;
   $('home').hidden = true; $('game').hidden = false; $('alt').hidden = true;

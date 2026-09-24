@@ -50,7 +50,7 @@ GAMES = {
     # Names are already English; "short" says what goes on the title board: the last word or all but the first.
     # "sub" names helper columns whose values go in brackets after the name (shown under the title board).
     "nfl": {"file": "NFL_Teams*.xlsx", "tab": "NFL teams", "noun": "team", "plural": "teams", "word": "NFL", "english": True, "short": "last",
-            "sport": "football", "cover": "covers/nfl.png", "sub": ["HILFSSPALTE: Division 2026"]},
+            "sport": "football", "cover": {"file": "covers/nfl.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Division 2026"]},
     "nflplayers": {"file": "NFL_Spieler*.xlsx", "tab": "NFL players", "noun": "player", "plural": "players", "word": "NFL", "english": True, "short": "surname",
                    "sport": "football", "cover": {"file": "covers/nflplayers.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Team (Sept. 2026)", "HILFSSPALTE: Position"]},
     "nflhof": {"file": "NFL_HallOfFame*.xlsx", "tab": "NFL Hall of Fame", "noun": "legend", "plural": "legends", "word": "HOF", "english": True, "short": "surname",

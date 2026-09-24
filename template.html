@@ -90,12 +90,13 @@ a{color:inherit}
 /* Drawer width: 367px, the whole screen up to 639px wide */
 :root{--dw:367px}
 .drawer-bg{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s}
-.drawer{position:fixed;z-index:41;top:0;bottom:0;left:0;width:var(--dw);overflow-y:auto;background:var(--bg);border-right:1px solid var(--line-strong);
-  padding:0 24px 32px;transform:translateX(-100%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+.drawer{position:fixed;z-index:41;top:0;bottom:0;left:0;width:var(--dw);display:flex;flex-direction:column;background:var(--bg);border-right:1px solid var(--line-strong);
+  transform:translateX(-100%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
 .menu-open .drawer{transform:none;visibility:visible;transition:transform .22s ease}
 .menu-open .drawer-bg{opacity:1;pointer-events:auto}
-/* The drawer's top row stays put while its list scrolls underneath (the X sits on it) */
-.drawer-head{position:sticky;top:0;z-index:1;height:64px;margin-inline:-24px;background:var(--bg);border-bottom:1px solid var(--line)}
+/* The drawer's top row (the X sits on it) never moves; only the list under it scrolls, and its bounce stays inside */
+.drawer-head{flex:none;height:64px;border-bottom:1px solid var(--line)}
+#menu-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 24px 32px}
 .drawer .sec{margin-top:24px}
 .drawer ul{list-style:none;margin:6px 0 0;padding:0}
 /* Each entry: no dividers, an arrow on the right in the text colour. Under the pointer a rounded box in the card colour

@@ -171,6 +171,11 @@ a{color:inherit}
 .tile-name{font-weight:800;font-size:20px}
 .tile-status{flex:none;white-space:nowrap;font-weight:800;font-size:15px;border-radius:6px;padding:8px 14px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge)}
 .tile-status.done{background:none;box-shadow:none;padding-inline:0;color:var(--muted);font-weight:600}
+/* Play button on a tile: rises on its hard edge like a key under the pointer, sinks when pressed */
+.tile-status:not(.done){transition:transform .12s,box-shadow .12s,filter .12s}
+@media (hover:hover){.tile-status:not(.done):hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}
+.tile-status:not(.done):active{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge)}
+@media (prefers-reduced-motion:reduce){.tile-status:not(.done){transition:none}}
 .home .foot{margin-top:40px;color:var(--muted);font-size:13px;max-width:68ch}
 
 /* Game: a wide photo strip on top, title cards hanging off it, the question, then the list.

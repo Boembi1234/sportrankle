@@ -33,7 +33,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0}
-body{background:var(--bg);color:var(--text);font:400 14px/1.4 var(--font);padding-inline:72px}
+body{background:var(--bg);color:var(--text);font:400 14px/1.4 var(--font);padding-inline:32px}   /* the same side margin at every width */
 :focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 button{font-family:inherit;color:inherit}
@@ -322,7 +322,6 @@ a{color:inherit}
 
 /* Tablet and phone */
 @media (max-width:1023px){
-  body{padding-inline:32px}
   .page>main{max-width:560px}
   .page.at-home>main{max-width:none}
   .game{padding-block:12px 0}
@@ -335,7 +334,6 @@ a{color:inherit}
 @media (max-width:639px){
   :root{--dw:100vw}
   .drawer{border-right:0}
-  body{padding-inline:20px}
   .counter{font-size:17px}
   .home{padding-block:22px 40px}
   .home h1{font-size:34px}
@@ -381,6 +379,20 @@ a{color:inherit}
   .page:not(.done) .question{font-size:22px;margin-top:8px}
   .page:not(.done) .rank{--w:34px;--h:40px;--f:22px;--r:5px}
 }
+/* Wide screens: no menu button; the logo goes left and the sports sit in the middle of the header (not during a game) */
+.logo-left,.sportnav{display:none}
+.sportnav a{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:15px;white-space:nowrap;text-decoration:none;
+  transition:background-color .15s}
+.sportnav img{flex:none;width:20px;height:20px;object-fit:contain}
+.sportnav a[aria-current="page"]{color:var(--signal);background:var(--surface)}
+@media (hover:hover){.sportnav a:hover{background:var(--surface)}}
+.sportnav a:active{background:var(--surface-edge)}
+@media (prefers-reduced-motion:reduce){.sportnav a{transition:none}}
+@media (min-width:1280px){
+  #menu-btn,.drawer,.drawer-bg,.drawer-x,.top-mid .logo{display:none}
+  .top-left .logo-left,.page:not(.at-home) .top .logo-left{display:flex}
+  .page.at-home .sportnav{display:flex;gap:4px}
+}
 </style>
 
 <div class="page at-home" id="page">
@@ -388,9 +400,11 @@ a{color:inherit}
     <div class="top-left">
       <button class="icon burger" id="menu-btn" type="button" aria-label="Menu" aria-controls="menu"></button>
       <a class="icon back" id="back" href="#" aria-label="All games"></a>
+      <a class="logo logo-left" href="#">Sportrankle</a>
     </div>
     <div class="top-mid">
       <a class="logo" href="#">Sportrankle</a>
+      <nav class="sportnav" id="sportnav" aria-label="Sports"></nav>
       <div class="counter" id="counter"><span id="round">1/8</span><i id="csep"></i><span id="cpts"><span id="score">0</span> pts</span></div>
     </div>
     <div class="top-right">
@@ -1018,13 +1032,23 @@ function partyButton(label, fn){ const b = $('pp-main'); b.textContent = label; 
 $('party-play').addEventListener('click', e => { if (e.target.id === 'pp-setup') { partySetup(); scrollTo(0, 0); } });
 
 // ---- Menu: a drawer from the left with every sport and every game ----
+// Where you are: the sport of the open sport, topic or game page, and the game type being played
+function here(){
+  const h = (location.hash || ROUTE || '').slice(1), [, kind, rest] = h.match(/^(rankle|blind|sort|ringer)?(?:[-/]?)(.*)$/);
+  const topic = rest.replace(/^[st]\//, '');
+  return {kind, sport: SPORTS[topic] ? topic : DATA[topic]?.sport};
+}
+const sportHref = s => { const t = topicsOf(s); return t.length > 1 ? `#s/${s}` : `#t/${t[0]}`; };
+// Wide screens: the sports as links in the middle of the header
+function sportNav(){
+  const {sport} = here();
+  $('sportnav').innerHTML = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
+    + `${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}</a>`).join('');
+}
 function menuHTML(){
-  // Mark where you are: the sport of the open sport, topic or game page, and the game type being played
-  const h = (location.hash || ROUTE || '').slice(1), m = h.match(/^(rankle|blind|sort|ringer)?(?:[-/]?)(.*)$/);
-  const [, kind, rest] = m, topic = rest.replace(/^[st]\//, '');
-  const sport = SPORTS[topic] ? topic : DATA[topic]?.sport;
+  const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;
-  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => { const t = topicsOf(s); return link(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, s === sport, SPORTS[s].icon); });
+  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
   const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind)), link('#ringer', 'Ringer', kind === 'ringer')];
   return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
 }
@@ -1047,7 +1071,10 @@ function closeMenu(refocus = true){
 }
 $('menu-btn').addEventListener('click', openMenu);
 $('menu-close').addEventListener('click', () => closeMenu());
-addEventListener('resize', () => { const r = $('menu-btn').getBoundingClientRect(); Object.assign($('menu-close').style, {left: `${r.left}px`, top: `${r.top}px`}); });
+addEventListener('resize', () => {
+  if (innerWidth >= 1280) closeMenu(false);
+  const r = $('menu-btn').getBoundingClientRect(); Object.assign($('menu-close').style, {left: `${r.left}px`, top: `${r.top}px`});
+});
 $('menu-bg').addEventListener('click', closeMenu);
 $('menu').addEventListener('click', e => { if (e.target.closest('a')) closeMenu(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
@@ -1056,6 +1083,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
 let booted = false;
 function route(){
   closeMenu(false);
+  sportNav();
   closePanels();
   $('party').hidden = true;
   // A page loaded on a real URL opens its own view; from then on the hash decides

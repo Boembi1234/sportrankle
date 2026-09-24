@@ -42,10 +42,10 @@ a{color:inherit}
 /* The play screen is exactly one viewport tall; home and results may scroll.
    Game screens are one column at reading width; the home uses the full width for its tiles. */
 .page{margin:0 auto;display:flex;flex-direction:column;height:100vh;height:100dvh}
-/* The header spans the window (24px side margin); the content is centred, at most 1032px including that 24px each side
-   (984px of content); the play screens are narrower still */
+/* The header spans the window (24px side margin); the content is centred and at most 1032px wide, with at least that
+   24px to the window edge; the play screens are narrower still */
 .page>main{width:100%;max-width:760px;margin-inline:auto}
-.page.at-home>main{max-width:984px}
+.page.at-home>main{max-width:1032px}
 .page.done,.page.at-home{height:auto;min-height:100dvh}
 
 /* Header */
@@ -183,7 +183,7 @@ a{color:inherit}
 .topic .meta{margin:18px 0 0}
 
 /* Site map under the home page: real links to every topic, sport and game */
-.sitemap{display:none;width:100%;max-width:984px;margin:0 auto;padding:8px 0 48px;color:var(--muted);font-size:14px;line-height:1.6}
+.sitemap{display:none;width:100%;max-width:1032px;margin:0 auto;padding:8px 0 48px;color:var(--muted);font-size:14px;line-height:1.6}
 .sitemap p{margin:4px 0}
 .sitemap a{color:var(--muted)} .sitemap b a{color:var(--text)}
 .page.at-home:not(.at-kind) .sitemap{display:block}
@@ -325,7 +325,7 @@ a{color:inherit}
 /* Tablet and phone */
 @media (max-width:1023px){
   .page>main{max-width:560px}
-  .page.at-home>main{max-width:984px}
+  .page.at-home>main{max-width:1032px}
   .game{padding-block:12px 0}
   .question{font-size:24px;margin-top:10px}
   .right{margin-top:10px}

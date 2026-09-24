@@ -102,6 +102,7 @@ a{color:inherit}
 .flag-blurb{margin:0;color:var(--muted);font-size:15px;line-height:1.4;text-wrap:pretty}
 .flag .btn{margin-top:6px}
 .flag .meta{margin:0}
+.flag-done{margin-top:6px;font-weight:800;font-size:18px;color:var(--led-ok);text-decoration:none}
 .hero:has(.flag){max-width:none}
 .sec{margin:32px 0 0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .sec+.kinds,.sec+.tiles{margin-top:12px}
@@ -790,8 +791,9 @@ function renderHome(kind, sport){
         <p class="eyebrow">Today's Rankle · ${date}</p>
         <h2 class="flag-name">${g.tab}</h2>
         <p class="flag-blurb">Eight of the world's biggest athletes, eight categories, one board. The same cards for everyone, one attempt a day.</p>
-        <a class="btn" href="#rankle-${FLAG}">${label}</a>
-        <p class="meta">${res ? `<b>✓ ${res[0]} of ${res[1]} pts</b> today · ` : ''}${facts}<span id="flag-n"></span></p>
+        ${res ? `<a class="flag-done" href="#rankle-${FLAG}">✓ Played · ${Math.round(100 * res[0] / res[1])} %</a>`
+          : `<a class="btn" href="#rankle-${FLAG}">${label}</a>
+        <p class="meta"><span style="white-space:nowrap">New cards in <span id="next">${countdown()}</span></span><span id="flag-n"></span></p>`}
       </div>
     </section>`;
   };

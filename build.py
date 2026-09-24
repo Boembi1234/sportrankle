@@ -33,11 +33,11 @@ PHOTO_RATIO = 1.6   # own photos taller than this (w:h) are cropped to a centred
 # The spreadsheets are German; the page is English. Rows and categories are
 # translated through the tables below (missing entries fall back to German).
 # The home page goes game -> sport -> pool. Every pool names its "sport" (a key of SPORTS below).
-# "All sports" always comes first (home page, menu, game pages, site map)
+# The order of every sport list (home page, menu, game pages, site map); "All sports" always comes first
 SPORTS = {
     "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
-    "football": {"name": "American football", "cover": "covers/sport-football.png"},
     "soccer": {"name": "Football", "cover": "covers/sport-soccer.png"},
+    "football": {"name": "American football", "cover": "covers/sport-football.png"},
     "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png"},
     "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png"},
 }

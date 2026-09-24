@@ -102,6 +102,7 @@ a{color:inherit}
   transition:background-color .15s,color .15s}
 .drawer li a::after{content:"";flex:none;margin-left:auto;margin-right:4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;
   transform:rotate(45deg)}
+.drawer .menu-ic{flex:none;width:32px;height:32px;margin-right:12px;object-fit:contain}
 .drawer li a[aria-current="page"]{color:var(--signal);background:var(--surface)}
 @media (hover:hover){
   .drawer li a:hover{background:var(--surface)}
@@ -1023,8 +1024,8 @@ function menuHTML(){
   const h = (location.hash || ROUTE || '').slice(1), m = h.match(/^(rankle|blind|sort|ringer)?(?:[-/]?)(.*)$/);
   const [, kind, rest] = m, topic = rest.replace(/^[st]\//, '');
   const sport = SPORTS[topic] ? topic : DATA[topic]?.sport;
-  const link = (href, name, on) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${name}</a></li>`;
-  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => { const t = topicsOf(s); return link(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, s === sport); });
+  const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;
+  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => { const t = topicsOf(s); return link(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, s === sport, SPORTS[s].icon); });
   const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind)), link('#ringer', 'Ringer', kind === 'ringer')];
   return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
 }

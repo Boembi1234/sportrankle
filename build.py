@@ -334,6 +334,28 @@ def cover(pattern, ratio=1.5, width=0.6, cy=0.53, size=800):
     return f"img/covers/{target.name}"
 
 
+def icon(pattern, size=96):
+    """Small transparent picture for the menu, as a file under img/covers/: trimmed to its visible part, centred on a
+    square and shrunk to `size` px (shown at a third of that, sharp on high-density screens). Returns its page path."""
+    from PIL import Image
+
+    path = next(HERE.glob(pattern))
+    out_dir = IMG_OUT / "covers"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    tag = hashlib.sha1(f"{path.stat().st_mtime_ns}-{size}".encode()).hexdigest()[:8]
+    target = out_dir / f"{path.stem}-{tag}.png"
+    if not target.exists():
+        for stale in out_dir.glob(f"{path.stem}-*.png"):
+            stale.unlink()
+        img = Image.open(path).convert("RGBA")
+        img = img.crop(img.getchannel("A").getbbox())
+        side = max(img.size)
+        square = Image.new("RGBA", (side, side))
+        square.paste(img, ((side - img.width) // 2, (side - img.height) // 2))
+        square.resize((size, size), Image.LANCZOS).save(target, "PNG", optimize=True)
+    return f"img/covers/{target.name}"
+
+
 def norm(s):
     """Lower-case letters and digits only, accents stripped: 'Loïc Meillard' -> 'loicmeillard'."""
     return re.sub(r"[^a-z0-9]+", "", unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower())
@@ -604,8 +626,10 @@ def main():
         opts = f if isinstance(f, dict) else {"file": f}
         if next(HERE.glob(opts["file"]), None):
             kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000)
-    # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's
-    sports = {k: {"name": s["name"], **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {})}
+    # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's;
+    # a menu icon if covers/icon-<key>.png exists (a transparent PNG)
+    sports = {k: {"name": s["name"], **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {}),
+                  **({"icon": icon(f"covers/icon-{k}.png")} if (HERE / "covers" / f"icon-{k}.png").exists() else {})}
               for k, s in SPORTS.items()}
     for key, g in data.items():
         if g.get("sport") not in SPORTS:

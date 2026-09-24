@@ -608,6 +608,8 @@ def main():
     for key, g in data.items():
         if g.get("sport") not in SPORTS:
             raise SystemExit(f"{key}: unknown sport '{g.get('sport')}'")
+    for g in data.values():   # the page each topic's share text links to
+        g["url"] = f"{SITE}/{slug(g['tab'])}"
     base = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))

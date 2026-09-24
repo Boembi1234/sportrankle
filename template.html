@@ -232,6 +232,8 @@ a{color:inherit}
 .main{width:100%;min-height:52px;border:0;border-radius:7px;font-weight:800;font-size:22px;cursor:pointer;background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
 .main:disabled{background:var(--line);color:var(--muted);box-shadow:none;cursor:default}
 .note{margin:0;color:var(--muted);font-size:13px;text-align:center}
+.share{width:100%;min-height:48px;border:1.5px solid var(--line-strong);border-radius:7px;background:none;color:var(--text);font:800 17px var(--font);cursor:pointer}
+.share.copied{border-color:var(--led-ok);color:var(--led-ok)}
 .note a{color:var(--text)}
 
 /* Results: one board, two views. A switch under the score shows your board or the perfect board
@@ -399,6 +401,7 @@ a{color:inherit}
       <ul class="board" id="board"></ul>
       <div class="bar">
         <button class="main" id="main" type="button"></button>
+        <button class="share" id="share" type="button" hidden>Share my score</button>
         <p class="note" id="note"></p>
       </div>
     </section>
@@ -649,6 +652,27 @@ function statsHTML(){
       </div><p>${name} on this device.</p>`
     : `<p>No ${name} game finished yet. Your stats fill up after the first one.</p>`;
 }
+// ---- Share: a Wordle-style summary of today's result, copied or handed to the share sheet ----
+function shareText(){
+  const h = load(`${KIND}-history-${MODE}`) || {}, [score, max] = h[G.day] || [G.score, 0];
+  const lines = [`Sportrankle – ${D.tab} · ${GAMES[KIND].name}`,
+    `${G.day} · ${score}/${max} pts (${max ? Math.round(100 * score / max) : 0} %)`,
+    (G.share || []).join('')];
+  if (G.stat) lines.push(`Better than ${G.stat.pct} % of today's ${G.stat.total.toLocaleString('en-US')} players`);
+  lines.push(D.url || location.origin);
+  return lines.filter(Boolean).join('\n');
+}
+async function share(){
+  const b = $('share'), text = shareText();
+  try {
+    if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) { await navigator.share({text}); return; }
+    await navigator.clipboard.writeText(text);
+    b.textContent = 'Copied – paste it anywhere'; b.classList.add('copied');
+    setTimeout(() => { b.textContent = 'Share my score'; b.classList.remove('copied'); }, 2500);
+  } catch (e) { /* the share sheet was closed or the clipboard is blocked */ }
+}
+$('share').addEventListener('click', share);
+
 function saveHistory(score, max){
   const h = load(`${KIND}-history-${MODE}`) || {};
   h[G.day] = [score, max];
@@ -692,6 +716,7 @@ async function reportResult(score, max){
     rows.forEach(r => { bins[Math.min(nb - 1, Math.floor(r.score / width))] += Number(r.n); });
     const mine = Math.min(nb - 1, Math.floor(score / width)), top = Math.max(...bins);
     const pct = Math.round(100 * below / (total - 1));
+    G.stat = total < 10 ? null : {pct, total};
     $('today-h').innerHTML = total < 10
       ? `<b>${total === 1 ? 'First to play today' : `${total} played today so far`}</b>`
       : `<b>Better than ${pct} %</b><span>${total.toLocaleString('en-US')} played today</span>`;
@@ -719,6 +744,7 @@ function nextGame(){
 function finishFooter(){
   const next = nextGame();
   mainButton(next ? (next.endsWith(`-${MODE}`) ? `Next: ${GAMES[next.split('-')[0]].name}` : 'Next game') : '', next ? () => { location.hash = next; } : null);
+  $('share').hidden = false;
   $('note').innerHTML = `Played today. New cards at midnight, in <span id="next">${countdown()}</span>. <a href="#t/${MODE}">${D.tab}</a> · <a href="#">Home</a>`;
 }
 
@@ -1001,6 +1027,7 @@ function route(){
   $('back').href = `#t/${MODE}`;
   $('today').hidden = true;
   $('led').hidden = true;
+  $('share').hidden = true;
   $('home').hidden = true; $('game').hidden = false; $('alt').hidden = true;
   scrollTo(0, 0);
   ({rankle: startRankle, blind: startBlind, sort: startSort})[KIND]();
@@ -1096,6 +1123,7 @@ function rankleResults(){
     const row = $(`row-${k}`), s = G.placed[k], ideal = idealFor[k], ok = s === ideal || pts(s, c) === pts(ideal, c);
     const rank = row.querySelector('.rank');
     turn(rank, rank.dataset.ch, 300 + k * 90, ok ? 'ok' : 'no');
+    G.share = (G.share || []).concat(ok ? '🟩' : '🟥');
   });
   finishFooter();
 
@@ -1231,6 +1259,7 @@ function blindResults(){
     row.querySelector('.pts').textContent = `+${p}`;
     miniCards(row.querySelector('.vals'), v ? v[0] : '', 300 + k * 90);
     turn(row.querySelector('.rank'), String(k + 1), 300 + k * 90, d ? 'no' : 'ok');
+    G.share = (G.share || []).concat(d === 0 ? '🟩' : d === 1 ? '🟨' : '🟥');
     const belongs = lo === hi ? String(lo + 1) : `${lo + 1} to ${hi + 1}`;
     if (d) row.querySelector('.res').insertAdjacentHTML('beforeend', `<span class="more">· belongs on <b>${belongs}</b></span>`);
     row.setAttribute('aria-label', `Spot ${k + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, plus ${p} points${d ? `, belongs on spot ${belongs}` : ''}`);

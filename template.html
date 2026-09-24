@@ -285,7 +285,8 @@ a{color:inherit}
   .kind-name{font-size:19px}
   .tiles{grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
   /* Narrow tiles: title on top, button underneath, the same on every tile */
-  .tile-body{grid-template-columns:1fr;justify-items:start;gap:8px;padding:12px}
+  /* Narrow tiles: name on top, button at the bottom; the body stretches, so buttons line up across a row */
+  .tile-body{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;flex:1;gap:8px;padding:12px}
   .tile-name{font-size:17px}
   .tile-status{font-size:14px;padding:7px 12px}
   .photo{border-radius:8px}

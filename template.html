@@ -94,7 +94,8 @@ a{color:inherit}
   padding:0 24px 32px;transform:translateX(-100%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
 .menu-open .drawer{transform:none;visibility:visible;transition:transform .22s ease}
 .menu-open .drawer-bg{opacity:1;pointer-events:auto}
-.drawer-head{height:64px;margin-inline:-24px;border-bottom:1px solid var(--line)}
+/* The drawer's top row stays put while its list scrolls underneath (the X sits on it) */
+.drawer-head{position:sticky;top:0;z-index:1;height:64px;margin-inline:-24px;background:var(--bg);border-bottom:1px solid var(--line)}
 .drawer .sec{margin-top:24px}
 .drawer ul{list-style:none;margin:6px 0 0;padding:0}
 /* Each entry: no dividers, an arrow on the right in the text colour. Under the pointer a rounded box in the card colour

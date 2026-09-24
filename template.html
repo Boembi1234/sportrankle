@@ -21,7 +21,7 @@
 <style>
 :root{
   color-scheme:dark;
-  --bg:#121210; --surface:#22282A; --line:#2A2A27; --line-strong:#34332F; --text:#EDEBE4; --muted:#9A968C;
+  --bg:#121210; --surface:#22282A; --surface-edge:#191D1F; /* 27 % darker, like --signal-edge to --signal */ --line:#2A2A27; --line-strong:#34332F; --text:#EDEBE4; --muted:#9A968C;
   --card:#6B6667; --card-edge:#4E4A4B; --card-stack:#3A3738; --card-mini:#3A3839; --card-open:#45443F;
   --glyph:#FAFAF7; --ring:#A9ADB2;
   --signal:#4FB3F6; --signal-edge:#2A86C4; --selected-bg:#151A1E;
@@ -33,7 +33,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0}
-body{background:var(--bg);color:var(--text);font:400 14px/1.4 var(--font);padding-inline:48px}
+body{background:var(--bg);color:var(--text);font:400 14px/1.4 var(--font);padding-inline:72px}
 :focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 button{font-family:inherit;color:inherit}
@@ -41,12 +41,19 @@ a{color:inherit}
 
 /* The play screen is exactly one viewport tall; home and results may scroll.
    Game screens are one column at reading width; the home uses the full width for its tiles. */
-.page{max-width:760px;margin:0 auto;display:flex;flex-direction:column;height:100vh;height:100dvh}
-.page.at-home{max-width:1280px}
+.page{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;height:100vh;height:100dvh}
+/* The header always spans the full page, so the menu button sits in the same spot everywhere; the content has its own width */
+.page>main{width:100%;max-width:760px;margin-inline:auto}
+.page.at-home>main{max-width:1280px}
 .page.done,.page.at-home{height:auto;min-height:100dvh}
 
 /* Header */
-.top{position:relative;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:64px;border-bottom:1px solid var(--line)}
+.top{position:sticky;top:0;z-index:30;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:64px}
+/* The header's background and divider run the full width of the window, past the page's side margins */
+.top::before,.top::after{content:"";position:absolute;left:0;right:0;clip-path:inset(0 -100vmax)}
+.top::before{z-index:-1;top:0;bottom:0;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg)}
+.top::after{bottom:0;height:1px;background:var(--line);box-shadow:0 0 0 100vmax var(--line)}
+.top-mid{display:flex;align-items:center;justify-content:center}
 .top-left{display:flex;align-items:center;gap:6px}
 .top-right{display:flex;align-items:center;justify-content:flex-end;gap:14px}
 .logo{font-weight:800;font-stretch:75%;font-size:24px;line-height:1;margin:0;text-decoration:none;display:flex;align-items:center;min-height:44px}
@@ -55,15 +62,53 @@ a{color:inherit}
 .stats-btn::before{content:"";position:absolute;left:13px;bottom:13px;width:4px;height:9px;background:var(--text);box-shadow:7px -5px 0 var(--text),14px -2px 0 var(--text)}
 .counter{display:flex;align-items:center;gap:14px;font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
 .counter i{width:1px;height:20px;background:var(--line-strong)}
-.nav{font-size:14px;color:var(--muted);background:none;border:0;padding:0;min-height:44px;cursor:pointer;text-decoration:underline 2px transparent;text-underline-offset:6px}
-.nav[aria-expanded="true"]{color:var(--text);text-decoration-color:var(--text)}
+.nav{font-weight:800;font-size:15px;border:0;border-radius:6px;padding:8px 14px;cursor:pointer;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge);
+  transition:transform .12s,box-shadow .12s,filter .12s}
+@media (hover:hover){.nav:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}
+.nav:active,.nav[aria-expanded="true"]{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge);filter:none}
+@media (prefers-reduced-motion:reduce){.nav{transition:none}}
 .panel{position:absolute;z-index:20;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--line-strong);padding:16px 0 18px}
 .panel p{margin:0 0 8px;max-width:68ch;color:var(--muted)}
 .panel p b{color:var(--text)}
 .panel .stats{display:flex;gap:28px;flex-wrap:wrap;margin:0 0 10px}
 .panel .stats b{display:block;font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
 .panel .stats span{color:var(--muted);font-size:13px}
-.page.at-home .counter,.page.at-home #stats-btn,.page.at-home:not(.at-kind) .back{visibility:hidden}
+.page.at-home .counter,.page.at-home #stats-btn{display:none}
+.page:not(.at-home) .top .logo{display:none}
+.page.at-home .back{display:none}
+/* Menu: three bars top left; a drawer slides in from the left with the sports and the games */
+.burger::before,.burger::after{content:"";position:absolute;left:13px;width:18px;height:2px;background:var(--text)}
+.burger::before{top:15px;box-shadow:0 6px 0 var(--text)}
+.burger::after{top:27px}
+/* The drawer's X: slides in with the drawer and stops exactly where the three bars are (openMenu measures them) */
+.drawer-x{position:fixed;z-index:42;transform:translateX(calc(-1 * var(--dw)));visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+.menu-open .drawer-x{transform:none;visibility:visible;transition:transform .22s ease}
+.drawer-x::before{box-shadow:none;transform:translateY(6px) rotate(45deg)}
+.drawer-x::after{transform:translateY(-6px) rotate(-45deg)}
+/* Drawer width: 367px, the whole screen up to 639px wide */
+:root{--dw:367px}
+.drawer-bg{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer{position:fixed;z-index:41;top:0;bottom:0;left:0;width:var(--dw);overflow-y:auto;background:var(--bg);border-right:1px solid var(--line-strong);
+  padding:0 24px 32px;transform:translateX(-100%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+.menu-open .drawer{transform:none;visibility:visible;transition:transform .22s ease}
+.menu-open .drawer-bg{opacity:1;pointer-events:auto}
+.drawer-head{height:64px;margin-inline:-24px;border-bottom:1px solid var(--line)}
+.drawer .sec{margin-top:24px}
+.drawer ul{list-style:none;margin:6px 0 0;padding:0}
+/* Each entry: no dividers, an arrow on the right in the text colour. Under the pointer a rounded box in the card colour
+   appears behind it; the current entry has the same box and blue text */
+.drawer ul{display:flex;flex-direction:column;gap:6px}
+.drawer li a{display:flex;align-items:center;min-height:48px;margin-inline:-12px;padding-inline:12px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;
+  transition:background-color .15s,color .15s}
+.drawer li a::after{content:"";flex:none;margin-left:auto;margin-right:4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;
+  transform:rotate(45deg)}
+.drawer li a[aria-current="page"]{color:var(--signal);background:var(--surface)}
+@media (hover:hover){
+  .drawer li a:hover{background:var(--surface)}
+}
+.drawer li a:active{background:var(--surface-edge)}
+@media (prefers-reduced-motion:reduce){.drawer li a{transition:none}}
+@media (prefers-reduced-motion:reduce){.drawer,.menu-open .drawer,.drawer-bg,.drawer-x,.menu-open .drawer-x{transition:none}}
 
 /* Home: today's games as tiles */
 .home{padding-block:32px 56px}
@@ -79,7 +124,7 @@ a{color:inherit}
 .meta{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
 .meta b{color:var(--text);font-weight:600}
 /* Ringer: setup form, then one big card per turn */
-.page.at-home.at-party{max-width:560px}
+.page.at-home.at-party>main{max-width:560px}
 .party{padding-block:28px 56px}
 .party h1{font-weight:800;font-stretch:80%;font-size:40px;line-height:1;margin:0}
 .party .lead{margin:12px 0 0;font-size:16px;line-height:1.4;color:var(--muted);text-wrap:pretty}
@@ -96,7 +141,7 @@ a{color:inherit}
 .party .bar{padding-top:24px}
 .party .note{display:block}
 .party .eyebrow{margin-top:8px}
-.deal{margin-top:12px;padding:24px;border-radius:12px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);min-height:280px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.deal{margin-top:12px;padding:24px;border-radius:12px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);min-height:280px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 .deal.ringer{background:var(--selected-bg);box-shadow:inset 0 0 0 2px var(--signal),0 3px 0 var(--signal-edge)}
 .deal-img{width:calc(100% + 48px);margin:-24px -24px 20px;aspect-ratio:16 / 9;object-fit:cover;display:block}
 .deal-k{margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
@@ -107,7 +152,7 @@ a{color:inherit}
 .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--text);text-decoration:underline;cursor:pointer}
 
 /* Flagship: today's Rankle as one big card under the headline */
-.flag{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);margin-top:22px;border-radius:12px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
+.flag{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);margin-top:22px;border-radius:12px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);overflow:hidden}
 .flag-art{position:relative;display:grid;place-items:center;min-height:240px;background:var(--card-stack)}
 .flag-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .flag-art.led{background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
@@ -124,13 +169,12 @@ a{color:inherit}
 .sec+.kinds,.sec+.tiles{margin-top:12px}
 
 /* Topic page: picture left, the games as rows right */
-.page.at-home.at-topic{max-width:960px}
+.page.at-home.at-topic>main{max-width:960px}
 .topic{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:24px;align-items:start;margin-top:24px}
 .topic-art{position:relative;aspect-ratio:3 / 2;border-radius:10px;overflow:hidden;background:var(--card-stack)}
 .topic-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .games{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
-.grow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;padding:14px 16px;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);text-decoration:none}
-.grow:active{transform:translateY(2px)}
+.grow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;padding:14px 16px;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);text-decoration:none}
 .grow-name{font-weight:800;font-size:20px}
 .grow-blurb{grid-column:1/-1;color:var(--muted);font-size:14px}
 .topic .btn{margin-top:18px}
@@ -149,9 +193,8 @@ a{color:inherit}
 .how b{display:block;font-size:15px;margin-bottom:3px}
 .how span{color:var(--muted);font-size:14px}
 /* Level 1: the game types as big cards; level 2: the pools of one game type as tiles */
-.kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:28px}
-.kind{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
-.kind:active{transform:translateY(2px)}
+.kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px;margin-top:28px}
+.kind{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);overflow:hidden}
 .kind-art{position:relative;display:grid;place-items:center;aspect-ratio:2 / 1;background:var(--card-stack)}
 .kind-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 /* A game without a picture: its name as an LED board */
@@ -161,9 +204,13 @@ a{color:inherit}
 .kind-body{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 12px;padding:16px}
 .kind-name{font-weight:800;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kind-blurb{grid-column:1/-1;color:var(--muted);font-size:14px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:28px}
-.tile{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--card-edge),0 6px 0 var(--card-stack);overflow:hidden}
-.tile:active{transform:translateY(2px)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px;margin-top:28px}
+.tile{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);overflow:hidden}
+/* Clickable cards: the same key as the buttons, they rise on their edge under the pointer and sink when pressed */
+.tile,.kind,.grow{transition:transform .12s,box-shadow .12s,filter .12s}
+@media (hover:hover){.tile:hover,.kind:hover,.grow:hover{transform:translateY(-3px);box-shadow:0 6px 0 var(--surface-edge);filter:brightness(1.05)}}
+.tile:active,.kind:active,.grow:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge)}
+@media (prefers-reduced-motion:reduce){.tile,.kind,.grow{transition:none}}
 .tile-art{position:relative;aspect-ratio:3 / 2;background:var(--card-stack)}
 .tile-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 /* Title and button share one line under the picture */
@@ -282,24 +329,24 @@ a{color:inherit}
 
 /* Tablet and phone */
 @media (max-width:1023px){
-  body{padding-inline:24px}
-  .page{max-width:560px}
-  .page.at-home{max-width:1280px}
+  body{padding-inline:32px}
+  .page>main{max-width:560px}
+  .page.at-home>main{max-width:1280px}
   .game{padding-block:12px 0}
   .question{font-size:24px;margin-top:10px}
   .right{margin-top:10px}
   .note{display:none}
   .page.done .note{display:block}
   .page.done .board>li{min-height:52px}
-  .page:not(.at-home) .logo{display:none}
 }
 @media (max-width:639px){
-  body{padding-inline:16px}
-  .top{min-height:52px}
+  :root{--dw:100vw}
+  .drawer{border-right:0}
+  body{padding-inline:20px}
   .counter{font-size:17px}
   .home{padding-block:22px 40px}
   .home h1{font-size:34px}
-  .kinds{grid-template-columns:1fr;gap:14px;margin-top:22px}
+  .kinds{grid-template-columns:1fr;gap:20px;margin-top:22px}
   .home .lead{font-size:15px}
   .btn{width:100%}
   .topic{grid-template-columns:1fr;gap:16px;margin-top:18px}
@@ -315,7 +362,7 @@ a{color:inherit}
   .kind-art .tile-cards{font-size:44px}
   .kind-body{padding:14px}
   .kind-name{font-size:19px}
-  .tiles{grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+  .tiles{grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
   /* Narrow tiles: title on top, button underneath, the same on every tile */
   /* Narrow tiles: name on top, button at the bottom; the body stretches, so buttons line up across a row */
   .tile-body{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;flex:1;gap:8px;padding:12px}
@@ -349,10 +396,13 @@ a{color:inherit}
 <div class="page at-home" id="page">
   <header class="top">
     <div class="top-left">
+      <button class="icon burger" id="menu-btn" type="button" aria-label="Menu" aria-controls="menu"></button>
       <a class="icon back" id="back" href="#" aria-label="All games"></a>
-      <a class="logo" href="#">Sportrankle</a>
     </div>
-    <div class="counter" id="counter"><span id="round">1/8</span><i id="csep"></i><span id="cpts"><span id="score">0</span> pts</span></div>
+    <div class="top-mid">
+      <a class="logo" href="#">Sportrankle</a>
+      <div class="counter" id="counter"><span id="round">1/8</span><i id="csep"></i><span id="cpts"><span id="score">0</span> pts</span></div>
+    </div>
     <div class="top-right">
       <button class="nav" id="rules-btn" type="button" aria-expanded="false" aria-controls="rules-panel">Rules</button>
       <button class="icon stats-btn" id="stats-btn" type="button" aria-label="Statistics" aria-expanded="false" aria-controls="stats-panel"></button>
@@ -360,6 +410,13 @@ a{color:inherit}
     <div class="panel" id="rules-panel" hidden></div>
     <div class="panel" id="stats-panel" hidden></div>
   </header>
+
+  <div class="drawer-bg" id="menu-bg"></div>
+  <nav class="drawer" id="menu" aria-label="Menu">
+    <div class="drawer-head"></div>
+    <div id="menu-list"></div>
+  </nav>
+  <button class="icon burger drawer-x" id="menu-close" type="button" aria-label="Close menu"></button>
 
   <main class="home" id="home">__STATIC__</main>
 
@@ -627,6 +684,7 @@ function rulesHTML(){
 }
 function togglePanel(id, btn){
   const open = $(id).hidden;
+  closeMenu(false);
   closePanels();
   if (open) {
     $(id).innerHTML = id === 'stats-panel' ? statsHTML() : rulesHTML();
@@ -969,9 +1027,45 @@ function partyRender(){
 function partyButton(label, fn){ const b = $('pp-main'); b.textContent = label; b.onclick = fn; }
 $('party-play').addEventListener('click', e => { if (e.target.id === 'pp-setup') { partySetup(); scrollTo(0, 0); } });
 
+// ---- Menu: a drawer from the left with every sport and every game ----
+function menuHTML(){
+  // Mark where you are: the sport of the open sport, topic or game page, and the game type being played
+  const h = (location.hash || ROUTE || '').slice(1), m = h.match(/^(rankle|blind|sort|ringer)?(?:[-/]?)(.*)$/);
+  const [, kind, rest] = m, topic = rest.replace(/^[st]\//, '');
+  const sport = SPORTS[topic] ? topic : DATA[topic]?.sport;
+  const link = (href, name, on) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${name}</a></li>`;
+  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => { const t = topicsOf(s); return link(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, s === sport); });
+  const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind)), link('#ringer', 'Ringer', kind === 'ringer')];
+  return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
+}
+function openMenu(){
+  closePanels();
+  $('menu-list').innerHTML = menuHTML();
+  $('page').classList.add('menu-open');
+  $('menu-btn').setAttribute('aria-expanded', 'true');
+  document.documentElement.style.overflow = 'hidden';
+  const r = $('menu-btn').getBoundingClientRect();
+  Object.assign($('menu-close').style, {left: `${r.left}px`, top: `${r.top}px`});
+  $('menu-close').focus({preventScroll: true});
+}
+function closeMenu(refocus = true){
+  if (!$('page').classList.contains('menu-open')) return;
+  $('page').classList.remove('menu-open');
+  $('menu-btn').setAttribute('aria-expanded', 'false');
+  document.documentElement.style.overflow = '';
+  if (refocus) $('menu-btn').focus();
+}
+$('menu-btn').addEventListener('click', openMenu);
+$('menu-close').addEventListener('click', () => closeMenu());
+addEventListener('resize', () => { const r = $('menu-btn').getBoundingClientRect(); Object.assign($('menu-close').style, {left: `${r.left}px`, top: `${r.top}px`}); });
+$('menu-bg').addEventListener('click', closeMenu);
+$('menu').addEventListener('click', e => { if (e.target.closest('a')) closeMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
 // ---- Routing ----
 let booted = false;
 function route(){
+  closeMenu(false);
   closePanels();
   $('party').hidden = true;
   // A page loaded on a real URL opens its own view; from then on the hash decides

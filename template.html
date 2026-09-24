@@ -386,10 +386,19 @@ a{color:inherit}
 .sportnav a{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:15px;white-space:nowrap;text-decoration:none;
   transition:background-color .15s}
 .sportnav img{flex:none;width:20px;height:20px;object-fit:contain}
-.sportnav a[aria-current="page"]{color:var(--signal);background:var(--surface)}
-@media (hover:hover){.sportnav a:hover{background:var(--surface)}}
-.sportnav a:active{background:var(--surface-edge)}
-@media (prefers-reduced-motion:reduce){.sportnav a{transition:none}}
+.nav-more{position:relative}
+.nav-more-btn{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border:0;border-radius:10px;background:none;font:700 15px var(--font);cursor:pointer;
+  transition:background-color .15s}
+.nav-more-btn::after{content:"";width:6px;height:6px;margin-top:-3px;border-right:2px solid;border-bottom:2px solid;transform:rotate(45deg)}
+.nav-more-btn[aria-expanded="true"]::after{margin-top:3px;transform:rotate(-135deg)}
+.nav-more-list{position:absolute;z-index:31;top:calc(100% + 12px);left:0;min-width:220px;display:flex;flex-direction:column;gap:6px;padding:6px;
+  background:var(--bg);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 3px 0 var(--surface-edge)}
+.nav-more-list[hidden]{display:none}
+.sportnav a[aria-current="page"],.nav-more-btn.on{color:var(--signal);background:var(--surface)}
+.nav-more-btn[aria-expanded="true"]{background:var(--surface)}
+@media (hover:hover){.sportnav a:hover,.nav-more-btn:hover{background:var(--surface)}}
+.sportnav a:active,.nav-more-btn:active{background:var(--surface-edge)}
+@media (prefers-reduced-motion:reduce){.sportnav a,.nav-more-btn{transition:none}}
 @media (min-width:1280px){
   #menu-btn,.drawer,.drawer-bg,.drawer-x,.top-mid .logo{display:none}
   .top-left .logo-left,.page:not(.at-home) .top .logo-left{display:flex}
@@ -1041,12 +1050,29 @@ function here(){
   return {kind, sport: SPORTS[topic] ? topic : DATA[topic]?.sport};
 }
 const sportHref = s => { const t = topicsOf(s); return t.length > 1 ? `#s/${s}` : `#t/${t[0]}`; };
-// Wide screens: the sports as links in the middle of the header
+// Wide screens: the sports as links in the middle of the header. Up to 5 fit; with more, the first 4 show and a
+// "More" button opens the rest in a dropdown underneath (the button is marked when the current sport is in there)
+const NAV_MAX = 5;
 function sportNav(){
-  const {sport} = here();
-  $('sportnav').innerHTML = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
-    + `${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}</a>`).join('');
+  const {sport} = here(), all = Object.keys(SPORTS).filter(s => topicsOf(s).length);
+  const link = s => `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
+    + `${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}</a>`;
+  const shown = all.length > NAV_MAX ? all.slice(0, NAV_MAX - 1) : all, rest = all.slice(shown.length);
+  $('sportnav').innerHTML = shown.map(link).join('') + (rest.length ? `<div class="nav-more">
+    <button type="button" class="nav-more-btn${rest.includes(sport) ? ' on' : ''}" id="more-btn" aria-expanded="false" aria-controls="more-list">More</button>
+    <div class="nav-more-list" id="more-list" hidden>${rest.map(link).join('')}</div></div>` : '');
 }
+function toggleMore(open){
+  const b = $('more-btn');
+  if (!b) return;
+  $('more-list').hidden = !open;
+  b.setAttribute('aria-expanded', String(open));
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('#more-btn')) toggleMore($('more-list').hidden);
+  else if (!e.target.closest('#more-list')) toggleMore(false);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleMore(false); });
 function menuHTML(){
   const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;

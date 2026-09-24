@@ -374,12 +374,16 @@ const GAMES = {
   sort: {name: 'Sort it', word: 'SORT', blurb: 'One attribute, all eight in view. Swap them into the right order, then reveal.'},
 };
 const KIND_ART = __KINDS__;
+const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cover?}}
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
-const ORDER = ['rankle-athletes', 'rankle-sports', 'rankle-f1', 'rankle-nfl', 'rankle-ski', 'rankle-cl',
-  'blind-sports', 'blind-f1', 'blind-nfl', 'blind-ski', 'blind-cl', 'sort-sports', 'sort-f1', 'sort-nfl', 'sort-ski', 'sort-cl'];
+const POOLS = ['athletes', 'sports', 'f1', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl'];
+const ORDER = ['rankle', 'blind', 'sort'].flatMap(k => POOLS.filter(m => !DATA[m].kinds || DATA[m].kinds.includes(k)).map(m => `${k}-${m}`));
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
-const poolsFor = kind => Object.keys(DATA).filter(m => !DATA[m].kinds || DATA[m].kinds.includes(kind))
+const poolsFor = (kind, sport) => POOLS.filter(m => (!DATA[m].kinds || DATA[m].kinds.includes(kind)) && (!sport || DATA[m].sport === sport))
   .sort((a, b) => (DATA[b].flagship ? 1 : 0) - (DATA[a].flagship ? 1 : 0));
+const sportsFor = kind => Object.keys(SPORTS).filter(s => poolsFor(kind, s).length);
+// Where a pool's back arrow goes: its sport page when the sport has more than one pool, else the game page
+const upLink = (kind, m) => poolsFor(kind, DATA[m].sport).length > 1 ? `#${kind}/${DATA[m].sport}` : `#${kind}`;
 const FLAG = Object.keys(DATA).find(m => DATA[m].flagship);
 const BLIND_PTS = [5, 3, 1];   // exact slot, one off, two off
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -671,8 +675,20 @@ function finishFooter(){
 }
 
 // ---- Home ----
-function renderHome(kind){
+function renderHome(kind, sport){
   const date = new Date().toLocaleDateString('en-GB', {weekday: 'short', day: 'numeric', month: 'long'});
+  // Level 2: the sports of one game. A sport with a single pool links straight to that pool.
+  const sportTile = (kind, s) => {
+    const sp = poolsFor(kind, s), done = sp.filter(m => progress(kind, m) >= PICK).length;
+    const started = sp.filter(m => progress(kind, m) > 0).length;
+    const img = SPORTS[s].cover || (sp.map(m => DATA[m].cover).find(Boolean));
+    const status = done === sp.length ? `<span class="tile-status done">✓ ${sp.length > 1 ? 'All played' : `${(load(`${kind}-history-${sp[0]}`) || {})[today()]?.[0] ?? ''} pts`}</span>`
+      : `<span class="tile-status">${started ? `Continue ${done}/${sp.length}` : 'Play'}</span>`;
+    return `<a class="tile" href="${sp.length > 1 ? `#${kind}/${s}` : `#${kind}-${sp[0]}`}" aria-label="${GAMES[kind].name}, ${SPORTS[s].name}">
+      <span class="tile-art">${img ? `<img src="${img}" alt="">` : ''}</span>
+      <span class="tile-body"><span class="tile-name">${SPORTS[s].name}</span>${status}</span>
+    </a>`;
+  };
   const tile = (kind, m) => {
     const g = DATA[m], n = progress(kind, m);
     const first = (kind === 'rankle' ? rankleDraw(m) : blindDraw(m, kind)).items[0];
@@ -686,8 +702,8 @@ function renderHome(kind){
       <span class="tile-body"><span class="tile-name">${g.tab}</span>${status}</span>
     </a>`;
   };
-  // Level 1: one card per game type; level 2 (kind set): that game's pools
-  const pools = poolsFor(kind || 'blind');   // level 2: this game's pools; level 1 texts: the regular pools
+  // Level 1: one card per game type; level 2: that game's sports; level 3: the pools of one sport
+  const pools = poolsFor(kind || 'blind', sport);
   const kindCard = (kind, g) => {
     const kp = poolsFor(kind), done = kp.filter(m => progress(kind, m) >= PICK).length;
     const started = kp.filter(m => progress(kind, m) > 0).length;
@@ -720,9 +736,9 @@ function renderHome(kind){
     </section>`;
   };
   $('home').innerHTML = kind
-    ? `<h1>${GAMES[kind].name}</h1>
-      <p class="today">${GAMES[kind].blurb} Pick a pool:</p>
-      <div class="tiles">${pools.map(m => tile(kind, m)).join('')}</div>`
+    ? `<h1>${GAMES[kind].name}${sport ? ` · ${SPORTS[sport].name}` : ''}</h1>
+      <p class="today">${GAMES[kind].blurb} ${sport ? 'Pick a topic:' : 'Pick a sport:'}</p>
+      <div class="tiles">${sport ? pools.map(m => tile(kind, m)).join('') : sportsFor(kind).map(s => sportTile(kind, s)).join('')}</div>`
     : `<section class="hero">
         <p class="eyebrow">Daily sports puzzles</p>
         <h1>How much of a sports freak are you?</h1>
@@ -738,7 +754,7 @@ function renderHome(kind){
         </a></div>
       <section class="how">
         <div><b>1 · Pick a game</b><span>Rankle, Blind ranking or Sort it — or Ringer with friends.</span></div>
-        <div><b>2 · Rank eight cards</b><span>${pools.map(m => DATA[m].tab).join(', ')}. One attempt per game and day.</span></div>
+        <div><b>2 · Rank eight cards</b><span>${Object.values(SPORTS).map(s => s.name).join(', ')} — ${POOLS.length} topics. One attempt per game and day.</span></div>
         <div><b>3 · Compare</b><span>Your score against everyone who played today, plus your own stats and streak.</span></div>
       </section>`;
   if (!kind && FLAG) flagCount();
@@ -848,7 +864,17 @@ function route(){
   }
   const legacy = {sports: 'rankle-sports', f1: 'rankle-f1'};
   const m = (legacy[h] || h).match(/^(rankle|blind|sort)(?:-([a-z0-9]+))?$/);
+  const ms = h.match(/^(rankle|blind|sort)\/([a-z]+)$/);   // the pools of one sport
   busy = false;
+  if (ms && sportsFor(ms[1]).includes(ms[2])) {
+    KIND = null;
+    $('page').className = 'page at-home at-kind';
+    $('back').href = `#${ms[1]}`;
+    $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;
+    renderHome(ms[1], ms[2]);
+    scrollTo(0, 0);
+    return;
+  }
   if (!m || (m[2] && !poolsFor(m[1]).includes(m[2]))) {
     KIND = null;
     $('page').className = 'page at-home';
@@ -869,7 +895,7 @@ function route(){
   }
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
   $('page').className = 'page';
-  $('back').href = `#${KIND}`;
+  $('back').href = upLink(KIND, MODE);
   $('today').hidden = true;
   $('led').hidden = true;
   $('home').hidden = true; $('game').hidden = false; $('alt').hidden = true;

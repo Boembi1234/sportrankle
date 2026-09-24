@@ -2,7 +2,7 @@
 
 Daily sports ranking puzzles, live at <https://sportrankle.netlify.app>.
 
-Three games, six pools (Top 150 athletes, team sports, F1 circuits, NFL teams, alpine skiers, Champions League players), one attempt per game and day. The Top 150 athletes pool is the flagship: Rankle only, shown as the big card on top of the home page (`"kinds": ["rankle"], "flagship": True` in `GAMES`). Every player gets the same cards; the daily draw is seeded by the date in the browser, so the site is a single static page with no backend.
+Three games, nine topics in five sports, one attempt per game and day. The home page goes **game → sport → topic**: Rankle → American football → NFL teams / NFL players / NFL Hall of Fame / College football; All sports → Top 150 athletes / Team sports; Football → Champions League players; Motorsport → F1 circuits; Winter sports → Alpine skiers. A sport with a single topic links straight to it. Each pool names its `"sport"` (a key of `SPORTS` in `build.py`, which also holds the sport's name and optional picture `covers/sport-<key>.png`). The Top 150 athletes pool is the flagship: Rankle only, shown as the big card on top of the home page (`"kinds": ["rankle"], "flagship": True`). Every player gets the same cards; the daily draw is seeded by the date in the browser, so the site is a single static page with no backend.
 
 | Game | Idea |
 |---|---|
@@ -39,7 +39,7 @@ Each pool is one workbook with three sheets:
 2. **Ränge** – ignored; ranks are recomputed from the values so the sheet can be saved without cached formulas.
 3. **Kategorien** – `#`, `Kategorie`, `Einheit`, `Rang 1 =` (direction, e.g. `meiste`, `frühestes`, `nördlichstes`). Rows whose `#` is a number are used.
 
-Values may be numbers or dates. Ties share a rank; empty cells get no rank and score 0 in Rankle.
+Values may be numbers or dates. Ties share a rank; empty cells get no rank and score 0 in Rankle. Rows under the table with fewer than half their values filled (notes, helper rows) are ignored, as are `HILFSSPALTE:` columns after the categories — unless the pool's `"sub"` names some of them, in which case their values appear in brackets after the item name (team and position under a player's name, for example).
 
 **Wide format** (used by the Champions League players): one sheet, one row per item, the stats in named columns, rank columns optional (they are ignored and recomputed). The `GAMES` entry sets `"format": "wide"`, the name column, which columns become categories (with English name, unit, format and direction), optional `"sub"` columns shown under the name, and an optional `"filter"` column/value to keep a subset of rows.
 

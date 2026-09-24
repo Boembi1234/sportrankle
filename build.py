@@ -32,22 +32,38 @@ PHOTO_RATIO = 1.6   # own photos taller than this (w:h) are cropped to a centred
 
 # The spreadsheets are German; the page is English. Rows and categories are
 # translated through the tables below (missing entries fall back to German).
+# The home page goes game -> sport -> pool. Every pool names its "sport" (a key of SPORTS below).
+SPORTS = {
+    "football": {"name": "American football", "cover": "covers/sport-football.png"},
+    "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
+    "soccer": {"name": "Football", "cover": "covers/sport-soccer.png"},
+    "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png"},
+    "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png"},
+}
+
 GAMES = {
     # "cover" is the picture on the home tile; games without one show their first item's photo
     "sports": {"file": "Mannschaftssportarten*.xlsx", "tab": "Team sports", "noun": "sport", "plural": "sports", "word": "SPORTS",
-               "cover": "covers/sports.png"},
+               "sport": "mixed", "cover": "covers/sports.png"},
     "f1": {"file": "F1-Strecken*.xlsx", "tab": "F1 circuits", "noun": "circuit", "plural": "circuits", "word": "F1",
-           "cover": "covers/f1.png"},
-    # Names are already English; "short" says what goes on the title cards: the last word or all but the first
+           "sport": "motorsport", "cover": "covers/f1.png"},
+    # Names are already English; "short" says what goes on the title board: the last word or all but the first.
+    # "sub" names helper columns whose values go in brackets after the name (shown under the title board).
     "nfl": {"file": "NFL_Teams*.xlsx", "tab": "NFL teams", "noun": "team", "plural": "teams", "word": "NFL", "english": True, "short": "last",
-            "cover": "covers/nfl.png"},
+            "sport": "football", "cover": "covers/nfl.png", "sub": ["HILFSSPALTE: Division 2026"]},
+    "nflplayers": {"file": "NFL_Spieler*.xlsx", "tab": "NFL players", "noun": "player", "plural": "players", "word": "NFL", "english": True, "short": "surname",
+                   "sport": "football", "cover": "covers/nflplayers.png", "sub": ["HILFSSPALTE: Team (Sept. 2026)", "HILFSSPALTE: Position"]},
+    "nflhof": {"file": "NFL_HallOfFame*.xlsx", "tab": "NFL Hall of Fame", "noun": "legend", "plural": "legends", "word": "HOF", "english": True, "short": "surname",
+               "sport": "football", "cover": "covers/nflhof.png", "sub": ["HILFSSPALTE: Position"]},
+    "college": {"file": "CollegeFootball*.xlsx", "tab": "College football", "noun": "program", "plural": "programs", "word": "NCAA", "english": True,
+                "sport": "football", "cover": "covers/college.png", "sub": ["HILFSSPALTE: Uni-Stadt"]},
     "ski": {"file": "Ski_Alpin*.xlsx", "tab": "Alpine skiers", "noun": "skier", "plural": "skiers", "word": "SKI", "english": True, "short": "surname",
-            "cover": "covers/ski.png"},
+            "sport": "winter", "cover": "covers/ski.png"},
     # "wide" format: one sheet, one row per player, value and rank columns side by side (ranks are recomputed).
     # "cats" maps the value columns to use -> (English name, unit, format, "Rank 1 =" direction);
     # "sub" columns go in brackets after the name and appear under the title; "filter" keeps matching rows only.
     "cl": {"file": "CL_Players*.xlsx", "tab": "Champions League players", "noun": "player", "plural": "players", "word": "CL",
-           "english": True, "short": "surname", "cover": {"file": "covers/cl.png", "width": 0.8, "cy": 0.46},
+           "english": True, "short": "surname", "sport": "soccer", "cover": {"file": "covers/cl.png", "width": 0.8, "cy": 0.46},
            "format": "wide", "name_col": "Player", "sub": ["Club", "Nationality"], "filter": ("Top 101 by MV", "yes"),
            "cats": {
                "Market value (€)": ("Market value", "M €", "mio", "highest"),
@@ -72,7 +88,7 @@ GAMES = {
 GAMES["athletes"] = {
     # The flagship: Rankle only ("kinds"), shown as the big card on top of the home page ("flagship")
     "file": "Sportrankle_Top150*.xlsx", "tab": "Top 150 athletes", "noun": "athlete", "plural": "athletes", "word": "TOP 150",
-    "english": True, "short": "surname", "kinds": ["rankle"], "flagship": True,
+    "english": True, "short": "surname", "sport": "mixed", "kinds": ["rankle"], "flagship": True,
     "cover": {"file": "covers/athletes.png", "ratio": 1, "width": 1.0, "cy": 0.5, "bg": "#282c50"},   # whole square, shown on its own navy
     "format": "wide", "name_col": "Athlete", "sub": ["Sport", "Nationality"],
     "cats": {
@@ -179,6 +195,51 @@ CATS_EN = {
     "Social-Media-Follower": ("Social media followers", "million"),
     "YouTube-Abonnenten": ("YouTube subscribers", "thousand"),
     "Betriebsgewinn Saison 2025": ("Operating profit 2025", "M USD"),
+    "Am heutigen Standort seit": ("In current city since", ""),
+    "Jahre ohne Meistertitel": ("Years without a title", "years"),
+    "Playoff-Siege all-time": ("Playoff wins, all time", "wins"),
+    "Siegquote Regular Season all-time": ("Regular-season win rate", ""),
+    "Stadion eröffnet": ("Stadium opened", ""),
+    "Reisekilometer zu den Divisionsgegnern": ("Travel to division rivals", "km"),
+    "Punkte erzielt Regular Season 2025": ("Points scored 2025", "pts"),
+    "Besitzerfamilie seit": ("Owner family since", ""),
+    "Erster Pick im Draft 2026": ("First pick, 2026 draft", "overall"),
+    # NFL players and Hall of Fame
+    "Geburtsdatum": ("Date of birth", ""),
+    "Grösse": ("Height", "cm"),
+    "Gewicht": ("Weight", "kg"),
+    "Draft-Jahr": ("Draft year", ""),
+    "Draft-Position": ("Draft position", "overall"),
+    "Alter beim NFL-Debüt": ("Age at NFL debut", "years"),
+    "Playoff-Spiele Karriere": ("Playoff games", "games"),
+    "Saisons im aktuellen Team": ("Seasons with current team", "seasons"),
+    "Pro-Bowl-Nominierungen": ("Pro Bowl selections", ""),
+    "First-Team All-Pro": ("First-team All-Pro", ""),
+    "Super-Bowl-Teilnahmen": ("Super Bowl appearances", ""),
+    "Rückennummer": ("Jersey number", ""),
+    "Ø Jahresgehalt aktueller Vertrag": ("Average salary, current deal", "M USD"),
+    "Vertrag läuft bis": ("Contract runs until", ""),
+    "Einwohner Geburtsort": ("Population of birthplace", "thousand"),
+    "HOF-Aufnahmejahr": ("Hall of Fame induction", ""),
+    "Spiele Regular Season": ("Regular-season games", "games"),
+    "Anzahl NFL-Teams": ("NFL teams played for", "teams"),
+    "Meistertitel (NFL/Super Bowl)": ("Championships", "titles"),
+    "Alter bei HOF-Aufnahme": ("Age at induction", "years"),
+    "Alter beim letzten Spiel": ("Age at last game", "years"),
+    # College football
+    "Universität gegründet": ("University founded", ""),
+    "Siege all-time": ("Wins, all time", "wins"),
+    "Siegquote all-time": ("Win rate, all time", ""),
+    "Jahre seit letztem AP-Nationaltitel": ("Years since last AP title", "years"),
+    "AP-Nationaltitel": ("AP national titles", "titles"),
+    "Heisman-Sieger": ("Heisman winners", ""),
+    "Bowl-Siege all-time": ("Bowl wins, all time", "wins"),
+    "CFP-Teilnahmen": ("Playoff appearances", ""),
+    "Siege Saison 2025": ("Wins in 2025", "wins"),
+    "Studierende": ("Students", "thousand"),
+    "Einwohner Uni-Stadt": ("Population of college town", "thousand"),
+    "NFL-Draft-Picks 2026": ("2026 NFL draft picks", "players"),
+    "Unentschieden all-time": ("Ties, all time", "ties"),
     # Alpine skiers
     "Geburtsdatum (Alter)": ("Date of birth", ""),
     "Weltcup-Debüt": ("World Cup debut", ""),
@@ -203,17 +264,26 @@ DIR_EN = {"meiste": "most", "grösste": "largest", "grösster": "largest", "län
           "schnellste": "fastest", "nördlichste": "northernmost", "nördlichstes": "northernmost", "westlichstes": "westernmost",
           "kürzeste": "shortest", "kleinste": "smallest", "leichteste": "lightest", "südlichste": "southernmost",
           "tiefste": "lowest", "wenigste": "fewest", "am längsten": "earliest", "am längsten dabei": "earliest",
-          "jüngste/r": "youngest", "jüngste/r Debütant/in": "youngest"}
+          "jüngste/r": "youngest", "jüngste/r Debütant/in": "youngest",
+          # NFL and college sheets
+          "am längsten (ältestes Jahr)": "longest", "längste Durststrecke": "longest", "höchster": "highest", "höchstes": "highest",
+          "ältestes Stadion": "oldest", "grösstes": "largest", "teuerstes": "most expensive", "meiste Kilometer": "most",
+          "frühester Pick": "earliest pick", "frühester Pick (Nr. 1)": "earliest pick", "ältester": "oldest", "grösster": "tallest",
+          "schwerster": "heaviest", "frühestes (dienstältester)": "earliest", "jüngstes Debüt": "youngest", "kleinste Nummer": "lowest",
+          "längste Bindung": "latest", "grösste Stadt": "largest", "neueste Aufnahme": "most recent", "meiste Teams": "most",
+          "jüngste Aufnahme": "youngest", "ältester beim Rücktritt": "oldest", "älteste Uni": "oldest"}
 
 # "Rang 1 =" directions where the smallest value wins. "am längsten (dabei)" ranks a year or date, so the
 # earliest wins; "jüngste/r" on a birth date means the latest date wins, on an age the smallest number.
 LOW_FIRST = {"ältestes", "älteste", "frühestes", "früheste", "schnellste", "kürzeste", "kleinste", "leichteste", "südlichste", "tiefste", "wenigste",
-             "am längsten", "am längsten dabei", "jüngste/r Debütant/in"}
+             "am längsten", "am längsten dabei", "jüngste/r Debütant/in",
+             "am längsten (ältestes Jahr)", "ältestes Stadion", "frühester Pick", "frühester Pick (Nr. 1)", "ältester",
+             "frühestes (dienstältester)", "jüngstes Debüt", "kleinste Nummer", "jüngste Aufnahme", "älteste Uni"}
 
 # Spreadsheet unit -> (unit shown, value format)
 UNIT_FMT = {"Anzahl": ("", ""), "Jahr": ("", "year"), "Sekunden": ("", "laptime"), "Grad": ("", "lat"),
             "° Nord": ("", "lat"), "° West": ("", "lon"), "%": ("", "pct"), "Datum": ("", "date"),
-            "Jahre": ("years", "dec1"), "Ø Podeste": ("podiums", "dec1"), "Ø Siege": ("wins", "dec1")}
+            "Jahre": ("years", ""), "Saison": ("", "year"), "Ø Podeste": ("podiums", "dec1"), "Ø Siege": ("wins", "dec1")}
 
 
 def photo(url):
@@ -323,10 +393,14 @@ def load_game(key, cfg):
     img_col = header.index("Bild-URL") if "Bild-URL" in header else None
     src_col = next((i for i, h in enumerate(header) if h and str(h).startswith("Bildquelle")), None)
 
-    values, images = {}, {}
+    sub_cols = [header.index(h) for h in cfg.get("sub", []) if h in header]
+
+    values, images, subs = {}, {}, {}
     for row in values_ws.iter_rows(min_row=2, values_only=True):
-        if row[0]:
+        # a row is an item when it has a name and at least half its values (notes and helper rows have 0 or 1)
+        if row[0] and sum(isinstance(v, (int, float, datetime)) for v in row[1 : 1 + n_cat]) * 2 >= n_cat:
             values[row[0]] = list(row[1 : 1 + n_cat])
+            subs[row[0]] = " · ".join(str(row[i]) for i in sub_cols if row[i])
             if img_col is not None and row[img_col]:
                 try:
                     images[row[0]] = {"img": photo(row[img_col]),
@@ -354,11 +428,12 @@ def load_game(key, cfg):
             print(f"  No English name for '{n}', using German")
     for cat in cats:
         cat["dir"] = DIR_EN.get(cat["dir"], cat["dir"])
-    items = [{"name": NAMES_EN.get(n, n), "ranks": ranks[n], "values": values[n], **images.get(n, {})} for n in names]
+    items = [{"name": NAMES_EN.get(n, n) + (f" ({subs[n]})" if subs.get(n) else ""), "ranks": ranks[n], "values": values[n],
+              **images.get(n, {})} for n in names]
     if cfg.get("short"):
         for it in items:
-            words = it["name"].split()
-            it["short"] = words[-1] if cfg["short"] == "last" else " ".join(words[1:])
+            words = it["name"].split(" (")[0].split()
+            it["short"] = words[-1] if cfg["short"] == "last" else " ".join(words[1:]) or words[0]
 
     attach_photos(key, cfg, names, items)
     return game(key, cfg, path, items, cats)
@@ -385,7 +460,7 @@ def game(key, cfg, path, items, cats):
     # "cover" is a file, or a dict with the file and crop options; "bg" shows the whole picture on that colour
     c = cfg.get("cover")
     opts = c if isinstance(c, dict) else {"file": c}
-    out = {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word", "kinds", "flagship")}, "source": path.name,
+    out = {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word", "kinds", "flagship", "sport")}, "source": path.name,
            "items": items, "cats": cats}
     if c and next(HERE.glob(opts["file"]), None):
         out["cover"] = cover(opts["file"], ratio=opts.get("ratio", 1.5), width=opts.get("width", 0.6), cy=opts.get("cy", 0.53))
@@ -438,8 +513,15 @@ def main():
         opts = f if isinstance(f, dict) else {"file": f}
         if next(HERE.glob(opts["file"]), None):
             kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000)
+    # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's
+    sports = {k: {"name": s["name"], **({"cover": cover(s["cover"])} if next(HERE.glob(s["cover"]), None) else {})}
+              for k, s in SPORTS.items()}
+    for key, g in data.items():
+        if g.get("sport") not in SPORTS:
+            raise SystemExit(f"{key}: unknown sport '{g.get('sport')}'")
     html = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
+            .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
             .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None)))
     OUT.write_text(html, encoding="utf-8")

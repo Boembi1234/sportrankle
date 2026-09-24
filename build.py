@@ -52,11 +52,11 @@ GAMES = {
     "nfl": {"file": "NFL_Teams*.xlsx", "tab": "NFL teams", "noun": "team", "plural": "teams", "word": "NFL", "english": True, "short": "last",
             "sport": "football", "cover": "covers/nfl.png", "sub": ["HILFSSPALTE: Division 2026"]},
     "nflplayers": {"file": "NFL_Spieler*.xlsx", "tab": "NFL players", "noun": "player", "plural": "players", "word": "NFL", "english": True, "short": "surname",
-                   "sport": "football", "cover": "covers/nflplayers.png", "sub": ["HILFSSPALTE: Team (Sept. 2026)", "HILFSSPALTE: Position"]},
+                   "sport": "football", "cover": {"file": "covers/nflplayers.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Team (Sept. 2026)", "HILFSSPALTE: Position"]},
     "nflhof": {"file": "NFL_HallOfFame*.xlsx", "tab": "NFL Hall of Fame", "noun": "legend", "plural": "legends", "word": "HOF", "english": True, "short": "surname",
-               "sport": "football", "cover": "covers/nflhof.png", "sub": ["HILFSSPALTE: Position"]},
+               "sport": "football", "cover": {"file": "covers/nflhof.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Position"]},
     "college": {"file": "CollegeFootball*.xlsx", "tab": "College football", "noun": "program", "plural": "programs", "word": "NCAA", "english": True,
-                "sport": "football", "cover": "covers/college.png", "sub": ["HILFSSPALTE: Uni-Stadt"]},
+                "sport": "football", "cover": {"file": "covers/college.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Uni-Stadt"]},
     "ski": {"file": "Ski_Alpin*.xlsx", "tab": "Alpine skiers", "noun": "skier", "plural": "skiers", "word": "SKI", "english": True, "short": "surname",
             "sport": "winter", "cover": "covers/ski.png"},
     # "wide" format: one sheet, one row per player, value and rank columns side by side (ranks are recomputed).
@@ -514,7 +514,7 @@ def main():
         if next(HERE.glob(opts["file"]), None):
             kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000)
     # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's
-    sports = {k: {"name": s["name"], **({"cover": cover(s["cover"])} if next(HERE.glob(s["cover"]), None) else {})}
+    sports = {k: {"name": s["name"], **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {})}
               for k, s in SPORTS.items()}
     for key, g in data.items():
         if g.get("sport") not in SPORTS:

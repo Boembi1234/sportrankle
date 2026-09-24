@@ -80,6 +80,7 @@ a{color:inherit}
 /* Menu: three bars top left; a drawer slides in from the left with the sports and the games */
 .burger::before,.burger::after{content:"";position:absolute;left:13px;width:18px;height:2px;background:var(--text)}
 .burger::before{top:15px;box-shadow:0 6px 0 var(--text)}
+#menu-btn{margin-left:-13px}   /* the bars (not the 44px tap area) start at the 24px side margin */
 .burger::after{top:27px}
 /* The drawer's X: slides in with the drawer and stops exactly where the three bars are (openMenu measures them) */
 .drawer-x{position:fixed;z-index:42;transform:translateX(calc(-1 * var(--dw)));visibility:hidden;transition:transform .22s ease,visibility 0s .22s}

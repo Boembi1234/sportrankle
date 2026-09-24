@@ -166,7 +166,7 @@ a{color:inherit}
 .flag-done{margin-top:6px;font-weight:800;font-size:18px;color:var(--led-ok);text-decoration:none}
 .hero:has(.flag){max-width:none}
 .sec{margin:32px 0 0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.sec+.kinds,.sec+.tiles{margin-top:12px}
+.sec+.tiles{margin-top:12px}
 
 /* Topic page: picture left, the games as rows right */
 .page.at-home.at-topic>main{max-width:960px}
@@ -192,25 +192,18 @@ a{color:inherit}
 .how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
 .how b{display:block;font-size:15px;margin-bottom:3px}
 .how span{color:var(--muted);font-size:14px}
-/* Level 1: the game types as big cards; level 2: the pools of one game type as tiles */
-.kinds{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px;margin-top:28px}
-.kind{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);overflow:hidden}
-.kind-art{position:relative;display:grid;place-items:center;aspect-ratio:2 / 1;background:var(--card-stack)}
-.kind-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+/* Tiles: sports, topics and the game types, all the same size */
+.kind-art{display:grid;place-items:center}
 /* A game without a picture: its name as an LED board */
 .kind-art.led{background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
 .kind-art .tile-cards{font-family:"Doto",var(--font);font-weight:900;font-size:56px;line-height:1;letter-spacing:.08em;color:var(--signal);text-shadow:0 0 14px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
-/* Name left, button right, always on the same line; the blurb underneath */
-.kind-body{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 12px;padding:16px}
-.kind-name{font-weight:800;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kind-blurb{grid-column:1/-1;color:var(--muted);font-size:14px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px;margin-top:28px}
 .tile{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);overflow:hidden}
 /* Clickable cards: the same key as the buttons, they rise on their edge under the pointer and sink when pressed */
-.tile,.kind,.grow{transition:transform .12s,box-shadow .12s,filter .12s}
-@media (hover:hover){.tile:hover,.kind:hover,.grow:hover{transform:translateY(-3px);box-shadow:0 6px 0 var(--surface-edge);filter:brightness(1.05)}}
-.tile:active,.kind:active,.grow:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge)}
-@media (prefers-reduced-motion:reduce){.tile,.kind,.grow{transition:none}}
+.tile,.grow{transition:transform .12s,box-shadow .12s,filter .12s}
+@media (hover:hover){.tile:hover,.grow:hover{transform:translateY(-3px);box-shadow:0 6px 0 var(--surface-edge);filter:brightness(1.05)}}
+.tile:active,.grow:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge)}
+@media (prefers-reduced-motion:reduce){.tile,.grow{transition:none}}
 .tile-art{position:relative;aspect-ratio:3 / 2;background:var(--card-stack)}
 .tile-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 /* Title and button share one line under the picture */
@@ -346,7 +339,6 @@ a{color:inherit}
   .counter{font-size:17px}
   .home{padding-block:22px 40px}
   .home h1{font-size:34px}
-  .kinds{grid-template-columns:1fr;gap:20px;margin-top:22px}
   .home .lead{font-size:15px}
   .btn{width:100%}
   .topic{grid-template-columns:1fr;gap:16px;margin-top:18px}
@@ -360,8 +352,6 @@ a{color:inherit}
   .sec{margin-top:26px}
   .how{grid-template-columns:1fr;gap:14px;margin-top:28px}
   .kind-art .tile-cards{font-size:44px}
-  .kind-body{padding:14px}
-  .kind-name{font-size:19px}
   .tiles{grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
   /* Narrow tiles: title on top, button underneath, the same on every tile */
   /* Narrow tiles: name on top, button at the bottom; the body stretches, so buttons line up across a row */
@@ -885,9 +875,9 @@ function renderHome(kind, sport){
     const started = kp.filter(m => progress(kind, m) > 0).length;
     const status = done === kp.length ? `<span class="tile-status done">✓ All played</span>`
       : `<span class="tile-status">${started ? `Continue ${done}/${kp.length}` : 'Play'}</span>`;
-    return `<a class="kind" href="#${kind}" aria-label="${g.name}">
-      <span class="kind-art${KIND_ART[kind] ? '' : ' led'}">${KIND_ART[kind] ? `<img src="${KIND_ART[kind]}" alt="">` : `<span class="tile-cards">${g.word}</span>`}</span>
-      <span class="kind-body"><span class="kind-name">${g.name}</span>${status}<span class="kind-blurb">${g.blurb}</span></span>
+    return `<a class="tile" href="#${kind}" aria-label="${g.name}. ${g.blurb}">
+      <span class="tile-art kind-art${KIND_ART[kind] ? '' : ' led'}">${KIND_ART[kind] ? `<img src="${KIND_ART[kind]}" alt="">` : `<span class="tile-cards">${g.word}</span>`}</span>
+      <span class="tile-body"><span class="tile-name">${g.name}</span>${status}</span>
     </a>`;
   };
   // Facts line: what is played, the streak, the countdown
@@ -926,10 +916,10 @@ function renderHome(kind, sport){
       <p class="sec">Pick a sport</p>
       <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length).map(sportCard).join('')}</div>
       <p class="sec">The games</p>
-      <div class="kinds">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
-        <a class="kind" href="#ringer" aria-label="Ringer, party game">
-          <span class="kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">RINGER</span>`}</span>
-          <span class="kind-body"><span class="kind-name">Ringer</span><span class="tile-status">Play</span><span class="kind-blurb">Party game on one phone, 3 to 12 players. Everyone knows the secret except the ringer. Find them.</span></span>
+      <div class="tiles">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
+        <a class="tile" href="#ringer" aria-label="Ringer. Party game on one phone, 3 to 12 players. Everyone knows the secret except the ringer. Find them.">
+          <span class="tile-art kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">RINGER</span>`}</span>
+          <span class="tile-body"><span class="tile-name">Ringer</span><span class="tile-status">Play</span></span>
         </a></div>
       <section class="how">
         <div><b>1 · Pick a sport and a topic</b><span>${Object.values(SPORTS).map(s => s.name).join(', ')} — ${POOLS.length} topics.</span></div>

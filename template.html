@@ -185,17 +185,10 @@ a{color:inherit}
 .topic .meta{margin:18px 0 0}
 
 /* Site map under the home page: real links to every topic, sport and game */
-.sitemap{display:none;width:100%;max-width:1032px;margin:0 auto;padding:8px 0 48px;color:var(--muted);font-size:14px;line-height:1.6}
-.sitemap p{margin:4px 0}
-.sitemap a{color:var(--muted)} .sitemap b a{color:var(--text)}
-.page.at-home:not(.at-kind) .sitemap{display:block}
 /* Static intro of a page before the app renders (search engines see it; the app replaces it) */
 #home ul{color:var(--muted)}
 
 /* Three steps, one line each */
-.how{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
-.how b{display:block;font-size:15px;margin-bottom:3px}
-.how span{color:var(--muted);font-size:14px}
 /* Tiles: sports, topics and the game types, all the same size */
 .kind-art{display:grid;place-items:center}
 /* A game without a picture: its name as an LED board */
@@ -366,7 +359,6 @@ a{color:inherit}
   .flag-body{padding:16px;gap:8px}
   .flag-name{font-size:26px}
   .sec{margin-top:26px}
-  .how{grid-template-columns:1fr;gap:14px;margin-top:28px}
   .kind-art .tile-cards{font-size:44px}
   .tiles{grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
   /* Narrow tiles: title on top, button underneath, the same on every tile */
@@ -500,7 +492,6 @@ a{color:inherit}
     </section>
     <section class="alt" id="alt" hidden><h2 class="alt-h" id="alt-h"></h2><ul class="board" id="board2"></ul></section>
   </main>
-  <footer class="sitemap" id="sitemap">__SITEMAP__</footer>
   <p class="sr" id="live" aria-live="polite"></p>
 </div>
 
@@ -971,11 +962,7 @@ function renderHome(kind, sport){
           <span class="tile-art kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">RINGER</span>`}</span>
           <span class="tile-body"><span class="tile-name">Ringer</span><span class="tile-status">Play</span></span>
         </a></div>
-      <section class="how">
-        <div><b>1 · Pick a sport and a topic</b><span>${Object.values(SPORTS).map(s => s.name).join(', ')} — ${POOLS.length} topics.</span></div>
-        <div><b>2 · Play its games</b><span>Rankle, Blind ranking and Sort it on every topic, one attempt per game and day — or Ringer with friends.</span></div>
-        <div><b>3 · Compare</b><span>Your score against everyone who played today, plus your own stats and streak.</span></div>
-      </section>`;
+      `;
   if (!kind && FLAG) flagCount();
 }
 // How many have played today's flagship so far (the same histogram call the results screen uses)

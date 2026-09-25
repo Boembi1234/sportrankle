@@ -64,7 +64,7 @@ The build enables it when `supabase/anon.key` exists (the project's public "anon
 
 ## Search engines
 
-The build writes one real page per topic, sport and game next to `index.html` (`nfl-teams.html`, `american-football.html`, `rankle.html`, ...; `_redirects` serves them as `/nfl-teams` etc.). Each is the full app opened on that view, with its own title, description, canonical URL, Open Graph tags and JSON-LD, plus a static intro that search engines read before the app renders. `sitemap.xml`, `robots.txt`, `og.jpg` and the icons are generated too, and a footer with real links to every page sits under the home page. Cover pictures are files under `img/covers/` with a content hash in the name (long cache), not data URIs.
+The build writes one real page per topic, sport and game next to `index.html` (`nfl-teams.html`, `american-football.html`, `rankle.html`, ...; `_redirects` serves them as `/nfl-teams` etc.). Each is the full app opened on that view, with its own title, description, canonical URL, Open Graph tags and JSON-LD, plus a static intro that search engines read before the app renders. `sitemap.xml`, `robots.txt`, `og.jpg` and the icons are generated too; search engines find every page through the sitemap and the links between the static intros. Cover pictures are files under `img/covers/` with a content hash in the name (long cache), not data URIs.
 
 ## Deploying
 

@@ -651,18 +651,6 @@ def pages(data, sports):
     return out
 
 
-def site_map(data, sports):
-    """Real links to every page, shown under the home page and crawled from there."""
-    lines = []
-    for sk, sp in sports.items():
-        topics = [(slug(g["tab"]), g["tab"]) for g in data.values() if g["sport"] == sk]
-        if topics:
-            lines.append(f'<p><b><a href="/{slug(sp["name"])}">{esc(sp["name"])}</a></b>: '
-                         + ", ".join(f'<a href="/{s}">{esc(t)}</a>' for s, t in topics) + "</p>")
-    lines.append('<p><b>Games</b>: ' + ", ".join(f'<a href="/{gs}">{esc(n)}</a>' for gs, (n, _) in GAME_PAGES.items()) + "</p>")
-    return '<p class="sec">All puzzles</p>' + "".join(lines)
-
-
 def ld_json(title, desc, url):
     return json.dumps([
         {"@context": "https://schema.org", "@type": "WebSite", "name": "Sportrankle", "url": SITE + "/"},
@@ -716,7 +704,7 @@ def main():
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
             .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None))
-            .replace("__SITEMAP__", site_map(data, sports)))
+            )
 
     def page(title, desc, url, route, intro):
         return (base.replace("__TITLE__", esc(title)).replace("__DESC__", esc(desc)).replace("__CANON__", url)

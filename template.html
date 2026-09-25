@@ -302,6 +302,13 @@ a{color:inherit}
 .row-no{flex:none;width:24px;text-align:center;font-size:20px;line-height:24px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
 .v2 .row.filled{background:var(--surface)}
 .v2 .cat.empty{font-weight:700;color:var(--text)}
+/* Sort it: drag and drop. The held row lifts above the others (which slide aside) and follows the pointer */
+.k-sort .board>li{position:relative;transition:transform .15s ease}
+.k-sort .board>li.dragging,.k-sort .board>li.snap{transition:none}
+.k-sort .board>li.dragging{z-index:2}
+.k-sort .row{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.k-sort .board>li.dragging .row{cursor:grabbing;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion:reduce){.k-sort .board>li{transition:none}}
 .page:is(.k-blind,.k-sort) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
 .page:is(.k-blind,.k-sort):not(.done) .question{font-size:17px;margin-top:24px}
 .page:is(.k-blind,.k-sort) .right{margin-top:16px}
@@ -870,7 +877,7 @@ function rulesHTML(){
   const rankle = `<p><b>Rankle.</b> Every day brings 8 categories and, one after another, 8 items. Put each one in the category where it ranks highest among all ${n || 'items in the pool'}. Each category can be used once. Rank 1 earns 100 points, the last place 0, with equal steps between: nine different values mean steps of 12.5 points, and tied items share their points. No value earns 0. At the end you see the perfect board.</p>`;
   const blind = `<p><b>Blind ranking.</b> Every day brings one attribute and, one after another, 8 items. Put each one on a spot from 1 to 8 without knowing what comes next; a spot can't be changed. The exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}. Tied values count as correct on any of their spots.</p>`;
   const common = `<p>One attempt per game, day and device. New cards at midnight. Keyboard: 1 to 8 or the arrow keys pick a row, Enter confirms.${Object.values(DATA).some(g => g.items.some(it => it.credit)) ? ' Click a photo for its source.' : ''}</p>`;
-  const sort = `<p><b>Sort it.</b> Every day brings one attribute and 8 items, all in view from the start. Tap two rows to swap them until the order is right, then reveal. Scored like Blind ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;
+  const sort = `<p><b>Sort it.</b> Every day brings one attribute and 8 items, all in view from the start. Drag the rows up and down until the order is right, then tap Done. Scored like Blind ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;
   const ringer = `<p><b>Ringer.</b> A party game for ${PLAYERS_MIN} to ${PLAYERS_MAX} people on one phone. Everyone gets the same secret from the chosen pool, except the ringer, who only learns the pool. Pass the phone round, then take turns giving one-word hints about the secret. Vote on who is bluffing, then reveal. The ringer wins by staying hidden or by guessing the secret.</p>`;
   const guess = `<p><b>Guess the record.</b> Every day one sports world record comes up, an official one or a crazy one. Type your guess in the record's unit and lock it in. The closer you are, the more points: 100 for the exact value, about 90 within 10 %, 50 for twice or half the value, 0 from four times off. Then you see the record, its holder and how everyone else did today.</p>`;
   if (!$('party').hidden) return ringer;
@@ -1685,7 +1692,7 @@ function startSort(){
     const c = card('rank');
     paint(c, String(i + 1));
     $(`row-${i}`).querySelector('.c-rank').append(c);
-    $(`row-${i}`).addEventListener('click', () => sortSelect(i));
+    $(`row-${i}`).addEventListener('pointerdown', e => sortDrag(e, i));
   });
   sortRows();
   shown = 0; $('score').textContent = 0;
@@ -1709,11 +1716,49 @@ function sortRound(){
   $('question').className = 'question';
   $('question').hidden = false;
   $('question').innerHTML = catLabel(G.cat);
-  mainButton('Reveal', () => sortReveal(), false);
-  $('note').textContent = 'Tap two rows to swap them. Reveal when the order is right.';
+  mainButton('Done', () => sortReveal(), false);
+  $('note').textContent = 'Drag the rows into order, then tap Done.';
   fitPhoto();
-  announce(`Sort ${PICK} ${D.plural} by ${c.name}, spot 1 = ${c.dir}. Tap two rows to swap them.`);
+  announce(`Sort ${PICK} ${D.plural} by ${c.name}, spot 1 = ${c.dir}. Drag the rows into order, or press two number keys to swap them.`);
 }
+// Drag and drop: hold a row and move it up or down; the rows in between slide aside, and on release the item moves to
+// that spot (the others shift by one). Mouse and touch alike. The name card shows the item you hold.
+function sortDrag(e, i){
+  if (busy || G.phase !== 'round' || e.button > 0) return;
+  const lis = range(PICK).map(k => $(`row-${k}`).parentElement), li = lis[i], row = $(`row-${i}`);
+  const pitch = lis[1].getBoundingClientRect().top - lis[0].getBoundingClientRect().top, y0 = e.clientY;
+  let to = i;
+  chips(showItem(G.order[i])[1]);
+  row.setPointerCapture(e.pointerId);
+  row.classList.add('sel');
+  li.classList.add('dragging');
+  const move = ev => {
+    const dy = Math.max(-i * pitch, Math.min((PICK - 1 - i) * pitch, ev.clientY - y0));
+    li.style.transform = `translateY(${dy}px)`;
+    to = i + Math.round(dy / pitch);
+    lis.forEach((l, k) => {   // the rows in between slide aside; every spot number follows where its row now sits
+      const shift = k === i ? 0 : i < k && k <= to ? -1 : to <= k && k < i ? 1 : 0;
+      if (k !== i) l.style.transform = shift ? `translateY(${shift * pitch}px)` : '';
+      l.querySelector('.row-no').textContent = (k === i ? to : k + shift) + 1;
+    });
+  };
+  const up = () => {
+    row.removeEventListener('pointermove', move); row.removeEventListener('pointerup', up); row.removeEventListener('pointercancel', up);
+    lis.forEach((l, k) => { l.classList.add('snap'); l.style.transform = ''; l.querySelector('.row-no').textContent = k + 1; });   // back in place without sliding, the names move instead
+    li.classList.remove('dragging');
+    row.classList.remove('sel');
+    if (to !== i) {
+      const [s] = G.order.splice(i, 1);
+      G.order.splice(to, 0, s);
+      sortRows();
+      save();
+      announce(`${D.items[s].name} moved to spot ${to + 1}`);
+    }
+    requestAnimationFrame(() => requestAnimationFrame(() => lis.forEach(l => l.classList.remove('snap'))));
+  };
+  row.addEventListener('pointermove', move); row.addEventListener('pointerup', up); row.addEventListener('pointercancel', up);
+}
+// Keyboard: a number key picks a row, another swaps them (drag and drop needs a pointer)
 function sortSelect(i){
   if (busy || G.phase !== 'round') return;
   if (G.sel == null) {

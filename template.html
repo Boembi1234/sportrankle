@@ -384,8 +384,8 @@ a{color:inherit}
 .k-rankle .row.ideal .cat{color:var(--led-ok)}
 .k-rankle .row.ideal .pts,.k-rankle #board2 .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}   /* the perfect board is all green */
 .page.k-rankle.done .row .cat{color:var(--text)}   /* results: the titles white; only the points box carries the colour */
-.k-rankle .row.worst .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}   /* the worst pick(s): red */
-/* During play: green when the pick was the best category still open for that item, red when it was the worst */
+.k-rankle .row.worst .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}   /* a pick in the item's worst category: red */
+/* During play: green when the pick matches the perfect board, red when it is the item's worst category of all */
 .page.k-rankle:not(.done) .row.good .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}
 .page.k-rankle:not(.done) .row.bad .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}
 /* Rankle results: "Your board" / "Perfect board" as two chips, half the width each; the active one blue, the other grey
@@ -1377,12 +1377,12 @@ function rankleFill(i){
   row.querySelector('.who').textContent = nm(s);
   row.querySelector('.unit').textContent = v ? v[1] : 'no value';
   countUp(row.querySelector('.pts'), pts(s, c));
-  // Right away: was this the best (green) or the worst (red) of the categories still open for this item? The open ones
-  // are worked out from the placement order, so a reloaded game shows the same colours. No colour when only one was left.
-  const round = G.sports.indexOf(s), open = G.cats.map((_, k) => k).filter(k => G.placed[k] == null || G.sports.indexOf(G.placed[k]) >= round);
-  const got = open.map(k => pts(s, G.cats[k])), mine = pts(s, c), best = Math.max(...got), worst = Math.min(...got);
-  row.classList.toggle('good', open.length > 1 && mine === best);
-  row.classList.toggle('bad', open.length > 1 && mine === worst && worst !== best);
+  // Right away, measured on the whole game: green when the item sits where the perfect board puts it (or scores the same
+  // there), red when this is its worst category of all eight
+  const slots = G.optSlots || (G.optSlots = optimal()[1]), ideal = G.sports[slots.indexOf(i)], mine = pts(s, c);
+  const good = s === ideal || mine === pts(ideal, c), worst = Math.min(...G.cats.map(k => pts(s, k)));
+  row.classList.toggle('good', good);
+  row.classList.toggle('bad', !good && mine === worst);
   row.setAttribute('aria-label', `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
   // The value shows at once (the rank tile is hidden in Rankle), so the next name can follow straight away
   row.querySelector('.vals').innerHTML = v ? miniHTML(v[0]) : '';
@@ -1445,8 +1445,9 @@ function rankleResults(){
     turn(rank, rank.dataset.ch, 300 + k * 90, ok ? 'ok' : 'no');
     G.share = (G.share || []).concat(ok ? '🟩' : '🟥');
   });
-  const low = Math.min(...G.cats.map((c, k) => pts(G.placed[k], c)));   // the worst pick(s) on your board go red
-  G.cats.forEach((c, k) => $(`row-${k}`).classList.toggle('worst', pts(G.placed[k], c) === low && !$(`row-${k}`).classList.contains('ideal')));
+  // Red: a pick in the item's worst category of all eight (the same rule as during play, so no colour changes at the end)
+  G.cats.forEach((c, k) => { const s = G.placed[k];
+    $(`row-${k}`).classList.toggle('worst', !$(`row-${k}`).classList.contains('ideal') && pts(s, c) === Math.min(...G.cats.map(x => pts(s, x)))); });
   finishFooter();
 
   // The perfect board: the same rows, each category with the item that belongs there

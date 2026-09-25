@@ -1546,7 +1546,7 @@ function scoreboard(score, max, note){
 const miniHTML = text => [...text].map(ch => `<i class="lit">${ch}</i>`).join('');
 function altRow(rankCh, tone, cat, who, v, pts, label, more = '', icon = ''){   // icon: Rankle's category emoji
   return `<li><button class="row done${tone === 'ok' ? ' ideal' : tone === 'no' ? ' worst' : ''}" type="button" disabled aria-label="${label}">
-      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'blind' ? `<span class="row-no">${rankCh}</span>` : icon}
+      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'rankle' ? icon : `<span class="row-no">${rankCh}</span>`}
       <span class="body"><span class="cat">${cat}</span>
         <span class="res">${who ? `<span class="who">${who}</span>` : ''}<span class="vals">${v ? miniHTML(v[0]) : ''}</span><span class="unit">${v ? v[1] : 'no value'}</span>${more ? `<span class="more">${more}</span>` : ''}</span></span>
       <span class="pts">${pts}</span>

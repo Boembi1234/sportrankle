@@ -410,11 +410,8 @@ a{color:inherit}
 .nav-more-list{position:absolute;z-index:31;top:calc(100% + 12px);left:0;min-width:220px;display:flex;flex-direction:column;gap:6px;padding:6px;
   background:var(--bg);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 3px 0 var(--surface-edge)}
 .nav-more-list[hidden]{display:none}
-/* Language: the flag in a round key with a white rim; it rises under the pointer and sinks when pressed, like the buttons */
-.lang-btn{display:block;width:36px;height:36px;padding:0;border:2px solid var(--text);border-radius:50%;overflow:hidden;background:var(--surface);cursor:pointer;
-  box-shadow:0 2px 0 var(--muted);transition:transform .12s,box-shadow .12s}
-@media (hover:hover){.lang-btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--muted)}}
-.lang-btn:active,.lang-btn[aria-expanded="true"]{transform:translateY(1px);box-shadow:0 1px 0 var(--muted)}
+/* Language: the flag in a flat round frame with a white rim */
+.lang-btn{display:block;width:28px;height:28px;padding:0;border:2px solid var(--text);border-radius:50%;overflow:hidden;background:var(--surface);cursor:pointer}
 .lang-btn svg,.dd-flag svg{display:block;width:100%;height:100%}
 .lang-list{left:auto;right:0;min-width:180px}
 .dd-item{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 12px;border:0;border-radius:10px;background:none;color:inherit;
@@ -423,7 +420,7 @@ a{color:inherit}
 .dd-item[aria-current="true"]{color:var(--signal);background:var(--surface)}
 @media (hover:hover){.dd-item:hover{background:var(--surface)}}
 .dd-item:active{background:var(--surface-edge)}
-@media (prefers-reduced-motion:reduce){.lang-btn,.dd-item{transition:none}}
+@media (prefers-reduced-motion:reduce){.dd-item{transition:none}}
 .sportnav a[aria-current="page"],.nav-more-btn.on{color:var(--signal);background:var(--surface)}
 .nav-more-btn[aria-expanded="true"]{background:var(--surface)}
 @media (hover:hover){.sportnav a:hover,.nav-more-btn:hover{background:var(--surface)}}

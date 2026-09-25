@@ -667,16 +667,35 @@ def esc(text):
     return text.replace("&", "&amp;").replace("<", "&lt;").replace('"', "&quot;")
 
 
+def open_topics(data, sports):
+    """The pools whose sport is playable (not "coming soon")."""
+    return {k: g for k, g in data.items() if not sports[g["sport"]].get("soon")}
+
+
+def link_lists(data, sports):
+    """Static HTML lists with real links to every sport, topic and game: what a crawler follows before the app renders."""
+    topic_slug = {k: slug(g["tab"]) for k, g in data.items()}
+    opened = open_topics(data, sports)
+    parts = []
+    for sk, sp in sports.items():
+        topics = [(topic_slug[k], g["tab"]) for k, g in opened.items() if g["sport"] == sk]
+        if topics:
+            parts.append(f'<li><a href="/{slug(sp["name"])}">{esc(sp["name"])}</a>: '
+                         + ", ".join(f'<a href="/{s}">{esc(t)}</a>' for s, t in topics) + "</li>")
+    games = ", ".join(f'<a href="/{gs}">{esc(n)}</a>' for gs, (n, _) in GAME_PAGES.items())
+    return f"<h2>Sports and topics</h2><ul>{''.join(parts)}</ul><h2>Games</h2><p>{games}</p>"
+
+
 def pages(data, sports):
-    """Every crawlable page: (path, title, description, route hash, static intro html)."""
+    """Every crawlable page: (path, title, description, route hash, static intro html, breadcrumbs)."""
     cats = lambda g: ", ".join(c["name"].lower() for c in g["cats"][:5])
     topic_slug = {k: slug(g["tab"]) for k, g in data.items()}
+    opened = open_topics(data, sports)
+    games_line = lambda: "<p>Games: " + ", ".join(f'<a href="/{gs}">{esc(n)}</a>' for gs, (n, _) in GAME_PAGES.items()) + "</p>"
     out = []
-    for k, g in data.items():
-        if sports[g["sport"]].get("soon"):
-            continue
-        kinds = g["kinds"]
-        games = ", ".join(KIND_NAMES[k] for k in kinds)
+    for k, g in opened.items():
+        sp = sports[g["sport"]]
+        games = ", ".join(KIND_NAMES[k] for k in g["kinds"])
         if g["cats"]:
             desc = (f"{g['tab']} quiz: rank {len(g['items'])} {g['plural']} by {len(g['cats'])} real categories such as {cats(g)}. "
                     f"Play {games}, new cards every day, one attempt each, compare your score with everyone else's.")
@@ -687,31 +706,41 @@ def pages(data, sports):
             desc = (f"{g['tab']} quiz: {len(g['items'])} sports world records, one a day. Guess how fast, how far or how many, "
                     f"score by how close you are, compare with everyone. {', '.join(areas[:6])} and more.")
             intro = f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Areas</h2><ul>" + "".join(f"<li>{esc(a)}</li>" for a in areas) + "</ul>"
-        out.append((topic_slug[k], f"{g['tab']} quiz - daily ranking puzzle | Sportrankle", desc, f"#t/{k}", intro))
+        siblings = [(topic_slug[o], og["tab"]) for o, og in opened.items() if og["sport"] == g["sport"] and o != k]
+        intro += (f'<p>Part of <a href="/{slug(sp["name"])}">{esc(sp["name"])}</a>'
+                  + (": also " + ", ".join(f'<a href="/{s}">{esc(n)}</a>' for s, n in siblings) if siblings else "") + ".</p>" + games_line())
+        crumbs = [(sp["name"], f"/{slug(sp['name'])}"), (g["tab"], f"/{topic_slug[k]}")]
+        out.append((topic_slug[k], f"{g['tab']} quiz | Sportrankle", desc, f"#t/{k}", intro, crumbs))
     for sk, sp in sports.items():
-        topics = [g for g in data.values() if g["sport"] == sk]
-        if not topics or sp.get("soon"):
+        topics = [g for g in opened.values() if g["sport"] == sk]
+        if not topics:
             continue
         names = ", ".join(t["tab"] for t in topics)
-        desc = f"{sp['name']} quizzes: {names}. Daily ranking puzzles on real stats, three games per topic, one attempt a day."
+        desc = f"{sp['name']} quizzes: {names}. Daily ranking puzzles on real stats, up to three games per topic, one attempt a day."
         intro = f"<h1>{esc(sp['name'])} quizzes</h1><p>{esc(desc)}</p><ul>" + "".join(
-            f'<li><a href="/{topic_slug[k]}">{esc(g["tab"])}</a></li>' for k, g in data.items() if g["sport"] == sk) + "</ul>"
-        out.append((slug(sp["name"]), f"{sp['name']} quizzes - {names} | Sportrankle", desc, f"#s/{sk}", intro))
+            f'<li><a href="/{topic_slug[k]}">{esc(g["tab"])}</a></li>' for k, g in opened.items() if g["sport"] == sk) + "</ul>" + games_line()
+        out.append((slug(sp["name"]), f"{sp['name']} quizzes | Sportrankle", desc, f"#s/{sk}", intro, [(sp["name"], f"/{slug(sp['name'])}")]))
+    examples = [g["tab"] for g in opened.values()]
     for gs, (name, blurb) in GAME_PAGES.items():
-        desc = f"{name}: {blurb}" + ("" if gs == "ringer" else f" Play it on {len(data)} topics, from NFL teams to F1 circuits.")
-        intro = f"<h1>{esc(name)}</h1><p>{esc(desc)}</p>"
-        out.append((gs, f"{name} - daily sports ranking game | Sportrankle", desc, GAME_ROUTE[gs], intro))
+        desc = f"{name}: {blurb}" + ("" if gs == "ringer" else f" Play it on {len(opened)} topics, from {examples[0]} to {examples[-1]}.")
+        intro = f"<h1>{esc(name)}</h1><p>{esc(desc)}</p>" + link_lists(data, sports)
+        out.append((gs, f"{name} - daily sports game | Sportrankle", desc, GAME_ROUTE[gs], intro, [(name, f"/{gs}")]))
     return out
 
 
-def ld_json(title, desc, url):
-    return json.dumps([
-        {"@context": "https://schema.org", "@type": "WebSite", "name": "Sportrankle", "url": SITE + "/"},
+def ld_json(title, desc, url, crumbs=()):
+    org = {"@type": "Organization", "name": "Sportrankle", "url": SITE + "/", "logo": SITE + "/icon-512.png"}
+    items = [
+        {"@context": "https://schema.org", "@type": "WebSite", "name": "Sportrankle", "url": SITE + "/", "publisher": org},
         {"@context": "https://schema.org", "@type": "WebApplication", "name": title.split(" | ")[0], "url": url, "description": desc,
          "applicationCategory": "GameApplication", "operatingSystem": "Any", "browserRequirements": "Requires JavaScript",
-         "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-         "publisher": {"@type": "Organization", "name": "Sportrankle", "url": SITE + "/"}},
-    ], ensure_ascii=False)
+         "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "publisher": org},
+    ]
+    if crumbs:
+        trail = [("Home", "/")] + list(crumbs)
+        items.append({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + path} for i, (n, path) in enumerate(trail)]})
+    return json.dumps(items, ensure_ascii=False)
 
 
 def social_images():
@@ -760,15 +789,16 @@ def main():
             .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None))
             .replace("__SITE__", SITE))
 
-    def page(title, desc, url, route, intro):
+    def page(title, desc, url, route, intro, crumbs=()):
         return (base.replace("__TITLE__", esc(title)).replace("__DESC__", esc(desc)).replace("__CANON__", url)
                 .replace("__ROUTE__", json.dumps(route)).replace("__STATIC__", intro)
-                .replace("__LDJSON__", ld_json(title, desc, url)))
+                .replace("__LDJSON__", ld_json(title, desc, url, crumbs)))
 
-    home_title = "Sportrankle - daily sports ranking puzzles: NFL, F1, Champions League, skiing"
-    home_desc = ("Free daily sports quiz games. Rank NFL teams, Champions League players, F1 circuits, alpine skiers and the "
-                 "world's top athletes by their real stats. New puzzles every day, one attempt each, compare with everyone.")
-    home = page(home_title, home_desc, SITE + "/", "", "<h1>Daily sports ranking puzzles</h1><p>" + esc(home_desc) + "</p>")
+    opened = open_topics(data, sports)
+    home_title = "Sportrankle - daily NFL, Champions League & records quiz"
+    home_desc = (f"Free daily sports quiz games on real stats: {', '.join(g['tab'] for g in list(opened.values())[:5])} and more. "
+                 "Rank them, sort them, guess the record. New puzzles every day, one attempt each, compare your score with everyone.")
+    home = page(home_title, home_desc, SITE + "/", "", "<h1>Daily sports ranking puzzles</h1><p>" + esc(home_desc) + "</p>" + link_lists(data, sports))
     OUT.write_text(home, encoding="utf-8")
     DIST.parent.mkdir(exist_ok=True)
     head = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
@@ -777,9 +807,10 @@ def main():
     # One real URL per topic, sport and game: the same app, opened on that view, with its own title and description
     urls = [SITE + "/"]
     redirects = []
-    for path, title, desc, route, intro in pages(data, sports):
-        (DIST.parent / f"{path}.html").write_text(f"{head}{page(title, desc, f'{SITE}/{path}', route, intro)}\n</html>\n", encoding="utf-8")
+    for path, title, desc, route, intro, crumbs in pages(data, sports):
+        (DIST.parent / f"{path}.html").write_text(f"{head}{page(title, desc, f'{SITE}/{path}', route, intro, crumbs)}\n</html>\n", encoding="utf-8")
         urls.append(f"{SITE}/{path}")
+        redirects.append(f"/{path}.html  /{path}  301!")   # one URL per page: the .html form redirects to the clean one
         redirects.append(f"/{path}  /{path}.html  200")
     # Legal notice and privacy policy: a plain page of its own, not in the sitemap
     legal = (HERE / "legal.html").read_text(encoding="utf-8").replace("__SITE__", SITE)
@@ -794,13 +825,20 @@ def main():
              .replace("__ANALYTICS_SENTENCE__", f", and {esc(ADS['analytics'])} for anonymous usage statistics" if ADS["analytics"] else ""))
     (DIST.parent / "legal.html").write_text(legal.replace("__DATE__", time.strftime("%d %B %Y").lstrip("0")), encoding="utf-8")
     redirects.append("/legal  /legal.html  200")
-    redirects = [f"{h}/* {SITE}/:splat 301!" for h in OLD_HOSTS] + redirects
+    # pages of sports that are "coming soon" (and any stale copies in dist) send visitors to the home page
+    for stale in [slug(g["tab"]) for k, g in data.items() if k not in opened] + [slug(sp["name"]) for sp in sports.values() if sp.get("soon")]:
+        (DIST.parent / f"{stale}.html").unlink(missing_ok=True)
+        redirects.append(f"/{stale}  /  301!")
+    redirects = [f"{h}/* {SITE}/:splat 301!" for h in OLD_HOSTS] + ["/index.html  /  301!"] + redirects
     (DIST.parent / "_redirects").write_text("\n".join(redirects) + "\n", encoding="utf-8")
-    (DIST.parent / "_headers").write_text("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n", encoding="utf-8")
+    (DIST.parent / "_headers").write_text(
+        "/*\n  X-Content-Type-Options: nosniff\n  X-Frame-Options: DENY\n  Referrer-Policy: strict-origin-when-cross-origin\n"
+        "  Permissions-Policy: camera=(), microphone=(), geolocation=()\n"
+        "/img/*\n  Cache-Control: public, max-age=31536000, immutable\n", encoding="utf-8")
     (DIST.parent / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n", encoding="utf-8")
     (DIST.parent / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        + "".join(f"  <url><loc>{u}</loc><changefreq>daily</changefreq></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
+        + "".join(f"  <url><loc>{u}</loc><lastmod>{time.strftime('%Y-%m-%d')}</lastmod><changefreq>daily</changefreq></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
     (DIST.parent / "site.webmanifest").write_text(json.dumps({
         "name": "Sportrankle", "short_name": "Sportrankle", "start_url": "/", "display": "standalone",
         "background_color": "#121210", "theme_color": "#121210",

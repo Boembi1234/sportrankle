@@ -10,6 +10,9 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="__TITLE__">
+<meta name="twitter:description" content="__DESC__">
+<meta name="twitter:image" content="__SITE__/og.jpg">
 <meta name="theme-color" content="#121210">
 <link rel="icon" href="/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -872,7 +875,7 @@ function statusOf(keys){
 }
 function bigTile(href, label, img, name, keys){
   return `<a class="tile" href="${href}" aria-label="${label}">
-    <span class="tile-art">${img ? `<img src="${img}" alt="">` : ''}</span>
+    <span class="tile-art">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>
     <span class="tile-body"><span class="tile-name">${name}</span>${statusOf(keys)}</span>
   </a>`;
 }
@@ -881,7 +884,7 @@ const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).fin
 const sportCard = s => { const t = topicsOf(s); return SOON(s) ? soonTile(s) : bigTile(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(t)); };
 // A sport that is not open yet: the same tile, greyed, a sign across the picture, nothing to click
 const soonTile = s => `<div class="tile soon" aria-disabled="true" aria-label="${SPORTS[s].name}, coming soon">
-    <span class="tile-art">${sportImg(s) ? `<img src="${sportImg(s)}" alt="">` : ''}<span class="soon-sign">Coming soon</span></span>
+    <span class="tile-art">${sportImg(s) ? `<img src="${sportImg(s)}" alt="" loading="lazy" decoding="async">` : ''}<span class="soon-sign">Coming soon</span></span>
     <span class="tile-body"><span class="tile-name">${SPORTS[s].name}</span><span class="tile-status done">Soon</span></span>
   </div>`;
 // Guess the record sits in front of the sports: one tile straight into today's record for each pool that only has that game
@@ -932,7 +935,7 @@ function renderHome(kind, sport){
       ? `<span class="tile-status done">✓ ${h[today()] ? h[today()][0] : ''} pts</span>`
       : `<span class="tile-status">${n ? `Continue ${n}/${PICK}` : 'Play'}</span>`;
     return `<a class="tile" href="#${kind}-${m}" aria-label="${GAMES[kind].name}, ${g.tab}">
-      <span class="tile-art">${img ? `<img src="${img}" alt="">` : ''}</span>
+      <span class="tile-art">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>
       <span class="tile-body"><span class="tile-name">${g.tab}</span>${status}</span>
     </a>`;
   };
@@ -959,7 +962,7 @@ function renderHome(kind, sport){
     const g = DATA[FLAG], n = progress('rankle', FLAG), h = load(`rankle-history-${FLAG}`) || {}, res = h[today()];
     const label = n >= PICK ? 'See your result' : n ? `Continue · ${n}/${PICK}` : "Play today's Rankle";
     return `<section class="flag">
-      <a class="flag-art${g.cover ? '' : ' led'}" href="#rankle-${FLAG}" aria-label="Rankle, ${g.tab}"${g.cover_bg ? ` style="background:${g.cover_bg}"` : ''}>${g.cover ? `<img src="${g.cover}" alt=""${g.cover_bg ? ' style="object-fit:contain"' : ''}>` : `<span class="tile-cards">${g.word}</span>`}</a>
+      <a class="flag-art${g.cover ? '' : ' led'}" href="#rankle-${FLAG}" aria-label="Rankle, ${g.tab}"${g.cover_bg ? ` style="background:${g.cover_bg}"` : ''}>${g.cover ? `<img src="${g.cover}" alt="" fetchpriority="high"${g.cover_bg ? ' style="object-fit:contain"' : ''}>` : `<span class="tile-cards">${g.word}</span>`}</a>
       <div class="flag-body">
         <p class="eyebrow">Today's Rankle · ${date}</p>
         <h2 class="flag-name">${g.tab}</h2>

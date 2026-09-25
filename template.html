@@ -132,7 +132,7 @@ a{color:inherit}
 .meta{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
 .meta b{color:var(--text);font-weight:600}
 /* Ringer: setup form, then one big card per turn */
-.page.at-home.at-party>main{max-width:560px}
+.page.at-home.at-party>main{max-width:760px}
 .party{padding-block:28px 56px}
 .party h1{font-weight:800;font-stretch:80%;font-size:40px;line-height:1;margin:0}
 .party .lead{margin:12px 0 0;font-size:16px;line-height:1.4;color:var(--muted);text-wrap:pretty}
@@ -298,7 +298,8 @@ a{color:inherit}
 @media (prefers-reduced-motion:reduce){.v2 .row{transition:none}}
 .v2 .c-rank{display:none}
 /* Blind ranking: the spot number in front instead of an emoji, the attribute as a heading over the list, filled spots keep the box */
-.row-ic{flex:none;width:24px;text-align:center;font-size:20px;line-height:24px}   /* the emoji as the row's icon, the size of the menu icons */
+.row-ic{flex:none;width:24px;text-align:center;font-size:20px;line-height:24px}
+img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the size of the menu icons */
 .row-no{flex:none;width:24px;text-align:center;font-size:20px;line-height:24px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
 .v2 .row.filled{background:var(--surface)}
 .v2 .cat.empty{font-weight:700;color:var(--text)}
@@ -309,7 +310,7 @@ a{color:inherit}
 .k-sort .row{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .k-sort .board>li.dragging .row{cursor:grabbing;box-shadow:0 8px 20px rgba(0,0,0,.5)}
 @media (prefers-reduced-motion:reduce){.k-sort .board>li{transition:none}}
-.page:is(.k-blind,.k-sort,.k-guess) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
+.page:is(.k-blind,.k-sort,.k-guess,.k-ringer) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
 .page:is(.k-blind,.k-sort,.k-guess):not(.done) .question{font-size:17px;margin-top:24px}
 .page:is(.k-blind,.k-sort,.k-guess) .right{margin-top:16px}
 /* Guess the record: each answer part is a box like the rows in the other games (faint box; the full card colour on hover and
@@ -324,6 +325,28 @@ a{color:inherit}
   font-family:var(--font);font-weight:800;font-size:24px;letter-spacing:0;text-shadow:none}
 .k-guess .gbox input::placeholder{color:var(--muted);font-weight:700}
 .k-guess .gbox input:focus,.k-guess .gbox input:focus-visible{outline:none}   /* the box turning grey shows the focus */
+/* Ringer: built from the games' parts. Setup: name card, chips, heading, the counts as rows with small keys, the topics as rows.
+   Cards: whose turn on the name card, the card underneath, the button like Reveal */
+.k-ringer .party{padding-block:24px 24px}
+.k-ringer .party .title{margin:0}
+.k-ringer .party .board{margin-top:16px}
+.k-ringer .field{display:flex;align-items:center;gap:12px;min-height:48px;margin:0;padding:0 12px;border:0;border-radius:10px;background:var(--surface-faint)}
+.k-ringer .field:first-of-type{margin-top:0;border-top:0}
+.k-ringer .field-l{flex:1;font-size:17px;font-weight:700}
+.k-ringer .stepper{gap:10px}
+.k-ringer .stepper button{width:32px;height:32px;border:0;border-radius:6px;background:var(--surface);box-shadow:0 2px 0 var(--surface-edge);
+  color:var(--text);font:800 18px/1 var(--font);transition:transform .12s,box-shadow .12s,filter .12s}
+@media (hover:hover){.k-ringer .stepper button:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--surface-edge);filter:brightness(1.08)}}
+.k-ringer .stepper button:disabled{color:var(--muted);box-shadow:none;opacity:.5}
+.k-ringer .stepper b{min-width:24px;font-size:17px}
+.k-ringer .party .bar{padding-top:16px}
+.k-ringer #pp-note{display:block;margin:12px 0 0;text-align:center;color:var(--muted)}
+.k-ringer .deal{margin-top:16px;padding:20px;border-radius:10px;min-height:240px}
+.k-ringer .deal.ringer{background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
+.k-ringer .deal-img{width:calc(100% + 40px);margin:-20px -20px 16px}
+.k-ringer .deal-k{font-size:13px;letter-spacing:0;text-transform:none}
+.k-ringer .deal-h{font-size:28px;font-stretch:100%}
+@media (prefers-reduced-motion:reduce){.k-ringer .stepper button{transition:none}}
 .k-guess .guess-unit{flex:none;margin:0;font-size:17px;font-weight:700;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.k-guess .gbox{transition:none}}
 /* Guess the record results: the facts as rows in the card colour like the other results (label left, value right) */
@@ -604,18 +627,21 @@ a{color:inherit}
 
   <main class="party" id="party" hidden>
     <section id="party-setup">
-      <p class="eyebrow">Party game · one phone</p>
-      <h1>Ringer</h1>
-      <p class="lead">Everyone gets the same secret from a pool — except the ringer, who has to bluff along. Talk, listen, and find out who it is.</p>
-      <div class="field"><span class="field-l">Players</span>
-        <span class="stepper"><button type="button" data-k="players" data-d="-1" aria-label="Fewer players">−</button><b id="p-players">5</b><button type="button" data-k="players" data-d="1" aria-label="More players">+</button></span></div>
-      <div class="field"><span class="field-l">Ringers</span>
-        <span class="stepper"><button type="button" data-k="ringers" data-d="-1" aria-label="Fewer ringers">−</button><b id="p-ringers">1</b><button type="button" data-k="ringers" data-d="1" aria-label="More ringers">+</button></span></div>
-      <div class="field"><span class="field-l">Pool</span><span class="picks" id="p-pools"></span></div>
+      <h1 class="title">Ringer</h1>
+      <div class="title-sub"><span class="chip">Party game</span><span class="chip">One phone</span><span class="chip">3–12 players</span></div>
+      <p class="question"><span class="emo">🕵️</span>Everyone knows the secret except the ringer. Find them.</p>
+      <ul class="board">
+        <li class="field"><span class="row-ic" aria-hidden="true">👥</span><span class="field-l">Players</span>
+          <span class="stepper"><button type="button" data-k="players" data-d="-1" aria-label="Fewer players">−</button><b id="p-players">5</b><button type="button" data-k="players" data-d="1" aria-label="More players">+</button></span></li>
+        <li class="field"><span class="row-ic" aria-hidden="true">🎭</span><span class="field-l">Ringers</span>
+          <span class="stepper"><button type="button" data-k="ringers" data-d="-1" aria-label="Fewer ringers">−</button><b id="p-ringers">1</b><button type="button" data-k="ringers" data-d="1" aria-label="More ringers">+</button></span></li>
+      </ul>
+      <p class="question"><span class="emo">📚</span>Pick a topic</p>
+      <ul class="board" id="p-pools" aria-label="Topic"></ul>
       <div class="bar"><button class="main" id="p-start" type="button">Deal the cards</button><p class="note">Pass the phone round: each player looks at their card alone.</p></div>
     </section>
     <section id="party-play" hidden>
-      <p class="eyebrow" id="pp-step"></p>
+      <p class="title" id="pp-step"></p>
       <div class="deal" id="pp-card"></div>
       <div class="bar"><button class="main" id="pp-main" type="button"></button><p class="note" id="pp-note"></p></div>
     </section>
@@ -1199,7 +1225,9 @@ function partyFields(){
   $('p-ringers').textContent = PARTY.ringers;
   const pools = ringerPools();
   if (!pools.includes(PARTY.pool)) PARTY.pool = pools[0];
-  $('p-pools').innerHTML = pools.map(m => `<button type="button" class="pick" aria-pressed="${m === PARTY.pool}" data-pool="${m}">${DATA[m].tab}</button>`).join('');
+  $('p-pools').innerHTML = pools.map(m => { const ic = SPORTS[DATA[m].sport]?.icon;   // the topics as rows like the game rows
+    return `<li><button type="button" class="row${m === PARTY.pool ? ' sel' : ''}" aria-pressed="${m === PARTY.pool}" data-pool="${m}">${ic ? `<img class="row-ic" src="${ic}" alt="">` : ''}`
+      + `<span class="body"><span class="cat">${DATA[m].tab}</span></span></button></li>`; }).join('');
   document.querySelectorAll('.stepper button').forEach(b => {
     const v = PARTY[b.dataset.k] + +b.dataset.d;
     b.disabled = b.dataset.k === 'players' ? v < PLAYERS_MIN || v > PLAYERS_MAX : v < 1 || v > maxRingers();
@@ -1375,7 +1403,7 @@ function route(){
   booted = true;
   if (h === 'ringer') {
     KIND = null;
-    $('page').className = 'page at-home at-kind at-party';
+    $('page').className = 'page at-home at-kind at-party v2 k-ringer';   // the games' design
     $('home').hidden = true; $('game').hidden = true; $('alt').hidden = true; $('party').hidden = false;
     partySetup();
     scrollTo(0, 0);

@@ -238,9 +238,9 @@ a{color:inherit}
   font-family:var(--font);font-weight:900;font-size:34px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance;color:var(--signal)}
 .title i{font-style:normal;color:#1C2126;transition:color .12s}
 .title i.lit{color:inherit;text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
-/* Rankle: the name on a card like the tiles on the home page (card colour, hard edge, white text, the tiles' hover), sized like the main button:
+/* Rankle: the name on a card like the tiles on the home page (card colour, hard edge, white text; no hover, it does nothing), sized like the main button:
    full width, 52px high, 20px bold, centred, 8px corners */
-.k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);transition:transform .12s,box-shadow .12s,filter .12s;
+.k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);
   font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;letter-spacing:0;text-transform:none;text-align:center}
 /* Rankle: the extra facts as chips under the name card, centred side by side, as far from it as the Reveal button is from
    the last row (16px, 10px on phones). Each chip is a small grey key like the Play button (hard edge, white text), not clickable */
@@ -253,8 +253,7 @@ a{color:inherit}
 .k-rankle .title{margin-top:0}
 .k-rankle .right{margin-top:24px}   /* 24px from the info box (or the name card) to the first row */
 .k-rankle .title i{color:var(--surface)}
-@media (hover:hover){.k-rankle .title:hover{transform:translateY(-3px);box-shadow:0 6px 0 var(--surface-edge);filter:brightness(1.05)}}
-@media (prefers-reduced-motion:reduce){.k-rankle .title{transition:none}}
+
 .k-rankle .title i.lit{color:inherit;text-shadow:none}
 /* Two rows of cards: the first row hangs fully on the photo, so the screen stays the same height */
 .question{flex:none;font-weight:700;font-stretch:85%;font-size:32px;line-height:1.1;margin:16px 0 0;text-wrap:balance}
@@ -299,11 +298,9 @@ a{color:inherit}
 .k-rankle .vals{font-weight:700;letter-spacing:0;color:var(--text);text-shadow:none}
 .k-rankle .vals i{color:transparent}
 .k-rankle .vals i.lit{color:inherit;text-shadow:none}
-/* Rankle: the points sit in a blue box like the Play button (same colour, corners and hard edge), without hover */
+/* Rankle: the points sit in a blue box like the Play button (same colour, corners and hard edge); no hover, only buttons that act have one */
 .k-rankle .pts{min-width:0;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge);
-  font-size:15px;line-height:1.2;text-align:center;transition:transform .12s,box-shadow .12s,filter .12s}
-@media (hover:hover){.k-rankle .pts:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}   /* looks alive; clicking does nothing */
-@media (prefers-reduced-motion:reduce){.k-rankle .pts{transition:none}}
+  font-size:15px;line-height:1.2;text-align:center}
 .k-rankle .row.done{padding-right:9px}   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
 .row:disabled{cursor:default}
 .body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}

@@ -1016,6 +1016,8 @@ const PARTY = {players: 5, ringers: 1, pool: 'sports'};
 let P = null;   // the round in progress
 const PLAYERS_MIN = 3, PLAYERS_MAX = 12;
 const maxRingers = () => Math.max(1, Math.floor((PARTY.players - 1) / 2));   // always fewer ringers than honest players
+// Ringer takes every playable pool that has ranked items (the record sheets have none)
+const ringerPools = () => POOLS.filter(m => open(m) && DATA[m].cats.length);
 function partySetup(){
   const s = load('ringer-setup');
   if (s && DATA[s.pool]) Object.assign(PARTY, s);
@@ -1028,8 +1030,9 @@ function partyFields(){
   PARTY.ringers = Math.max(1, Math.min(maxRingers(), PARTY.ringers));
   $('p-players').textContent = PARTY.players;
   $('p-ringers').textContent = PARTY.ringers;
-  if (!poolsFor('ringer').includes(PARTY.pool)) PARTY.pool = poolsFor('ringer')[0];
-  $('p-pools').innerHTML = poolsFor('ringer').map(m => `<button type="button" class="pick" aria-pressed="${m === PARTY.pool}" data-pool="${m}">${DATA[m].tab}</button>`).join('');
+  const pools = ringerPools();
+  if (!pools.includes(PARTY.pool)) PARTY.pool = pools[0];
+  $('p-pools').innerHTML = pools.map(m => `<button type="button" class="pick" aria-pressed="${m === PARTY.pool}" data-pool="${m}">${DATA[m].tab}</button>`).join('');
   document.querySelectorAll('.stepper button').forEach(b => {
     const v = PARTY[b.dataset.k] + +b.dataset.d;
     b.disabled = b.dataset.k === 'players' ? v < PLAYERS_MIN || v > PLAYERS_MAX : v < 1 || v > maxRingers();

@@ -222,6 +222,15 @@ CATS_EN = {
     "Spiele im Ausland all-time": ("Games played abroad", "games"),
     "Durchschnittsalter Kader 2026": ("Average roster age 2026", "years"),
     "Längste Siegesserie Regular Season": ("Longest regular-season win streak", "games"),
+    "Heim-Siegquote seit 1999": ("Home win rate since 1999", ""),
+    "Auswärts-Siegquote seit 1999": ("Away win rate since 1999", ""),
+    "Overtime-Spiele seit 1999": ("Overtime games since 1999", "games"),
+    "Grösster Sieg seit 1999": ("Biggest win since 1999", "pts"),
+    "Primetime-Spiele seit 1999": ("Prime-time games since 1999", "games"),
+    "Punktedifferenz seit 1999": ("Point differential since 1999", "pts"),
+    "Sacks Defense 2025": ("Defensive sacks 2025", "sacks"),
+    "Erstrunden-Picks seit 1990": ("First-round picks since 1990", "picks"),
+    "Pro-Bowler gedraftet seit 1990": ("Pro Bowlers drafted since 1990", "players"),
     # NFL players and Hall of Fame
     "Geburtsdatum": ("Date of birth", ""),
     "Grösse": ("Height", "cm"),
@@ -240,6 +249,11 @@ CATS_EN = {
     "Einwohner Geburtsort": ("Population of birthplace", "thousand"),
     "Spiele Regular Season Karriere": ("Regular-season games", "games"),
     "Anzahl Head Coaches in der Karriere": ("Head coaches in career", ""),
+    "Karrierewert (Weighted AV)": ("Career value (weighted AV)", "AV"),
+    "Saisons als Starter": ("Seasons as a starter", "seasons"),
+    "Snaps Saison 2025": ("Snaps in 2025", "snaps"),
+    "Injury-Report-Einträge 2025": ("Injury report entries 2025", "entries"),
+    "Karrierelänge": ("Career length", "seasons"),
     "HOF-Aufnahmejahr": ("Hall of Fame induction", ""),
     "Spiele Regular Season": ("Regular-season games", "games"),
     "Anzahl NFL-Teams": ("NFL teams played for", "teams"),
@@ -262,6 +276,12 @@ CATS_EN = {
     "Unentschieden all-time": ("Ties, all time", "ties"),
     "Cheftrainer-Gehalt 2025": ("Head coach salary 2025", "M USD"),
     "Alumni auf NFL-Kadern Woche 1 2026": ("Alumni on NFL rosters 2026", "players"),
+    "NFL-Draft-Picks seit 1980": ("NFL draft picks since 1980", "players"),
+    "Erstrunden-Picks seit 1980": ("First-round picks since 1980", "players"),
+    "Pro-Bowler gedraftet seit 1980": ("Pro Bowlers drafted since 1980", "players"),
+    "Hall-of-Famer gedraftet seit 1980": ("Hall of Famers drafted since 1980", "players"),
+    "Combine-Teilnehmer seit 2000": ("Combine invitees since 2000", "players"),
+    "Schnellster 40-Yard eines Alumni": ("Fastest 40-yard dash by an alumnus", "s"),
     # Alpine skiers
     "Geburtsdatum (Alter)": ("Date of birth", ""),
     "Weltcup-Debüt": ("World Cup debut", ""),
@@ -296,7 +316,8 @@ DIR_EN = {"meiste": "most", "grösste": "largest", "grösster": "largest", "län
           "jüngste Aufnahme": "youngest", "ältester beim Rücktritt": "oldest", "älteste Uni": "oldest",
           "meister Platz unter dem Cap": "most", "wertvollste": "most valuable", "dienstältester Head Coach": "longest-serving",
           "günstigstes Bier": "cheapest", "ältester Kader": "oldest", "längste Serie": "longest", "meiste Head Coaches": "most",
-          "bestbezahlter Trainer": "highest paid", "meiste NFL-Profis": "most", "grösste Uni": "largest"}
+          "bestbezahlter Trainer": "highest paid", "meiste NFL-Profis": "most", "grösste Uni": "largest",
+          "höchster Sieg": "biggest", "beste Differenz": "best", "schnellster": "fastest"}
 
 # "Rang 1 =" directions where the smallest value wins. "am längsten (dabei)" ranks a year or date, so the
 # earliest wins; "jüngste/r" on a birth date means the latest date wins, on an age the smallest number.
@@ -304,7 +325,7 @@ LOW_FIRST = {"ältestes", "älteste", "frühestes", "früheste", "schnellste", "
              "am längsten", "am längsten dabei", "jüngste/r Debütant/in",
              "am längsten (ältestes Jahr)", "ältestes Stadion", "frühester Pick", "frühester Pick (Nr. 1)", "ältester",
              "frühestes (dienstältester)", "jüngstes Debüt", "kleinste Nummer", "jüngste Aufnahme", "älteste Uni",
-             "dienstältester Head Coach", "günstigstes Bier"}
+             "dienstältester Head Coach", "günstigstes Bier", "schnellster"}
 
 # Spreadsheet unit -> (unit shown, value format)
 UNIT_FMT = {"Anzahl": ("", ""), "Jahr": ("", "year"), "Sekunden": ("", "laptime"), "Grad": ("", "lat"),
@@ -447,8 +468,31 @@ def local_photos(key, opts=None):
     return out
 
 
+def ensure_calculated(path):
+    """Workbooks written by a script hold formulas without results; openpyxl then reads those cells as empty.
+    If the first sheet has such cells, open the file in Excel once (Windows, via COM), recalculate and save."""
+    ws_f = openpyxl.load_workbook(path, data_only=False).worksheets[0]
+    ws_v = openpyxl.load_workbook(path, data_only=True).worksheets[0]
+    missing = [c.coordinate for row in ws_f.iter_rows(min_row=2) for c in row
+               if isinstance(c.value, str) and c.value.startswith("=") and ws_v[c.coordinate].value is None]
+    if not missing:
+        return
+    try:
+        import win32com.client
+        xl = win32com.client.DispatchEx("Excel.Application")
+        xl.Visible = False; xl.DisplayAlerts = False
+        wb = xl.Workbooks.Open(str(path.resolve()))
+        xl.CalculateFullRebuild()
+        wb.Save(); wb.Close(False); xl.Quit()
+        print(f"  {path.name}: {len(missing)} formula cells had no result, calculated in Excel and saved")
+    except Exception as e:
+        raise SystemExit(f"{path.name}: {len(missing)} formula cells have no result (e.g. {missing[0]}) and Excel could not "
+                         f"calculate them ({e}). Open the file in Excel, press F9, save, and build again.")
+
+
 def load_game(key, cfg):
     path = next(HERE.glob(cfg["file"]))
+    ensure_calculated(path)
     wb = openpyxl.load_workbook(path, data_only=True)
     values_ws, _, cats_ws = wb.worksheets[:3]
 

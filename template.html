@@ -385,6 +385,9 @@ a{color:inherit}
 .k-rankle .row.ideal .pts,.k-rankle #board2 .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}   /* the perfect board is all green */
 .page.k-rankle.done .row .cat{color:var(--text)}   /* results: the titles white; only the points box carries the colour */
 .k-rankle .row.worst .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}   /* the worst pick(s): red */
+/* During play: green when the pick was the best category still open for that item, red when it was the worst */
+.page.k-rankle:not(.done) .row.good .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}
+.page.k-rankle:not(.done) .row.bad .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}
 /* Rankle results: "Your board" / "Perfect board" as two chips, half the width each; the active one blue, the other grey
    with the buttons' hover */
 .k-rankle .seg{gap:8px;margin-top:16px}   /* as far from the score card as the two buttons are apart (10px on phones) */
@@ -1374,6 +1377,12 @@ function rankleFill(i){
   row.querySelector('.who').textContent = nm(s);
   row.querySelector('.unit').textContent = v ? v[1] : 'no value';
   countUp(row.querySelector('.pts'), pts(s, c));
+  // Right away: was this the best (green) or the worst (red) of the categories still open for this item? The open ones
+  // are worked out from the placement order, so a reloaded game shows the same colours. No colour when only one was left.
+  const round = G.sports.indexOf(s), open = G.cats.map((_, k) => k).filter(k => G.placed[k] == null || G.sports.indexOf(G.placed[k]) >= round);
+  const got = open.map(k => pts(s, G.cats[k])), mine = pts(s, c), best = Math.max(...got), worst = Math.min(...got);
+  row.classList.toggle('good', open.length > 1 && mine === best);
+  row.classList.toggle('bad', open.length > 1 && mine === worst && worst !== best);
   row.setAttribute('aria-label', `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
   // The value shows at once (the rank tile is hidden in Rankle), so the next name can follow straight away
   row.querySelector('.vals').innerHTML = v ? miniHTML(v[0]) : '';

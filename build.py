@@ -596,9 +596,9 @@ def load_wide(key, cfg):
 
 
 SITE = "https://sport-minigames.com"
-# Who runs the site, shown on /legal (legal notice and privacy policy). Swiss data protection law (Art. 19 FADP)
-# requires the controller's identity and a contact for it; a name, a place and an e-mail address are enough.
-OPERATOR = {"name": "", "place": "", "email": ""}
+# Who runs the site, shown on /legal (legal notice and privacy policy): the same operator as the Playmakerz app.
+OPERATOR = {"name": "Playmakerz", "people": "Daniel Keller, Sebastian Flotron, Severin Ott and Yannick Scheitlin",
+            "address": "Schlossschürstrasse 22", "place": "8409 Winterthur", "email": "info@playmakerz.ch"}
 # Ads and analytics on the site, for the privacy policy: "network" is the ad provider (e.g. "Snigel", "Google AdSense"),
 # "analytics" the analytics tool or "". Empty network = the policy says there are no ads and no optional cookies.
 ADS = {"network": "", "analytics": ""}
@@ -734,11 +734,9 @@ def main():
         urls.append(f"{SITE}/{path}")
         redirects.append(f"/{path}  /{path}.html  200")
     # Legal notice and privacy policy: a plain page of its own, not in the sitemap
-    if not all(OPERATOR.values()):
-        print("  legal: OPERATOR name, place or e-mail missing in build.py, the page shows placeholders")
     legal = (HERE / "legal.html").read_text(encoding="utf-8").replace("__SITE__", SITE)
     for k, v in OPERATOR.items():
-        legal = legal.replace(f"__OPERATOR_{k.upper()}__", esc(v) or f"[{k} to be added]")
+        legal = legal.replace(f"__OPERATOR_{k.upper()}__", esc(v))
     # The policy has two variants of its cookie and advertising parts: <!--ADS-->...<!--/ADS--> is kept when an ad
     # network is set, <!--NOADS-->...<!--/NOADS--> otherwise
     keep, drop = ("ADS", "NOADS") if ADS["network"] else ("NOADS", "ADS")

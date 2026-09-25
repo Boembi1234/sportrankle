@@ -62,6 +62,10 @@ There are no logins. When a game ends, the page records `day, game, score, max` 
 
 The build enables it when `supabase/anon.key` exists (the project's public "anon" key, one line). Without the file the page runs exactly the same, minus that one line on the results screen. To use your own project: `npx supabase link --project-ref <ref>`, `npx supabase db push`, then save the anon key to `supabase/anon.key` and rebuild.
 
+## Seeded results
+
+So that nobody is "first to play today", a pg_cron job inside Supabase (`supabase/migrations/20260925180000_seed_results.sql`) tops every daily game up to roughly 900 to 1,150 plausible results a day, spread over the day along an hourly activity curve (runs hourly at :07 UTC, catches up after a missed run). Seed rows have device ids starting with `facade00-` and are deleted after two days; real rows are never touched. The games to seed live in `public.seed_games`; when pools or games change, the build warns and a new migration has to upsert that table (and `supabase/seed_games.txt` is updated to match). Score shapes per game kind are in `seed_score()`.
+
 ## Search engines
 
 The build writes one real page per topic, sport and game next to `index.html` (`nfl-teams.html`, `american-football.html`, `rankle.html`, ...; `_redirects` serves them as `/nfl-teams` etc.). Each is the full app opened on that view, with its own title, description, canonical URL, Open Graph tags and JSON-LD, plus a static intro that search engines read before the app renders. Every static intro carries real links (home: all sports, topics and games; topic: its sport, sibling topics, games), so a crawler reaches every page without JavaScript. `sitemap.xml` (with lastmod), `robots.txt`, `og.jpg`, the icons, JSON-LD with breadcrumbs, the `.html` to clean-URL redirects and the security headers are generated too. Cover pictures are files under `img/covers/` with a content hash in the name (long cache), not data URIs.

@@ -514,8 +514,9 @@ def game(key, cfg, path, items, cats):
     # "cover" is a file, or a dict with the file and crop options; "bg" shows the whole picture on that colour
     c = cfg.get("cover")
     opts = c if isinstance(c, dict) else {"file": c}
-    out = {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word", "kinds", "flagship", "sport")}, "source": path.name,
-           "items": items, "cats": cats}
+    # "kinds" names the games of a pool; without it the three ranking games (never Guess the record, which needs records)
+    out = {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word", "flagship", "sport")}, "source": path.name,
+           "kinds": cfg.get("kinds") or ["rankle", "blind", "sort"], "items": items, "cats": cats}
     if c and next(HERE.glob(opts["file"]), None):
         out["cover"] = cover(opts["file"], ratio=opts.get("ratio", 1.5), width=opts.get("width", 0.6), cy=opts.get("cy", 0.53), pad=opts.get("pad", False))
         if opts.get("bg"):
@@ -600,7 +601,7 @@ def pages(data, sports):
     topic_slug = {k: slug(g["tab"]) for k, g in data.items()}
     out = []
     for k, g in data.items():
-        kinds = g.get("kinds") or ["rankle", "blind", "sort"]
+        kinds = g["kinds"]
         games = ", ".join(KIND_NAMES[k] for k in kinds)
         if g["cats"]:
             desc = (f"{g['tab']} quiz: rank {len(g['items'])} {g['plural']} by {len(g['cats'])} real categories such as {cats(g)}. "

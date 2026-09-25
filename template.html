@@ -756,7 +756,7 @@ function shareText(){
   const lines = [`Sportrankle – ${D.tab} · ${GAMES[KIND].name}`,
     `${G.day} · ${score}/${max} pts (${max ? Math.round(100 * score / max) : 0} %)`,
     (G.share || []).join('')];
-  if (G.stat) lines.push(`Better than ${G.stat.pct} % of today's ${G.stat.total.toLocaleString('en-US')} players`);
+  if (G.stat) lines.push(`${KIND === 'guess' ? 'Closer' : 'Better'} than ${G.stat.pct} % of today's ${G.stat.total.toLocaleString('en-US')} players`);
   lines.push(D.url || location.origin);
   return lines.filter(Boolean).join('\n');
 }
@@ -816,8 +816,8 @@ async function reportResult(score, max){
     const pct = Math.round(100 * below / (total - 1));
     G.stat = total < 10 ? null : {pct, total};
     $('today-h').innerHTML = total < 10
-      ? `<b>${total === 1 ? 'First to play today' : `${total} played today so far`}</b>`
-      : `<b>Better than ${pct} %</b><span>${total.toLocaleString('en-US')} played today</span>`;
+      ? `<b>${total === 1 ? 'First to play today' : `${total} played today so far`}</b><span>the comparison starts at 10 players</span>`
+      : `<b>${KIND === 'guess' ? 'Closer than' : 'Better than'} ${pct} %</b><span>${total.toLocaleString('en-US')} played today</span>`;
     $('today-bars').innerHTML = bins.map((n, i) => `<i${i === mine ? ' class="me"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('');
     $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, you scored ${score} of ${max}${total < 10 ? '' : `, better than ${pct} %`}`);
     $('today-axis').innerHTML = `<span${mine === 0 ? ' hidden' : ''}>0</span>`

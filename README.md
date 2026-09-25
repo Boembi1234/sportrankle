@@ -9,7 +9,7 @@ Three games, nine topics in five sports, one attempt per game and day. The home 
 | **Rankle** | 8 categories, 8 items arriving one by one. Put each item in the category where it ranks highest among the whole pool. Each category can be used once. |
 | **Blind ranking** | One attribute, 8 items arriving one by one. Place each on spot 1–8 without knowing what comes next. |
 | **Sort it** | One attribute, all 8 items in view. Swap them into the right order, then reveal. |
-| **Guess the record** | One sports world record a day (official or crazy). Type your guess in its unit; points by closeness on a log scale (exact 100, twice or half 50, four times off 0), then the record, its holder and today's comparison. Data: `Sports_World_Records*.xlsx`, sheet 1, loaded by `load_records` (no categories). |
+| **Guess the record** | One sports world record a day (official or crazy). Type your guess in its unit; points by closeness on a log scale (exact 100, twice or half 50, four times off 0), then the record, its holder and today's comparison. Data: `Sports_World_Records*.xlsx`, sheet 1, loaded by `load_records` (no categories). Only the World records pool carries this game (`"kinds": ["guess"]`); every other pool gets the three ranking games unless its `"kinds"` says otherwise. |
 | **Ringer** | Party game on one phone (3–12 players, not daily): everyone sees the same item from a pool except the ringer(s), who only learn the pool. Hints go round, the group votes, then the reveal. |
 
 ## How it is built
@@ -58,7 +58,7 @@ Own photos go into `photos/<pool>/<item name>.jpg` (see `photos/README.txt`); th
 
 ## Online results (optional)
 
-There are no logins. When a game ends, the page records `day, game, score, max` under a random device id kept in `localStorage`, then shows how the score compares with everyone else's that day ("Better than 73 % of today's 1,204 players"). The schema and policies are in `supabase/migrations/`: the public key can only insert one row per device, game and day and call `daily_stats()`, which returns a score histogram — individual rows are never readable from the browser.
+There are no logins. When a game ends, the page records `day, game, score, max` under a random device id kept in `localStorage`, then shows how the score compares with everyone else's that day ("Better than 73 % of today's 1,204 players"). The schema and policies are in `supabase/migrations/`: the public key can only insert one row per device, game and day (game keys `rankle-`, `blind-`, `sort-`, `guess-`; a new game type needs a migration widening that pattern) and call `daily_stats()`, which returns a score histogram — individual rows are never readable from the browser.
 
 The build enables it when `supabase/anon.key` exists (the project's public "anon" key, one line). Without the file the page runs exactly the same, minus that one line on the results screen. To use your own project: `npx supabase link --project-ref <ref>`, `npx supabase db push`, then save the anon key to `supabase/anon.key` and rebuild.
 

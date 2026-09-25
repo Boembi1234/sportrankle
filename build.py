@@ -642,7 +642,7 @@ def load_wide(key, cfg):
 
 SITE = "https://sport-minigames.com"
 # Who runs the site, shown on /legal (legal notice and privacy policy): the same operator as the Playmakerz app.
-OPERATOR = {"name": "Playmakerz", "people": "Daniel Keller, Sebastian Flotron, Severin Ott and Yannick Scheitlin",
+OPERATOR = {"name": "Playmakerz", "people": "Daniel Keller",
             "address": "Schlossschürstrasse 22", "place": "8409 Winterthur", "email": "info@playmakerz.ch"}
 # Ads and analytics on the site, for the privacy policy: "network" is the ad provider (e.g. "Snigel", "Google AdSense"),
 # "analytics" the analytics tool or "". Empty network = the policy says there are no ads and no optional cookies.

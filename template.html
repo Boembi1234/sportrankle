@@ -242,6 +242,9 @@ a{color:inherit}
    full width, 52px high, 20px bold, centred, 8px corners */
 .k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);
   font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;letter-spacing:0;text-transform:none;text-align:center}
+/* Rankle: the extra facts sit inside the name card, small and grey under the name */
+.k-rankle .title:has(.title-sub){padding-block:9px}
+.title-sub{display:block;margin-top:3px;font-size:13px;line-height:16px;font-weight:600;color:var(--muted)}
 /* Rankle: no photo; the name card comes first, 24px under the header */
 .k-rankle .photo{display:none}
 .k-rankle .game{padding-top:24px}
@@ -687,7 +690,7 @@ function miniCards(box, text, delay = 0){
 
 // Title board: the item name in LED letters; a new name lights up letter by letter
 let prevTitle = '';
-function titleCards(text, label){
+function titleCards(text, label, sub = ''){   // sub: Rankle's small line under the name, inside the card
   const box = $('title');
   box.setAttribute('aria-label', label || text);
   // Rankle keeps the name's own case and shows the next name at once; the other games light it up letter by letter
@@ -702,6 +705,7 @@ function titleCards(text, label){
     if (lit) i.className = 'lit';
     box.append(i); chars.push(i);
   }
+  if (sub) box.insertAdjacentHTML('beforeend', `<span class="title-sub">${sub}</span>`);
   if (lit) return Promise.resolve();
   return Promise.all(chars.map((i, k) => wait(120 + k * 45).then(() => i.classList.add('lit'))));
 }
@@ -1333,9 +1337,10 @@ function rankleRound(){
   setCounter(true);
   const s = G.sports[G.round], [title, sub, short] = showItem(s);
   const line = [short !== title ? title : '', sub].filter(Boolean).join(', ');
-  $('question').className = 'question sub';
-  $('question').textContent = line;
-  $('question').hidden = !line;
+  // The extra facts (team, position, division) go inside the name card, small under the name
+  $('question').hidden = true;
+  titleText[2] = line;   // kept for redraws on resize
+  if (line) $('title').insertAdjacentHTML('beforeend', `<span class="title-sub">${line}</span>`);
   mainButton('Reveal', confirmPick, true);
   $('note').textContent = 'Tap a category, then reveal.';
   fitPhoto();

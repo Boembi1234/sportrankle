@@ -117,6 +117,9 @@ GAMES["records"] = {
     # Guess the record: one world record a day, guess the number. Not a ranking pool: no categories, its own loader.
     "file": "Sports_World_Records*.xlsx", "tab": "World records", "noun": "record", "plural": "records", "word": "RECORD",
     "sport": "mixed", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/records.png", "ratio": 1.5, "pad": True}}
+GAMES["footrecords"] = {
+    "file": "Football_Records*.xlsx", "tab": "Football records", "noun": "record", "plural": "records", "word": "RECORD",
+    "sport": "soccer", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/footrecords.png", "ratio": 1.5, "pad": True}}
 # Title-board names that the surname rule gets wrong
 SHORT_NAMES = {"Vinicius Junior": "Vinicius", "Vinícius Júnior": "Vinícius", "Cristiano Ronaldo": "Cristiano", "Ronaldo Nazário": "Ronaldo",
                "Son Heung-min": "Son", "Yao Ming": "Yao Ming", "Magic Johnson": "Magic", "Canelo Álvarez": "Canelo"}
@@ -595,16 +598,21 @@ def load_records(key, cfg):
     path = next(HERE.glob(cfg["file"]))
     ws = openpyxl.load_workbook(path, data_only=True).worksheets[0]
     col = {h: i for i, h in enumerate(c.value for c in ws[1]) if h}
+    # column names differ a little between the sheets; the first present name is used, a missing one reads as ""
+    pick = lambda *names: next((n for n in names if n in col), None)
+    c_type, c_nat, c_body = pick("Type"), pick("Nationality", "Nation / Club"), pick("Record body", "Competition")
     items = []
     for r in ws.iter_rows(min_row=2, values_only=True):
         if r[col["ID"]] is None or not r[col["Record"]] or not isinstance(r[col["Value"]], (int, float)):
             continue
-        g = lambda h: (str(r[col[h]]).strip() if r[col[h]] is not None else "")
-        items.append({"name": g("Record"), "cat": g("Category"), "type": g("Type"), "holder": g("Holder"), "nat": g("Nationality"),
+        g = lambda h: (str(r[col[h]]).strip() if h and r[col[h]] is not None else "")
+        items.append({"name": g("Record"), "cat": g("Category"), "type": g(c_type), "holder": g("Holder"), "nat": g(c_nat),
                       "value": float(r[col["Value"]]), "unit": g("Unit"), "display": g("Display") or str(r[col["Value"]]),
-                      "year": r[col["Year set"]], "years": r[col["Years standing"]], "body": g("Record body"), "note": g("Note"),
+                      "year": r[col["Year set"]], "years": r[col["Years standing"]], "body": g(c_body), "note": g("Note"),
                       "ranks": [], "values": []})
-    return game(key, cfg, path, items, [])
+    out = game(key, cfg, path, items, [])
+    out["body_label"] = "Competition" if c_body == "Competition" else "Ratified by"
+    return out
 
 
 def load_wide(key, cfg):

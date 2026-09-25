@@ -521,7 +521,7 @@ const KIND_ART = __KINDS__;
 const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cover?}}
 const ROUTE = __ROUTE__;   // the view a real URL opens on (e.g. "#t/nfl" on /nfl-teams), "" on the home page
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
-const POOLS = ['athletes', 'sports', 'f1', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'records'];
+const POOLS = ['athletes', 'sports', 'f1', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'footrecords', 'records'];
 const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !SPORTS[DATA[m].sport].soon && (!DATA[m].kinds || DATA[m].kinds.includes(k))).map(m => `${k}-${m}`));
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
 // A sport marked "soon" is shown but not playable yet: its pools are out of every list, route and the next-game cycle
@@ -888,14 +888,14 @@ const soonTile = s => `<div class="tile soon" aria-disabled="true" aria-label="$
     <span class="tile-body"><span class="tile-name">${SPORTS[s].name}</span><span class="tile-status done">Soon</span></span>
   </div>`;
 // Guess the record sits in front of the sports: one tile straight into today's record for each pool that only has that game
-const guessCards = () => POOLS.filter(m => DATA[m].kinds.length === 1 && DATA[m].kinds[0] === 'guess')
+const guessCards = () => POOLS.filter(m => DATA[m].kinds.length === 1 && DATA[m].kinds[0] === 'guess' && DATA[m].sport === 'mixed')
   .map(m => bigTile(`#guess-${m}`, `${GAMES.guess.name}, ${DATA[m].tab}`, DATA[m].cover, GAMES.guess.name, [`guess-${m}`]));
 const topicCard = m => bigTile(`#t/${m}`, `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, DATA[m].cover, DATA[m].tab, keysOf([m]));
 
 // Sport page: its topics
 function renderSport(s){
   $('home').innerHTML = `<h1>${SPORTS[s].name}</h1>
-    <p class="today">Pick a topic. Every topic has ${Object.keys(GAMES).filter(k => poolsFor(k, s).length).length} daily games.</p>
+    <p class="today">Pick a topic. ${topicsOf(s).map(m => `${DATA[m].tab}: ${DATA[m].kinds.length === 1 ? 'one daily game' : `${DATA[m].kinds.length} daily games`}`).join(' · ')}.</p>
     <div class="tiles">${topicsOf(s).map(topicCard).join('')}</div>`;
 }
 // Topic page: the games on it side by side, with today's status, and a button to the next open one
@@ -1567,12 +1567,12 @@ function startGuess(){
   G = {day: today(), item: it, guess: null, round: 0, score: 0, sel: null, placed: {}, sports: [], phase: 'round'};
   prevTitle = '';
   setPhoto(D.cover ? {img: D.cover, name: 'World records'} : null);
-  titleCards(it.cat, `${it.cat}, ${it.type}`);
+  titleCards(it.cat, `${it.cat}${it.type ? ', ' + it.type : ''}`);
   const how = ['s', 'min', 'days', 'weeks', 'years'].includes(it.unit) ? 'long' : it.unit === 'km/h' ? 'fast' : ['m', 'km', 'cm', 'yards'].includes(it.unit) ? 'far' : it.unit === 'kg' ? 'heavy' : 'many';
   $('question').className = 'question';
   $('question').hidden = false;
   const fields = guessFields(it), words = fields.map(f => FIELD_WORD[f] || f), inWords = fields.length > 1 ? `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}` : (UNIT_WORD[it.unit] || it.unit);
-  $('question').innerHTML = `${it.name}<span class="qdir">${it.type} · How ${how}? Guess the world record in ${inWords}.</span>`;
+  $('question').innerHTML = `${it.name}<span class="qdir">${it.type ? it.type + ' · ' : ''}How ${how}? Guess the record in ${inWords}.</span>`;
   $('board').innerHTML = `<li class="guess-li"><div class="guess">${fields.map((f, i) => `<input class="gf" id="gf-${i}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
       placeholder="${fields.length > 1 ? '0' : 'e.g. 100'}" aria-label="${FIELD_WORD[f] || f}"><span class="guess-unit">${f}</span>`).join('')}</div></li>`;
   $('round').textContent = ''; $('csep').hidden = $('cpts').hidden = true; shown = 0; $('score').textContent = 0;
@@ -1632,7 +1632,7 @@ function guessResults(){
   const facts = [['Record', recDisplay(it)],
     ['Holder', `${it.holder}${it.nat ? ' · ' + it.nat : ''}`],
     ['Set', it.year ? `${it.year}${it.years > 0 ? ` · standing ${it.years} year${it.years === 1 ? '' : 's'}` : ' · this year'}` : '–'],
-    ['Ratified by', it.body || '–'], it.note ? ['Note', it.note] : null].filter(Boolean);
+    [D.body_label || 'Ratified by', it.body || '–'], it.note ? ['Note', it.note] : null].filter(Boolean);
   $('board').innerHTML = facts.map(([k, val]) => `<li class="fact"><span class="fact-k">${k}</span><span class="fact-v">${val}</span></li>`).join('');
   finishFooter();
   announce(`${score} of 100 points. The record is ${it.display}, set by ${it.holder}.`);

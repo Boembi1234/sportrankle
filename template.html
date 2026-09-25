@@ -238,18 +238,19 @@ a{color:inherit}
   font-family:var(--font);font-weight:900;font-size:34px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance;color:var(--signal)}
 .title i{font-style:normal;color:#1C2126;transition:color .12s}
 .title i.lit{color:inherit;text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
-/* Rankle: the name on a plain card (card colour, hard edge, no dots or glow), sized like the main button below:
+/* Rankle: the name on the blue key of the main button (dark text, hard edge, no dots or glow), sized like it:
    full width, 52px high, 20px bold, centred, 8px corners */
-.k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);
+.k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--signal);box-shadow:0 3px 0 var(--signal-edge);color:var(--bg);
   font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;letter-spacing:0;text-transform:none;text-align:center}
-/* Rankle: the extra facts sit inside the name card, small and grey under the name */
-.k-rankle .title:has(.title-sub){padding-block:9px}
-.title-sub{display:block;margin-top:3px;font-size:13px;line-height:16px;font-weight:600;color:var(--muted)}
+/* Rankle: the extra facts on their own line under the name card: the size and weight of the menu's section labels,
+   but normal case and tighter spacing */
+.title-sub{margin:8px 0 0;font-size:12px;font-weight:700;letter-spacing:.02em;line-height:1.3;color:var(--muted);text-align:center}
+.page.done .title-sub{display:none}
 /* Rankle: no photo; the name card comes first, 24px under the header */
 .k-rankle .photo{display:none}
 .k-rankle .game{padding-top:24px}
 .k-rankle .title{margin-top:0}
-.k-rankle .title i{color:var(--surface)}
+.k-rankle .title i{color:var(--signal)}
 .k-rankle .title i.lit{color:inherit;text-shadow:none}
 /* Two rows of cards: the first row hangs fully on the photo, so the screen stays the same height */
 .question{flex:none;font-weight:700;font-stretch:85%;font-size:32px;line-height:1.1;margin:16px 0 0;text-wrap:balance}
@@ -293,8 +294,11 @@ a{color:inherit}
 .k-rankle .vals i.lit{color:inherit;text-shadow:none}
 /* Rankle: the points sit in a blue box like the Play button (same colour, corners and hard edge), without hover */
 .k-rankle .pts{min-width:0;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge);
-  font-size:15px;line-height:1.2;text-align:center}
-.k-rankle .row.done{padding-right:9px}   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
+  font-size:15px;line-height:1.2;text-align:center;transition:transform .12s,box-shadow .12s,filter .12s}
+@media (hover:hover){.k-rankle .pts:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}   /* looks alive; clicking does nothing */
+@media (prefers-reduced-motion:reduce){.k-rankle .pts{transition:none}}
+.k-rankle .row.done{padding-right:9px}
+.k-rankle:not(.done) .row.done .res{display:none}   /* during play a filled row shows only its title and points; name and value come with the results */   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
 .row:disabled{cursor:default}
 .body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .cat{font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -528,6 +532,7 @@ a{color:inherit}
     <section class="left">
       <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
       <div class="title" id="title" role="img"></div>
+      <p class="title-sub" id="title-sub" hidden></p>
       <div class="led" id="led" hidden>
         <div><span class="led-lbl">Points</span><span class="led-num" id="led-num"></span></div>
         <div class="led-side"><span class="led-lbl">Of max</span><span class="led-num" id="led-pct"></span></div>
@@ -690,7 +695,7 @@ function miniCards(box, text, delay = 0){
 
 // Title board: the item name in LED letters; a new name lights up letter by letter
 let prevTitle = '';
-function titleCards(text, label, sub = ''){   // sub: Rankle's small line under the name, inside the card
+function titleCards(text, label){
   const box = $('title');
   box.setAttribute('aria-label', label || text);
   // Rankle keeps the name's own case and shows the next name at once; the other games light it up letter by letter
@@ -705,7 +710,6 @@ function titleCards(text, label, sub = ''){   // sub: Rankle's small line under 
     if (lit) i.className = 'lit';
     box.append(i); chars.push(i);
   }
-  if (sub) box.insertAdjacentHTML('beforeend', `<span class="title-sub">${sub}</span>`);
   if (lit) return Promise.resolve();
   return Promise.all(chars.map((i, k) => wait(120 + k * 45).then(() => i.classList.add('lit'))));
 }
@@ -1282,6 +1286,7 @@ function route(){
   }
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
   $('page').className = `page k-${KIND}`;   // k-rankle etc.: styles for one game only
+  $('title-sub').hidden = true;
   $('today').hidden = true;
   $('led').hidden = true;
   $('share').hidden = true;
@@ -1337,10 +1342,10 @@ function rankleRound(){
   setCounter(true);
   const s = G.sports[G.round], [title, sub, short] = showItem(s);
   const line = [short !== title ? title : '', sub].filter(Boolean).join(', ');
-  // The extra facts (team, position, division) go inside the name card, small under the name
+  // The extra facts (team, position, division) go on their own small line under the name card
   $('question').hidden = true;
-  titleText[2] = line;   // kept for redraws on resize
-  if (line) $('title').insertAdjacentHTML('beforeend', `<span class="title-sub">${line}</span>`);
+  $('title-sub').textContent = line;
+  $('title-sub').hidden = !line;
   mainButton('Reveal', confirmPick, true);
   $('note').textContent = 'Tap a category, then reveal.';
   fitPhoto();

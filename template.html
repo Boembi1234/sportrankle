@@ -384,6 +384,17 @@ a{color:inherit}
 .k-rankle .row.ideal .cat{color:var(--led-ok)}
 .k-rankle .row.ideal .pts,.k-rankle #board2 .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}   /* the perfect board is all green */
 .page.k-rankle.done .row .cat{color:var(--text)}   /* results: the titles white; only the points box carries the colour */
+.k-rankle .row.worst .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}   /* the worst pick(s): red */
+/* Rankle results: "Your board" / "Perfect board" as two chips, half the width each; the active one blue, the other grey
+   with the buttons' hover */
+.k-rankle .seg{gap:8px;margin-top:24px}
+.page.k-rankle.done #board,.page.k-rankle.done .alt{margin-top:24px}   /* 24px from the switch to the list, like the facts to the rows */
+.k-rankle .segbtn{flex:1;min-height:40px;border-radius:6px;background:var(--surface);box-shadow:0 2px 0 var(--surface-edge);color:var(--text);
+  font-size:15px;font-weight:700;text-decoration:none;transition:transform .12s,box-shadow .12s,filter .12s}
+.k-rankle .segbtn[aria-pressed="true"]{background:var(--signal);box-shadow:0 2px 0 var(--signal-edge);color:var(--bg);cursor:default}
+@media (hover:hover){.k-rankle .segbtn[aria-pressed="false"]:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--surface-edge);filter:brightness(1.08)}}
+.k-rankle .segbtn[aria-pressed="false"]:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge);filter:none}
+@media (prefers-reduced-motion:reduce){.k-rankle .segbtn{transition:none}}
 @media (prefers-reduced-motion:reduce){.led-bar i{transition:none}}
 .page.done .title{display:none}
 
@@ -1424,6 +1435,8 @@ function rankleResults(){
     turn(rank, rank.dataset.ch, 300 + k * 90, ok ? 'ok' : 'no');
     G.share = (G.share || []).concat(ok ? '🟩' : '🟥');
   });
+  const low = Math.min(...G.cats.map((c, k) => pts(G.placed[k], c)));   // the worst pick(s) on your board go red
+  G.cats.forEach((c, k) => $(`row-${k}`).classList.toggle('worst', pts(G.placed[k], c) === low && !$(`row-${k}`).classList.contains('ideal')));
   finishFooter();
 
   // The perfect board: the same rows, each category with the item that belongs there

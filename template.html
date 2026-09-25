@@ -1537,7 +1537,7 @@ function scoreboard(score, max, note){
 // ---- Second board on the results screen (perfect board / true order) ----
 const miniHTML = text => [...text].map(ch => `<i class="lit">${ch}</i>`).join('');
 function altRow(rankCh, tone, cat, who, v, pts, label, more = '', icon = ''){   // icon: Rankle's category emoji
-  return `<li><button class="row done${tone === 'ok' ? ' ideal' : ''}" type="button" disabled aria-label="${label}">
+  return `<li><button class="row done${tone === 'ok' ? ' ideal' : tone === 'no' ? ' worst' : ''}" type="button" disabled aria-label="${label}">
       <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'blind' ? `<span class="row-no">${rankCh}</span>` : icon}
       <span class="body"><span class="cat">${cat}</span>
         <span class="res">${who ? `<span class="who">${who}</span>` : ''}<span class="vals">${v ? miniHTML(v[0]) : ''}</span><span class="unit">${v ? v[1] : 'no value'}</span>${more ? `<span class="more">${more}</span>` : ''}</span></span>
@@ -1655,13 +1655,13 @@ function blindResults(){
   });
   finishFooter();
 
-  // The true order: the same rows, each spot with the item that belongs there and where you put it
+  // The perfect order: the same rows, each spot with the item that belongs there, the points you got for it and where you put it
   const order = [...G.sports].sort((a, b) => D.items[a].ranks[G.cat] - D.items[b].ranks[G.cat]);
   const yourSpot = {};
   for (const [k, s] of Object.entries(G.placed)) yourSpot[s] = +k;
-  showAlt('True order', `True order by ${c.name}`, order.map((s, i) => {
+  showAlt('Perfect order', `Perfect order by ${c.name}`, order.map((s, i) => {
     const [p, d] = blindPts(s, yourSpot[s]), v = fmt(s, G.cat);
-    return altRow(String(i + 1), d ? '' : 'ok', nm(s), '', v, `+${p}`,
+    return altRow(String(i + 1), d === 0 ? 'ok' : d >= 2 ? 'no' : '', nm(s), '', v, `+${p}`,   // same colours as in your order
       `Spot ${i + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, you put it on spot ${yourSpot[s] + 1}`,
       d ? `· you: spot <b>${yourSpot[s] + 1}</b>` : '');
   }));

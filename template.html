@@ -527,7 +527,17 @@ const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = id => document.getElementById(id);
 let KIND, MODE, D, N, G, busy = false, instant = false;
 
-const pts = (s, c) => { const r = D.items[s].ranks[c]; return r == null ? 0 : N + 1 - r; };
+// Rankle points: rank 1 earns 100, the last distinct rank of the category 0, equal steps between. A category
+// whose values run 0..8 has nine steps of 12.5 points; one with 150 different values has steps of 0.67.
+// Tied items share a rank and therefore the points; no value earns 0.
+const STEPS = {};   // "pool|category" -> the category's distinct ranks, ascending
+function pts(s, c){
+  const r = D.items[s].ranks[c];
+  if (r == null) return 0;
+  const key = `${MODE}|${c}`;
+  const ranks = STEPS[key] || (STEPS[key] = [...new Set(D.items.map(it => it.ranks[c]).filter(x => x != null))].sort((a, b) => a - b));
+  return ranks.length < 2 ? 100 : Math.round(100 * (1 - ranks.indexOf(r) / (ranks.length - 1)));
+}
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const announce = t => { $('live').textContent = t; };
 const cap = s => s[0].toUpperCase() + s.slice(1);
@@ -704,7 +714,7 @@ function setCounter(showPts){
 }
 function rulesHTML(){
   const n = KIND ? N : null;
-  const rankle = `<p><b>Rankle.</b> Every day brings 8 categories and, one after another, 8 items. Put each one in the category where it ranks highest among all ${n || 'items in the pool'}. Each category can be used once. Rank 1 earns ${n ? `${n} points` : 'one point per item in the pool'}, the last rank earns 1, no value earns 0. At the end you see the perfect board.</p>`;
+  const rankle = `<p><b>Rankle.</b> Every day brings 8 categories and, one after another, 8 items. Put each one in the category where it ranks highest among all ${n || 'items in the pool'}. Each category can be used once. Rank 1 earns 100 points, the last place 0, with equal steps between: nine different values mean steps of 12.5 points, and tied items share their points. No value earns 0. At the end you see the perfect board.</p>`;
   const blind = `<p><b>Blind ranking.</b> Every day brings one attribute and, one after another, 8 items. Put each one on a spot from 1 to 8 without knowing what comes next; a spot can't be changed. The exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}. Tied values count as correct on any of their spots.</p>`;
   const common = `<p>One attempt per game, day and device. New cards at midnight. Keyboard: 1 to 8 or the arrow keys pick a row, Enter confirms.${Object.values(DATA).some(g => g.items.some(it => it.credit)) ? ' Click a photo for its source.' : ''}</p>`;
   const sort = `<p><b>Sort it.</b> Every day brings one attribute and 8 items, all in view from the start. Tap two rows to swap them until the order is right, then reveal. Scored like Blind ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;

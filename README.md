@@ -2,14 +2,14 @@
 
 Daily sports ranking puzzles, live at <https://sportrankle.netlify.app>.
 
-Three games, nine topics in five sports, one attempt per game and day. The home page goes **sport → topic → game**: American football → NFL teams / NFL players / NFL Hall of Fame / College football; All sports → Top 150 athletes / Team sports; Football → Champions League players; Motorsport → F1 circuits; Winter sports → Alpine skiers. A topic page (`#t/nfl`) lists its games side by side with today's status; a sport with a single topic links straight to its topic page. The game cards on the home page still open the game-first view (`#rankle`, `#rankle/football`) for people who prefer one mechanic. Each pool names its `"sport"` (a key of `SPORTS` in `build.py`, which also holds the sport's name and optional picture `covers/sport-<key>.png`). The Top 150 athletes pool is the flagship: Rankle only, shown as the big card on top of the home page (`"kinds": ["rankle"], "flagship": True`). Every player gets the same cards; the daily draw is seeded by the date in the browser, so the site is a single static page with no backend.
+Three games, nine topics in five sports, one attempt per game and day. The home page goes **sport → topic → game**: American football → NFL teams / NFL players / NFL Hall of Fame / College football; All sports → Top 150 athletes / Team sports; Football → Champions League players; Motorsport → F1 circuits; Winter sports → Alpine skiers. A topic page (`#t/nfl`) lists its games side by side with today's status; a sport with a single topic links straight to its topic page. The game cards on the home page still open the game-first view (`#rankle`, `#rankle/football`) for people who prefer one mechanic. Each pool names its `"sport"` (a key of `SPORTS` in `build.py`, which also holds the sport's name and optional picture `covers/sport-<key>.png`; `"soon": True` shows the sport as "Coming soon": greyed tile with a sign, no link in nav or menu, its topics out of every list, route, page and the sitemap). The Top 150 athletes pool is the flagship: Rankle only, shown as the big card on top of the home page (`"kinds": ["rankle"], "flagship": True`). Every player gets the same cards; the daily draw is seeded by the date in the browser, so the site is a single static page with no backend.
 
 | Game | Idea |
 |---|---|
-| **Rankle** | 8 categories, 8 items arriving one by one. Put each item in the category where it ranks highest among the whole pool. Each category can be used once. |
-| **Blind ranking** | One attribute, 8 items arriving one by one. Place each on spot 1–8 without knowing what comes next. |
+| **Rankle** | 8 categories, 8 items arriving one by one. Put each item in the category where it ranks highest among the whole pool. Each category can be used once. Rank 1 earns 100 points, the last distinct rank 0, equal steps between (tied items share a rank), so every category is worth the same and a game maxes at 800. |
+| **Blind ranking** | One attribute, 8 items arriving one by one. Place each on spot 1–8 without knowing what comes next. The draw takes eight different values, so the items never tie. |
 | **Sort it** | One attribute, all 8 items in view. Swap them into the right order, then reveal. |
-| **Guess the record** | One sports world record a day (official or crazy). Type your guess in its unit; points by closeness on a log scale (exact 100, twice or half 50, four times off 0), then the record, its holder and today's comparison. Data: `Sports_World_Records*.xlsx`, sheet 1, loaded by `load_records` (no categories). Only the World records pool carries this game (`"kinds": ["guess"]`); every other pool gets the three ranking games unless its `"kinds"` says otherwise. |
+| **Guess the record** | One sports world record a day (official or crazy). Type your guess in its unit; points by closeness on a log scale (exact 100, twice or half 50, four times off 0), then the record, its holder and today's comparison. Data: `Sports_World_Records*.xlsx` and `Football_Records*.xlsx` (under Football), sheet 1, loaded by `load_records` (no categories; the sheets may name the columns Nationality / Nation / Club and Record body / Competition). Only the records pools carry this game (`"kinds": ["guess"]`); every other pool gets the three ranking games unless its `"kinds"` says otherwise. |
 | **Ringer** | Party game on one phone (3–12 players, not daily): everyone sees the same item from a pool except the ringer(s), who only learn the pool. Hints go round, the group votes, then the reveal. |
 
 ## How it is built
@@ -17,7 +17,7 @@ Three games, nine topics in five sports, one attempt per game and day. The home 
 ```
 Mannschaftssportarten_20x15.xlsx ─┐
 F1-Strecken_20x15.xlsx            ├─ build.py ─► sportrankle.html (dev copy)
-NFL_Teams_Rankle_32x15.xlsx       │             dist/index.html  (deployed)
+NFL_Teams_Rankle_*.xlsx (+3 NFL) │             dist/index.html  (deployed)
 Ski_Alpin_Rankle_40x15.xlsx      ─┘             dist/img/        (photos)
 template.html  (all HTML, CSS and JS)
 photos/<pool>/ (own photos)   covers/ (tile pictures)
@@ -62,9 +62,17 @@ There are no logins. When a game ends, the page records `day, game, score, max` 
 
 The build enables it when `supabase/anon.key` exists (the project's public "anon" key, one line). Without the file the page runs exactly the same, minus that one line on the results screen. To use your own project: `npx supabase link --project-ref <ref>`, `npx supabase db push`, then save the anon key to `supabase/anon.key` and rebuild.
 
+## Seeded results
+
+So that nobody is "first to play today", a pg_cron job inside Supabase (`supabase/migrations/20260925180000_seed_results.sql`) tops every daily game up to roughly 900 to 1,150 plausible results a day, spread over the day along an hourly activity curve (runs hourly at :07 UTC, catches up after a missed run). Seed rows have device ids starting with `facade00-` and are deleted after two days; real rows are never touched. The games to seed live in `public.seed_games`; when pools or games change, the build warns and a new migration has to upsert that table (and `supabase/seed_games.txt` is updated to match). Score shapes per game kind are in `seed_score()`.
+
 ## Search engines
 
-The build writes one real page per topic, sport and game next to `index.html` (`nfl-teams.html`, `american-football.html`, `rankle.html`, ...; `_redirects` serves them as `/nfl-teams` etc.). Each is the full app opened on that view, with its own title, description, canonical URL, Open Graph tags and JSON-LD, plus a static intro that search engines read before the app renders. `sitemap.xml`, `robots.txt`, `og.jpg` and the icons are generated too, and a footer with real links to every page sits under the home page. Cover pictures are files under `img/covers/` with a content hash in the name (long cache), not data URIs.
+The build writes one real page per topic, sport and game next to `index.html` (`nfl-teams.html`, `american-football.html`, `rankle.html`, ...; `_redirects` serves them as `/nfl-teams` etc.). Each is the full app opened on that view, with its own title, description, canonical URL, Open Graph tags and JSON-LD, plus a static intro that search engines read before the app renders. Every static intro carries real links (home: all sports, topics and games; topic: its sport, sibling topics, games), so a crawler reaches every page without JavaScript. `sitemap.xml` (with lastmod), `robots.txt`, `og.jpg`, the icons, JSON-LD with breadcrumbs, the `.html` to clean-URL redirects and the security headers are generated too. Cover pictures are files under `img/covers/` with a content hash in the name (long cache), not data URIs.
+
+## Legal notice and privacy
+
+`legal.html` is the legal notice (Impressum) and privacy policy, served as `/legal` and linked from the bottom of the home page. The build fills in `OPERATOR` from `build.py` (Playmakerz, the people behind it, address and e-mail, the same as the Playmakerz app's Impressum) and the date. It describes exactly what the site does with data: Netlify server logs, Google Fonts, the anonymous score rows in Supabase (EU, Ireland) and the local storage in the browser. Update it when a game starts to need other data. The cookie, advertising, legal-basis and recipients parts exist in two variants: set `ADS = {"network": "<ad provider>", "analytics": "<tool or empty>"}` in `build.py` once ads run, and the build keeps the consent-based version (modelled on geotrivia.com's policy) instead of the "no ads, no cookies" one. Ads also need a real consent banner (TCF-compliant CMP) on the page.
 
 ## Deploying
 

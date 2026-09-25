@@ -38,8 +38,9 @@ SPORTS = {
     "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
     "soccer": {"name": "Football", "cover": "covers/sport-soccer.png"},
     "football": {"name": "American football", "cover": "covers/sport-football.png"},
-    "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png"},
-    "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png"},
+    # "soon": the sport shows as "Coming soon" (tile, nav, menu) and its topics are not playable or crawlable yet
+    "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},
+    "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png", "soon": True},
 }
 
 GAMES = {
@@ -116,6 +117,9 @@ GAMES["records"] = {
     # Guess the record: one world record a day, guess the number. Not a ranking pool: no categories, its own loader.
     "file": "Sports_World_Records*.xlsx", "tab": "World records", "noun": "record", "plural": "records", "word": "RECORD",
     "sport": "mixed", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/records.png", "ratio": 1.5, "pad": True}}
+GAMES["footrecords"] = {
+    "file": "Football_Records*.xlsx", "tab": "Football records", "noun": "record", "plural": "records", "word": "RECORD",
+    "sport": "soccer", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/footrecords.png", "ratio": 1.5, "pad": True}}
 # Title-board names that the surname rule gets wrong
 SHORT_NAMES = {"Vinicius Junior": "Vinicius", "Vinícius Júnior": "Vinícius", "Cristiano Ronaldo": "Cristiano", "Ronaldo Nazário": "Ronaldo",
                "Son Heung-min": "Son", "Yao Ming": "Yao Ming", "Magic Johnson": "Magic", "Canelo Álvarez": "Canelo"}
@@ -211,6 +215,26 @@ CATS_EN = {
     "Punkte erzielt Regular Season 2025": ("Points scored 2025", "pts"),
     "Besitzerfamilie seit": ("Owner family since", ""),
     "Erster Pick im Draft 2026": ("First pick, 2026 draft", "overall"),
+    "Cap Space Saison 2026": ("Cap space 2026", "M USD"),
+    "Franchise-Wert 2026 (Forbes)": ("Franchise value 2026", "B USD"),
+    "Super-Bowl-Teilnahmen all-time": ("Super Bowl appearances", ""),
+    "Jahre seit letztem Playoff-Sieg": ("Years since last playoff win", "years"),
+    "Head Coach im Amt seit": ("Head coach in charge since", ""),
+    "Zuschauerschnitt Heimspiele 2025": ("Average home crowd 2025", ""),
+    "Bierpreis im Stadion 2025": ("Stadium beer price 2025", "USD"),
+    "Nr.-1-Overall-Picks all-time": ("No. 1 overall picks, all time", ""),
+    "Spiele im Ausland all-time": ("Games played abroad", "games"),
+    "Durchschnittsalter Kader 2026": ("Average roster age 2026", "years"),
+    "Längste Siegesserie Regular Season": ("Longest regular-season win streak", "games"),
+    "Heim-Siegquote seit 1999": ("Home win rate since 1999", ""),
+    "Auswärts-Siegquote seit 1999": ("Away win rate since 1999", ""),
+    "Overtime-Spiele seit 1999": ("Overtime games since 1999", "games"),
+    "Grösster Sieg seit 1999": ("Biggest win since 1999", "pts"),
+    "Primetime-Spiele seit 1999": ("Prime-time games since 1999", "games"),
+    "Punktedifferenz seit 1999": ("Point differential since 1999", "pts"),
+    "Sacks Defense 2025": ("Defensive sacks 2025", "sacks"),
+    "Erstrunden-Picks seit 1990": ("First-round picks since 1990", "picks"),
+    "Pro-Bowler gedraftet seit 1990": ("Pro Bowlers drafted since 1990", "players"),
     # NFL players and Hall of Fame
     "Geburtsdatum": ("Date of birth", ""),
     "Grösse": ("Height", "cm"),
@@ -227,6 +251,13 @@ CATS_EN = {
     "Ø Jahresgehalt aktueller Vertrag": ("Average salary, current deal", "M USD"),
     "Vertrag läuft bis": ("Contract runs until", ""),
     "Einwohner Geburtsort": ("Population of birthplace", "thousand"),
+    "Spiele Regular Season Karriere": ("Regular-season games", "games"),
+    "Anzahl Head Coaches in der Karriere": ("Head coaches in career", ""),
+    "Karrierewert (Weighted AV)": ("Career value (weighted AV)", "AV"),
+    "Saisons als Starter": ("Seasons as a starter", "seasons"),
+    "Snaps Saison 2025": ("Snaps in 2025", "snaps"),
+    "Injury-Report-Einträge 2025": ("Injury report entries 2025", "entries"),
+    "Karrierelänge": ("Career length", "seasons"),
     "HOF-Aufnahmejahr": ("Hall of Fame induction", ""),
     "Spiele Regular Season": ("Regular-season games", "games"),
     "Anzahl NFL-Teams": ("NFL teams played for", "teams"),
@@ -247,6 +278,14 @@ CATS_EN = {
     "Einwohner Uni-Stadt": ("Population of college town", "thousand"),
     "NFL-Draft-Picks 2026": ("2026 NFL draft picks", "players"),
     "Unentschieden all-time": ("Ties, all time", "ties"),
+    "Cheftrainer-Gehalt 2025": ("Head coach salary 2025", "M USD"),
+    "Alumni auf NFL-Kadern Woche 1 2026": ("Alumni on NFL rosters 2026", "players"),
+    "NFL-Draft-Picks seit 1980": ("NFL draft picks since 1980", "players"),
+    "Erstrunden-Picks seit 1980": ("First-round picks since 1980", "players"),
+    "Pro-Bowler gedraftet seit 1980": ("Pro Bowlers drafted since 1980", "players"),
+    "Hall-of-Famer gedraftet seit 1980": ("Hall of Famers drafted since 1980", "players"),
+    "Combine-Teilnehmer seit 2000": ("Combine invitees since 2000", "players"),
+    "Schnellster 40-Yard eines Alumni": ("Fastest 40-yard dash by an alumnus", "s"),
     # Alpine skiers
     "Geburtsdatum (Alter)": ("Date of birth", ""),
     "Weltcup-Debüt": ("World Cup debut", ""),
@@ -278,7 +317,11 @@ DIR_EN = {"meiste": "most", "grösste": "largest", "grösster": "largest", "län
           "frühester Pick": "earliest pick", "frühester Pick (Nr. 1)": "earliest pick", "ältester": "oldest", "grösster": "tallest",
           "schwerster": "heaviest", "frühestes (dienstältester)": "earliest", "jüngstes Debüt": "youngest", "kleinste Nummer": "lowest",
           "längste Bindung": "latest", "grösste Stadt": "largest", "neueste Aufnahme": "most recent", "meiste Teams": "most",
-          "jüngste Aufnahme": "youngest", "ältester beim Rücktritt": "oldest", "älteste Uni": "oldest", "grösste Uni": "largest", "Grösste Uni": "largest"}
+          "jüngste Aufnahme": "youngest", "ältester beim Rücktritt": "oldest", "älteste Uni": "oldest",
+          "meister Platz unter dem Cap": "most", "wertvollste": "most valuable", "dienstältester Head Coach": "longest-serving",
+          "günstigstes Bier": "cheapest", "ältester Kader": "oldest", "längste Serie": "longest", "meiste Head Coaches": "most",
+          "bestbezahlter Trainer": "highest paid", "meiste NFL-Profis": "most", "grösste Uni": "largest",
+          "höchster Sieg": "biggest", "beste Differenz": "best", "schnellster": "fastest", "Grösste Uni": "largest"}
 
 # Rankle shows each category as one title with its direction: "most" + "Playoff wins, all time" -> "Most playoff wins, all time".
 # Where that reads badly (a doubled word, a lowercased name), the full title is spelled out here, keyed by the automatic one.
@@ -309,6 +352,14 @@ TITLES = {
     "Largest students": "Most students", "Northernmost latitude": "Northernmost", "Longest track length": "Longest track",
     "Longest field length": "Longest field", "Highest goal / hoop / net height": "Highest goal / hoop / net",
     "Most first-team All-Pro": "Most first-team All-Pro picks",
+    # NFL teams v5, NFL players v4, Hall of Fame v3, College football v3
+    "Longest longest regular-season win streak": "Longest regular-season win streak", "Biggest biggest win since 1999": "Biggest win since 1999",
+    "Fastest fastest 40-yard dash by an alumnus": "Fastest 40-yard dash by an alumnus", "Longest-serving head coach in charge since": "Longest-serving head coach",
+    "Most valuable franchise value 2026": "Most valuable franchise 2026", "Highest paid head coach salary 2025": "Highest-paid head coach 2025",
+    "Cheapest stadium beer price 2025": "Cheapest stadium beer 2025", "Longest years since last playoff win": "Longest wait for a playoff win",
+    "Longest career length": "Longest career", "Most average home crowd 2025": "Biggest average home crowd 2025",
+    "Most hall of Famers drafted since 1980": "Most Hall of Famers drafted since 1980", "Most pro Bowlers drafted since 1980": "Most Pro Bowlers drafted since 1980",
+    "Most pro Bowlers drafted since 1990": "Most Pro Bowlers drafted since 1990", "Oldest average roster age 2026": "Oldest roster 2026",
 }
 
 
@@ -323,7 +374,8 @@ def cat_title(cat):
 LOW_FIRST = {"ältestes", "älteste", "frühestes", "früheste", "schnellste", "kürzeste", "kleinste", "leichteste", "südlichste", "tiefste", "wenigste",
              "am längsten", "am längsten dabei", "jüngste/r Debütant/in",
              "am längsten (ältestes Jahr)", "ältestes Stadion", "frühester Pick", "frühester Pick (Nr. 1)", "ältester",
-             "frühestes (dienstältester)", "jüngstes Debüt", "kleinste Nummer", "jüngste Aufnahme", "älteste Uni"}
+             "frühestes (dienstältester)", "jüngstes Debüt", "kleinste Nummer", "jüngste Aufnahme", "älteste Uni",
+             "dienstältester Head Coach", "günstigstes Bier", "schnellster"}
 
 # Spreadsheet unit -> (unit shown, value format)
 UNIT_FMT = {"Anzahl": ("", ""), "Jahr": ("", "year"), "Sekunden": ("", "laptime"), "Grad": ("", "lat"),
@@ -466,8 +518,32 @@ def local_photos(key, opts=None):
     return out
 
 
+def ensure_calculated(path):
+    """Workbooks written by a script hold formulas without results; openpyxl then reads those cells as empty.
+    If the first sheet has such cells, open the file in Excel once (Windows, via COM), recalculate and save."""
+    ws_f = openpyxl.load_workbook(path, data_only=False).worksheets[0]
+    ws_v = openpyxl.load_workbook(path, data_only=True).worksheets[0]
+    # =IMAGE(...) cells only show a picture in Excel and never hold a value, so they don't count
+    missing = [c.coordinate for row in ws_f.iter_rows(min_row=2) for c in row
+               if isinstance(c.value, str) and c.value.startswith("=") and "IMAGE(" not in c.value.upper() and ws_v[c.coordinate].value is None]
+    if not missing:
+        return
+    try:
+        import win32com.client
+        xl = win32com.client.DispatchEx("Excel.Application")
+        xl.Visible = False; xl.DisplayAlerts = False
+        wb = xl.Workbooks.Open(str(path.resolve()))
+        xl.CalculateFullRebuild()
+        wb.Save(); wb.Close(False); xl.Quit()
+        print(f"  {path.name}: {len(missing)} formula cells had no result, calculated in Excel and saved")
+    except Exception as e:
+        raise SystemExit(f"{path.name}: {len(missing)} formula cells have no result (e.g. {missing[0]}) and Excel could not "
+                         f"calculate them ({e}). Open the file in Excel, press F9, save, and build again.")
+
+
 def load_game(key, cfg):
     path = next(HERE.glob(cfg["file"]))
+    ensure_calculated(path)
     wb = openpyxl.load_workbook(path, data_only=True)
     values_ws, _, cats_ws = wb.worksheets[:3]
 
@@ -519,6 +595,8 @@ def load_game(key, cfg):
         if n not in NAMES_EN and not cfg.get("english"):
             print(f"  No English name for '{n}', using German")
     for cat in cats:
+        if cat["dir"] not in DIR_EN:
+            print(f"  Unknown direction '{cat['dir']}' for '{cat['name']}' (largest value ranks first)")
         cat["dir"] = DIR_EN.get(cat["dir"], cat["dir"])
     items = [{"name": NAMES_EN.get(n, n) + (f" ({subs[n]})" if subs.get(n) else ""), "ranks": ranks[n], "values": values[n],
               **images.get(n, {})} for n in names]
@@ -567,16 +645,21 @@ def load_records(key, cfg):
     path = next(HERE.glob(cfg["file"]))
     ws = openpyxl.load_workbook(path, data_only=True).worksheets[0]
     col = {h: i for i, h in enumerate(c.value for c in ws[1]) if h}
+    # column names differ a little between the sheets; the first present name is used, a missing one reads as ""
+    pick = lambda *names: next((n for n in names if n in col), None)
+    c_type, c_nat, c_body = pick("Type"), pick("Nationality", "Nation / Club"), pick("Record body", "Competition")
     items = []
     for r in ws.iter_rows(min_row=2, values_only=True):
         if r[col["ID"]] is None or not r[col["Record"]] or not isinstance(r[col["Value"]], (int, float)):
             continue
-        g = lambda h: (str(r[col[h]]).strip() if r[col[h]] is not None else "")
-        items.append({"name": g("Record"), "cat": g("Category"), "type": g("Type"), "holder": g("Holder"), "nat": g("Nationality"),
+        g = lambda h: (str(r[col[h]]).strip() if h and r[col[h]] is not None else "")
+        items.append({"name": g("Record"), "cat": g("Category"), "type": g(c_type), "holder": g("Holder"), "nat": g(c_nat),
                       "value": float(r[col["Value"]]), "unit": g("Unit"), "display": g("Display") or str(r[col["Value"]]),
-                      "year": r[col["Year set"]], "years": r[col["Years standing"]], "body": g("Record body"), "note": g("Note"),
+                      "year": r[col["Year set"]], "years": r[col["Years standing"]], "body": g(c_body), "note": g("Note"),
                       "ranks": [], "values": []})
-    return game(key, cfg, path, items, [])
+    out = game(key, cfg, path, items, [])
+    out["body_label"] = "Competition" if c_body == "Competition" else "Ratified by"
+    return out
 
 
 def load_wide(key, cfg):
@@ -613,6 +696,12 @@ def load_wide(key, cfg):
 
 
 SITE = "https://sport-minigames.com"
+# Who runs the site, shown on /legal (legal notice and privacy policy): the same operator as the Playmakerz app.
+OPERATOR = {"name": "Playmakerz", "people": "Daniel Keller",
+            "address": "Schlossschürstrasse 22", "place": "8409 Winterthur", "email": "info@playmakerz.ch"}
+# Ads and analytics on the site, for the privacy policy: "network" is the ad provider (e.g. "Snigel", "Google AdSense"),
+# "analytics" the analytics tool or "". Empty network = the policy says there are no ads and no optional cookies.
+ADS = {"network": "", "analytics": ""}
 OLD_HOSTS = ["https://sportrankle.netlify.app"]   # old addresses: everything there redirects to SITE
 GAME_PAGES = {
     "rankle": ("Rankle", "Eight categories, eight items arriving one by one: put each one where it ranks highest among the whole pool. Each category can be used once. The perfect board is revealed at the end."),
@@ -633,14 +722,35 @@ def esc(text):
     return text.replace("&", "&amp;").replace("<", "&lt;").replace('"', "&quot;")
 
 
+def open_topics(data, sports):
+    """The pools whose sport is playable (not "coming soon")."""
+    return {k: g for k, g in data.items() if not sports[g["sport"]].get("soon")}
+
+
+def link_lists(data, sports):
+    """Static HTML lists with real links to every sport, topic and game: what a crawler follows before the app renders."""
+    topic_slug = {k: slug(g["tab"]) for k, g in data.items()}
+    opened = open_topics(data, sports)
+    parts = []
+    for sk, sp in sports.items():
+        topics = [(topic_slug[k], g["tab"]) for k, g in opened.items() if g["sport"] == sk]
+        if topics:
+            parts.append(f'<li><a href="/{slug(sp["name"])}">{esc(sp["name"])}</a>: '
+                         + ", ".join(f'<a href="/{s}">{esc(t)}</a>' for s, t in topics) + "</li>")
+    games = ", ".join(f'<a href="/{gs}">{esc(n)}</a>' for gs, (n, _) in GAME_PAGES.items())
+    return f"<h2>Sports and topics</h2><ul>{''.join(parts)}</ul><h2>Games</h2><p>{games}</p>"
+
+
 def pages(data, sports):
-    """Every crawlable page: (path, title, description, route hash, static intro html)."""
+    """Every crawlable page: (path, title, description, route hash, static intro html, breadcrumbs)."""
     cats = lambda g: ", ".join(c["name"].lower() for c in g["cats"][:5])
     topic_slug = {k: slug(g["tab"]) for k, g in data.items()}
+    opened = open_topics(data, sports)
+    games_line = lambda: "<p>Games: " + ", ".join(f'<a href="/{gs}">{esc(n)}</a>' for gs, (n, _) in GAME_PAGES.items()) + "</p>"
     out = []
-    for k, g in data.items():
-        kinds = g["kinds"]
-        games = ", ".join(KIND_NAMES[k] for k in kinds)
+    for k, g in opened.items():
+        sp = sports[g["sport"]]
+        games = ", ".join(KIND_NAMES[k] for k in g["kinds"])
         if g["cats"]:
             desc = (f"{g['tab']} quiz: rank {len(g['items'])} {g['plural']} by {len(g['cats'])} real categories such as {cats(g)}. "
                     f"Play {games}, new cards every day, one attempt each, compare your score with everyone else's.")
@@ -651,43 +761,41 @@ def pages(data, sports):
             desc = (f"{g['tab']} quiz: {len(g['items'])} sports world records, one a day. Guess how fast, how far or how many, "
                     f"score by how close you are, compare with everyone. {', '.join(areas[:6])} and more.")
             intro = f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Areas</h2><ul>" + "".join(f"<li>{esc(a)}</li>" for a in areas) + "</ul>"
-        out.append((topic_slug[k], f"{g['tab']} quiz - daily ranking puzzle | Sportrankle", desc, f"#t/{k}", intro))
+        siblings = [(topic_slug[o], og["tab"]) for o, og in opened.items() if og["sport"] == g["sport"] and o != k]
+        intro += (f'<p>Part of <a href="/{slug(sp["name"])}">{esc(sp["name"])}</a>'
+                  + (": also " + ", ".join(f'<a href="/{s}">{esc(n)}</a>' for s, n in siblings) if siblings else "") + ".</p>" + games_line())
+        crumbs = [(sp["name"], f"/{slug(sp['name'])}"), (g["tab"], f"/{topic_slug[k]}")]
+        out.append((topic_slug[k], f"{g['tab']} quiz | Sportrankle", desc, f"#t/{k}", intro, crumbs))
     for sk, sp in sports.items():
-        topics = [g for g in data.values() if g["sport"] == sk]
+        topics = [g for g in opened.values() if g["sport"] == sk]
         if not topics:
             continue
         names = ", ".join(t["tab"] for t in topics)
-        desc = f"{sp['name']} quizzes: {names}. Daily ranking puzzles on real stats, three games per topic, one attempt a day."
+        desc = f"{sp['name']} quizzes: {names}. Daily ranking puzzles on real stats, up to three games per topic, one attempt a day."
         intro = f"<h1>{esc(sp['name'])} quizzes</h1><p>{esc(desc)}</p><ul>" + "".join(
-            f'<li><a href="/{topic_slug[k]}">{esc(g["tab"])}</a></li>' for k, g in data.items() if g["sport"] == sk) + "</ul>"
-        out.append((slug(sp["name"]), f"{sp['name']} quizzes - {names} | Sportrankle", desc, f"#s/{sk}", intro))
+            f'<li><a href="/{topic_slug[k]}">{esc(g["tab"])}</a></li>' for k, g in opened.items() if g["sport"] == sk) + "</ul>" + games_line()
+        out.append((slug(sp["name"]), f"{sp['name']} quizzes | Sportrankle", desc, f"#s/{sk}", intro, [(sp["name"], f"/{slug(sp['name'])}")]))
+    examples = [g["tab"] for g in opened.values()]
     for gs, (name, blurb) in GAME_PAGES.items():
-        desc = f"{name}: {blurb}" + ("" if gs == "ringer" else f" Play it on {len(data)} topics, from NFL teams to F1 circuits.")
-        intro = f"<h1>{esc(name)}</h1><p>{esc(desc)}</p>"
-        out.append((gs, f"{name} - daily sports ranking game | Sportrankle", desc, GAME_ROUTE[gs], intro))
+        desc = f"{name}: {blurb}" + ("" if gs == "ringer" else f" Play it on {len(opened)} topics, from {examples[0]} to {examples[-1]}.")
+        intro = f"<h1>{esc(name)}</h1><p>{esc(desc)}</p>" + link_lists(data, sports)
+        out.append((gs, f"{name} - daily sports game | Sportrankle", desc, GAME_ROUTE[gs], intro, [(name, f"/{gs}")]))
     return out
 
 
-def site_map(data, sports):
-    """Real links to every page, shown under the home page and crawled from there."""
-    lines = []
-    for sk, sp in sports.items():
-        topics = [(slug(g["tab"]), g["tab"]) for g in data.values() if g["sport"] == sk]
-        if topics:
-            lines.append(f'<p><b><a href="/{slug(sp["name"])}">{esc(sp["name"])}</a></b>: '
-                         + ", ".join(f'<a href="/{s}">{esc(t)}</a>' for s, t in topics) + "</p>")
-    lines.append('<p><b>Games</b>: ' + ", ".join(f'<a href="/{gs}">{esc(n)}</a>' for gs, (n, _) in GAME_PAGES.items()) + "</p>")
-    return '<p class="sec">All puzzles</p>' + "".join(lines)
-
-
-def ld_json(title, desc, url):
-    return json.dumps([
-        {"@context": "https://schema.org", "@type": "WebSite", "name": "Sportrankle", "url": SITE + "/"},
+def ld_json(title, desc, url, crumbs=()):
+    org = {"@type": "Organization", "name": "Sportrankle", "url": SITE + "/", "logo": SITE + "/icon-512.png"}
+    items = [
+        {"@context": "https://schema.org", "@type": "WebSite", "name": "Sportrankle", "url": SITE + "/", "publisher": org},
         {"@context": "https://schema.org", "@type": "WebApplication", "name": title.split(" | ")[0], "url": url, "description": desc,
          "applicationCategory": "GameApplication", "operatingSystem": "Any", "browserRequirements": "Requires JavaScript",
-         "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-         "publisher": {"@type": "Organization", "name": "Sportrankle", "url": SITE + "/"}},
-    ], ensure_ascii=False)
+         "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "publisher": org},
+    ]
+    if crumbs:
+        trail = [("Home", "/")] + list(crumbs)
+        items.append({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + path} for i, (n, path) in enumerate(trail)]})
+    return json.dumps(items, ensure_ascii=False)
 
 
 def social_images():
@@ -720,7 +828,8 @@ def main():
             kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000, pad=opts.get("pad", False))
     # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's;
     # a menu icon if covers/icon-<key>.png exists (a transparent PNG)
-    sports = {k: {"name": s["name"], **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {}),
+    sports = {k: {"name": s["name"], **({"soon": True} if s.get("soon") else {}),
+                  **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {}),
                   **({"icon": icon(f"covers/icon-{k}.png")} if (HERE / "covers" / f"icon-{k}.png").exists() else {})}
               for k, s in SPORTS.items()}
     for key, g in data.items():
@@ -735,17 +844,18 @@ def main():
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
             .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None))
-            .replace("__SITEMAP__", site_map(data, sports)))
+            .replace("__SITE__", SITE))
 
-    def page(title, desc, url, route, intro):
+    def page(title, desc, url, route, intro, crumbs=()):
         return (base.replace("__TITLE__", esc(title)).replace("__DESC__", esc(desc)).replace("__CANON__", url)
                 .replace("__ROUTE__", json.dumps(route)).replace("__STATIC__", intro)
-                .replace("__LDJSON__", ld_json(title, desc, url)))
+                .replace("__LDJSON__", ld_json(title, desc, url, crumbs)))
 
-    home_title = "Sportrankle - daily sports ranking puzzles: NFL, F1, Champions League, skiing"
-    home_desc = ("Free daily sports quiz games. Rank NFL teams, Champions League players, F1 circuits, alpine skiers and the "
-                 "world's top athletes by their real stats. New puzzles every day, one attempt each, compare with everyone.")
-    home = page(home_title, home_desc, SITE + "/", "", "<h1>Daily sports ranking puzzles</h1><p>" + esc(home_desc) + "</p>")
+    opened = open_topics(data, sports)
+    home_title = "Sportrankle - daily NFL, Champions League & records quiz"
+    home_desc = (f"Free daily sports quiz games on real stats: {', '.join(g['tab'] for g in list(opened.values())[:5])} and more. "
+                 "Rank them, sort them, guess the record. New puzzles every day, one attempt each, compare your score with everyone.")
+    home = page(home_title, home_desc, SITE + "/", "", "<h1>Daily sports ranking puzzles</h1><p>" + esc(home_desc) + "</p>" + link_lists(data, sports))
     OUT.write_text(home, encoding="utf-8")
     DIST.parent.mkdir(exist_ok=True)
     head = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
@@ -754,17 +864,38 @@ def main():
     # One real URL per topic, sport and game: the same app, opened on that view, with its own title and description
     urls = [SITE + "/"]
     redirects = []
-    for path, title, desc, route, intro in pages(data, sports):
-        (DIST.parent / f"{path}.html").write_text(f"{head}{page(title, desc, f'{SITE}/{path}', route, intro)}\n</html>\n", encoding="utf-8")
+    for path, title, desc, route, intro, crumbs in pages(data, sports):
+        (DIST.parent / f"{path}.html").write_text(f"{head}{page(title, desc, f'{SITE}/{path}', route, intro, crumbs)}\n</html>\n", encoding="utf-8")
         urls.append(f"{SITE}/{path}")
+        redirects.append(f"/{path}.html  /{path}  301!")   # one URL per page: the .html form redirects to the clean one
         redirects.append(f"/{path}  /{path}.html  200")
-    redirects = [f"{h}/* {SITE}/:splat 301!" for h in OLD_HOSTS] + redirects
+    # Legal notice and privacy policy: a plain page of its own, not in the sitemap
+    legal = (HERE / "legal.html").read_text(encoding="utf-8").replace("__SITE__", SITE)
+    for k, v in OPERATOR.items():
+        legal = legal.replace(f"__OPERATOR_{k.upper()}__", esc(v))
+    # The policy has two variants of its cookie and advertising parts: <!--ADS-->...<!--/ADS--> is kept when an ad
+    # network is set, <!--NOADS-->...<!--/NOADS--> otherwise
+    keep, drop = ("ADS", "NOADS") if ADS["network"] else ("NOADS", "ADS")
+    legal = re.sub(rf"<!--{drop}-->.*?<!--/{drop}-->", "", legal, flags=re.S)
+    legal = legal.replace(f"<!--{keep}-->", "").replace(f"<!--/{keep}-->", "")
+    legal = (legal.replace("__ADS_NETWORK__", esc(ADS["network"]))
+             .replace("__ANALYTICS_SENTENCE__", f", and {esc(ADS['analytics'])} for anonymous usage statistics" if ADS["analytics"] else ""))
+    (DIST.parent / "legal.html").write_text(legal.replace("__DATE__", time.strftime("%d %B %Y").lstrip("0")), encoding="utf-8")
+    redirects.append("/legal  /legal.html  200")
+    # pages of sports that are "coming soon" (and any stale copies in dist) send visitors to the home page
+    for stale in [slug(g["tab"]) for k, g in data.items() if k not in opened] + [slug(sp["name"]) for sp in sports.values() if sp.get("soon")]:
+        (DIST.parent / f"{stale}.html").unlink(missing_ok=True)
+        redirects.append(f"/{stale}  /  301!")
+    redirects = [f"{h}/* {SITE}/:splat 301!" for h in OLD_HOSTS] + ["/index.html  /  301!"] + redirects
     (DIST.parent / "_redirects").write_text("\n".join(redirects) + "\n", encoding="utf-8")
-    (DIST.parent / "_headers").write_text("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n", encoding="utf-8")
+    (DIST.parent / "_headers").write_text(
+        "/*\n  X-Content-Type-Options: nosniff\n  X-Frame-Options: DENY\n  Referrer-Policy: strict-origin-when-cross-origin\n"
+        "  Permissions-Policy: camera=(), microphone=(), geolocation=()\n"
+        "/img/*\n  Cache-Control: public, max-age=31536000, immutable\n", encoding="utf-8")
     (DIST.parent / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n", encoding="utf-8")
     (DIST.parent / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        + "".join(f"  <url><loc>{u}</loc><changefreq>daily</changefreq></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
+        + "".join(f"  <url><loc>{u}</loc><lastmod>{time.strftime('%Y-%m-%d')}</lastmod><changefreq>daily</changefreq></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
     (DIST.parent / "site.webmanifest").write_text(json.dumps({
         "name": "Sportrankle", "short_name": "Sportrankle", "start_url": "/", "display": "standalone",
         "background_color": "#121210", "theme_color": "#121210",
@@ -777,6 +908,15 @@ def main():
         pics = sum(1 for it in g["items"] if "img" in it)
         print(f"{key}: {len(g['items'])} items, {len(g['cats'])} categories, {pics} images ({own} own photos) from {g['source']}")
     print(f"{len(urls)} pages, sitemap, robots, og.jpg, icons")
+    # The seed job in Supabase (supabase/migrations/*_seed_results.sql) fills each daily game with plausible results;
+    # it needs the list of games. supabase/seed_games.txt is that list as of the last migration.
+    seed_now = {f"{k}-{key}" for k, g in KIND_NAMES.items() for key, cfg in GAMES.items()
+                if not SPORTS[cfg["sport"]].get("soon") and k in (cfg.get("kinds") or ["rankle", "blind", "sort"])}
+    seed_file = HERE / "supabase" / "seed_games.txt"
+    seed_known = {line.split("	")[0] for line in seed_file.read_text(encoding="utf-8").splitlines() if line.strip()} if seed_file.exists() else set()
+    if seed_now != seed_known:
+        print(f"  seed job: games changed ({', '.join(sorted(seed_now ^ seed_known))}); add a migration that upserts public.seed_games "
+              f"and update supabase/seed_games.txt")
 
 
 if __name__ == "__main__":

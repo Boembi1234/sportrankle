@@ -48,7 +48,7 @@ Values may be numbers or dates. Ties share a rank; empty cells get no rank and s
 
 1. Put the workbook next to the others.
 2. Add an entry to `GAMES` in `build.py`: file pattern, tab name, noun/plural, a card word, optionally `"english": True` (names already English) and `"short": "last" | "surname"` (what goes on the title cards).
-3. Add the category names and units to `CATS_EN`, item names to `NAMES_EN` unless English, new directions to `DIR_EN` (and to `LOW_FIRST` if the smallest value wins), new units to `UNIT_FMT` if they need a special format.
+3. Add the category names and units to `CATS_EN`, item names to `NAMES_EN` unless English, new directions to `DIR_EN` (and to `LOW_FIRST` if the smallest value wins), new units to `UNIT_FMT` if they need a special format, and an emoji for each category to `CAT_EMOJI` (keyed by the English name; a keyword rule in `cat_emoji` fills gaps and the build prints any category left with the generic mark).
 4. Run the build; it warns about anything untranslated.
 5. Add the pool's game keys to `ORDER` in `template.html` so "Next game" cycles through it.
 

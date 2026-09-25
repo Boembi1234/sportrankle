@@ -363,6 +363,81 @@ TITLES = {
 }
 
 
+# Category -> emoji shown in front of its title, keyed by the English category name (the same name may appear in several pools).
+# Names not listed here fall back to a keyword rule in cat_emoji(); the build prints the ones that end up with the generic mark.
+CAT_EMOJI = {
+    # Team sports
+    "Players on the field": "👥", "Playing area": "📐", "Field length": "📏", "Game periods": "⏱️", "Referees on the field": "🦓",
+    "Highest single score": "🎯", "Ball / puck / stone weight": "⚖️", "Ball size": "🏐", "Goal / hoop / net height": "🥅",
+    "Modern rules codified": "📜", "World federation founded": "🏛️", "Member federations": "🌍", "First men's World Cup": "🏆",
+    "First women's World Cup": "🏆", "Teams at last men's World Cup": "🌐",
+    # F1 circuits
+    "Track length": "📏", "Corners": "↩️", "Race laps": "🔁", "Race distance": "🛣️", "Corners per km": "🌀", "First F1 Grand Prix": "🏁",
+    "F1 Grands Prix held": "🏎️", "Race lap record": "⏱️", "Circuit opened": "🗓️", "Altitude": "⛰️", "Elevation change": "📈",
+    "Race weekend attendance": "👥", "Longest straight": "➡️", "DRS zones (2025)": "💨", "Latitude": "🧭",
+    # NFL teams
+    "In current city since": "🏙️", "Years without a title": "⏳", "Playoff wins, all time": "🏆", "Hall of Famers": "🏅",
+    "Regular-season win rate": "📊", "Stadium opened": "🏟️", "Stadium capacity": "🏟️", "Stadium construction cost": "🏗️",
+    "Travel to division rivals": "✈️", "Metro area population": "🏙️", "Social media followers": "📱", "Points scored 2025": "🎯",
+    "Owner family since": "👔", "First pick, 2026 draft": "🎟️", "Cap space 2026": "💵", "Franchise value 2026": "💎",
+    "Super Bowl appearances": "🏆", "Years since last playoff win": "⏳", "Head coach in charge since": "🧢",
+    "Average home crowd 2025": "👥", "Stadium beer price 2025": "🍺", "No. 1 overall picks, all time": "1️⃣", "Games played abroad": "🌍",
+    "Average roster age 2026": "🎂", "Longest regular-season win streak": "🔥", "Home win rate since 1999": "🏠",
+    "Away win rate since 1999": "🚌", "Overtime games since 1999": "⏰", "Biggest win since 1999": "💥",
+    "Prime-time games since 1999": "🌙", "Point differential since 1999": "➕", "Defensive sacks 2025": "🛡️",
+    "First-round picks since 1990": "🎟️", "Pro Bowlers drafted since 1990": "⭐",
+    # NFL players and Hall of Fame
+    "Date of birth": "🎂", "Height": "📏", "Weight": "⚖️", "Draft year": "🗓️", "Draft position": "🎟️", "Age at NFL debut": "🐣",
+    "Playoff games": "🏈", "Seasons with current team": "🤝", "Pro Bowl selections": "⭐", "First-team All-Pro": "🌟",
+    "Jersey number": "👕", "Average salary, current deal": "💰", "Contract runs until": "📝", "Population of birthplace": "🏙️",
+    "Regular-season games": "🏈", "Head coaches in career": "🧢", "Career value (weighted AV)": "📈", "Seasons as a starter": "🚀",
+    "Snaps in 2025": "⚡", "Injury report entries 2025": "🩹", "Career length": "⏳", "Hall of Fame induction": "🏅",
+    "NFL teams played for": "🔄", "Championships": "🏆", "Age at induction": "🎂", "Age at last game": "👴",
+    # College football
+    "University founded": "🎓", "Wins, all time": "🏆", "Win rate, all time": "📊", "Years since last AP title": "⏳",
+    "AP national titles": "🏆", "Heisman winners": "🏅", "Bowl wins, all time": "🥣", "Playoff appearances": "🎯",
+    "Wins in 2025": "✅", "Students": "🎓", "Population of college town": "🏙️", "2026 NFL draft picks": "🎟️",
+    "Head coach salary 2025": "💰", "Alumni on NFL rosters 2026": "🏈", "NFL draft picks since 1980": "🎟️",
+    "First-round picks since 1980": "🎟️", "Pro Bowlers drafted since 1980": "⭐", "Hall of Famers drafted since 1980": "🏅",
+    "Combine invitees since 2000": "💪", "Fastest 40-yard dash by an alumnus": "⚡",
+    # Alpine skiers
+    "World Cup debut": "🐣", "Age at World Cup debut": "🐣", "World Cup seasons": "❄️", "World Cup wins": "🥇", "World Cup podiums": "🏆",
+    "Podiums without a win": "🥈", "Wins per podium": "📊", "Podiums per season": "📈", "World Cup wins 2025/26": "🥇",
+    "Wins per season": "📈", "Olympic medals": "🏅", "Olympic + World Champs medals": "🏅", "Olympic Games": "🔥",
+    "World Championship medals": "🎖️",
+    # Champions League players
+    "Market value": "💶", "Peak market value": "📈", "Age": "🎂", "Shirt number": "👕", "International caps": "🌍",
+    "International goals": "⚽", "Club appearances since 2012/13": "🏟️", "Club goals since 2012/13": "⚽",
+    "Club assists since 2012/13": "🎯", "Club minutes since 2012/13": "⏱️", "Champions League appearances": "⭐",
+    "Champions League goals": "⚽", "Record transfer fee": "💸", "Transfer fees, all careers": "💸", "Senior clubs": "🔄",
+    "Goals + assists 2025/26": "⚽",
+    # Top 150 athletes
+    "Pro debut": "🐣", "Age at pro debut": "🐣", "Years as a pro": "⏳", "Olympic golds": "🥇", "Top-tier titles": "🏆",
+    "First top-tier title": "🗓️", "Age at first top-tier title": "🎂", "Career earnings": "💰", "Net worth": "💎",
+    "Instagram followers": "📸", "Children": "👶", "Laureus awards": "🏅",
+}
+
+# Keyword -> emoji for category names that are not in CAT_EMOJI (checked in order, lowercased name)
+EMOJI_RULES = [("goal", "⚽"), ("assist", "🎯"), ("medal", "🏅"), ("gold", "🥇"), ("podium", "🏆"), ("title", "🏆"), ("champion", "🏆"),
+               ("win", "🏆"), ("draft", "🎟️"), ("salary", "💰"), ("earning", "💰"), ("value", "💶"), ("fee", "💸"), ("follower", "📱"),
+               ("stadium", "🏟️"), ("crowd", "👥"), ("attendance", "👥"), ("population", "🏙️"), ("height", "📏"), ("length", "📏"),
+               ("weight", "⚖️"), ("age", "🎂"), ("birth", "🎂"), ("debut", "🐣"), ("year", "🗓️"), ("since", "🗓️"), ("season", "📅"),
+               ("game", "🎮"), ("appearance", "🎫"), ("minute", "⏱️"), ("speed", "⚡"), ("fastest", "⚡"), ("coach", "🧢")]
+
+
+def cat_emoji(cat):
+    """The emoji in front of the category title: the table first, then the keyword rules, then a generic mark."""
+    e = CAT_EMOJI.get(cat["name"])
+    if e:
+        return e
+    low = cat["name"].lower()
+    for word, e in EMOJI_RULES:
+        if word in low:
+            return e
+    print(f"  No emoji for category '{cat['name']}', using the generic mark")
+    return "📊"
+
+
 def cat_title(cat):
     """The category as one title with its direction (see TITLES)."""
     name = cat["name"] if re.match(r"[A-Z0-9]{2}", cat["name"]) else cat["name"][:1].lower() + cat["name"][1:]
@@ -755,7 +830,7 @@ def pages(data, sports):
             desc = (f"{g['tab']} quiz: rank {len(g['items'])} {g['plural']} by {len(g['cats'])} real categories such as {cats(g)}. "
                     f"Play {games}, new cards every day, one attempt each, compare your score with everyone else's.")
             intro = (f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Categories</h2><ul>"
-                     + "".join(f"<li>{esc(c['name'])} (rank 1 = {esc(c['dir'])})</li>" for c in g["cats"]) + "</ul>")
+                     + "".join(f"<li>{c['emoji']} {esc(c['name'])} (rank 1 = {esc(c['dir'])})</li>" for c in g["cats"]) + "</ul>")
         else:
             areas = sorted({it["cat"] for it in g["items"]})
             desc = (f"{g['tab']} quiz: {len(g['items'])} sports world records, one a day. Guess how fast, how far or how many, "
@@ -838,6 +913,7 @@ def main():
     for g in data.values():   # the page each topic's share text links to
         for cat in g['cats']:
             cat['title'] = cat_title(cat)
+            cat['emoji'] = cat_emoji(cat)
         g["url"] = f"{SITE}/{slug(g['tab'])}"
     base = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))

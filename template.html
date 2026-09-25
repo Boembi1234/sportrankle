@@ -311,6 +311,7 @@ a{color:inherit}
 .body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .cat{font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cat.empty{font-weight:400;color:var(--muted)}
+.emo{margin-right:.35em;font-weight:400;font-style:normal}   /* category emoji in front of the title */
 .hint,.who,.unit,.more{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .res{display:none;align-items:center;gap:8px;min-width:0}
 .row.done .hint{display:none}
@@ -662,6 +663,7 @@ const announce = t => { $('live').textContent = t; };
 const cap = s => s[0].toUpperCase() + s.slice(1);
 // Rankle's category title with its direction, e.g. "Most playoff wins, all time" (made by the build, see TITLES in build.py)
 const catTitle = c => D.cats[c].title || `${cap(D.cats[c].dir)} ${D.cats[c].name}`;
+const catLabel = c => `${D.cats[c].emoji ? `<span class="emo">${D.cats[c].emoji}</span>` : ''}${catTitle(c)}`;   // emoji + title, for display only
 
 // Daily games: the date seeds the draw, the device keeps its progress.
 const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -1389,7 +1391,7 @@ function startRankle(){
   prevTitle = '';
   $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${catTitle(c)}, open">
       <span class="c-rank"></span>${rowIcon()}
-      <span class="body"><span class="cat">${catTitle(c)}</span>
+      <span class="body"><span class="cat">${catLabel(c)}</span>
         <span class="res"><span class="who"></span><span class="vals"></span><span class="unit"></span></span></span>
       <span class="pts"></span>
     </button></li>`).join('');
@@ -1491,7 +1493,7 @@ function rankleResults(){
   // The perfect board: the same rows, each category with the item that belongs there
   showAlt('Perfect board', `Perfect board, ${opt} points`, G.cats.map((c, k) => {
     const s = idealFor[k], r = D.items[s].ranks[c], v = fmt(s, c);
-    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', catTitle(c), nm(s), v, `+${pts(s, c)}`,
+    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', catLabel(c), nm(s), v, `+${pts(s, c)}`,
       `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
   }));
   announce(`${titleText[1]}, ${$('led-note').textContent}`);
@@ -1587,7 +1589,7 @@ function blindRound(){
   const c = D.cats[G.cat];
   $('question').className = 'question';
   $('question').hidden = false;
-  $('question').innerHTML = `${c.name}<span class="qdir">Spot 1 = ${c.dir}${sub ? `. ${title}, ${sub}` : ''}</span>`;
+  $('question').innerHTML = `${c.emoji ? `<span class="emo">${c.emoji}</span>` : ''}${c.name}<span class="qdir">Spot 1 = ${c.dir}${sub ? `. ${title}, ${sub}` : ''}</span>`;
   mainButton('Place', confirmPick, true);
   $('note').textContent = 'Tap a spot, then place. Spots are final.';
   fitPhoto();
@@ -1687,7 +1689,7 @@ function sortRound(){
   showItem(G.order[0]);
   $('question').className = 'question';
   $('question').hidden = false;
-  $('question').innerHTML = `${c.name}<span class="qdir">Spot 1 = ${c.dir}. Tap two rows to swap them.</span>`;
+  $('question').innerHTML = `${c.emoji ? `<span class="emo">${c.emoji}</span>` : ''}${c.name}<span class="qdir">Spot 1 = ${c.dir}. Tap two rows to swap them.</span>`;
   mainButton('Reveal', () => sortReveal(), false);
   $('note').textContent = 'Tap two rows to swap them. Reveal when the order is right.';
   fitPhoto();

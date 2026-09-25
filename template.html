@@ -238,8 +238,10 @@ a{color:inherit}
   font-family:var(--font);font-weight:900;font-size:34px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance;color:var(--signal)}
 .title i{font-style:normal;color:#1C2126;transition:color .12s}
 .title i.lit{color:inherit;text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
-/* Rankle: the name on a plain card like the others (card colour, hard edge, no dots or glow), in the narrow heading style */
-.k-rankle .title{background:var(--surface);border:0;box-shadow:0 3px 0 var(--surface-edge);font-weight:800;font-stretch:85%;letter-spacing:0;text-transform:none}
+/* Rankle: the name on a plain card (card colour, hard edge, no dots or glow), sized like the main button below:
+   full width, 52px high, 20px bold, centred, 8px corners */
+.k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);
+  font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;letter-spacing:0;text-transform:none;text-align:center}
 .k-rankle .title i{color:var(--surface)}
 .k-rankle .title i.lit{color:inherit;text-shadow:none}
 /* Two rows of cards: the first row hangs fully on the photo, so the screen stays the same height */

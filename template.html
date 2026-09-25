@@ -296,11 +296,12 @@ a{color:inherit}
 .v2 .c-rank{display:none}
 /* Blind ranking: the spot number in front instead of an emoji, the attribute as a heading over the list, filled spots keep the box */
 .row-ic{flex:none;width:24px;text-align:center;font-size:20px;line-height:24px}   /* the emoji as the row's icon, the size of the menu icons */
-.row-no{flex:none;width:24px;text-align:center;font-size:17px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.row-no{flex:none;width:24px;text-align:center;font-size:20px;line-height:24px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
 .v2 .row.filled{background:var(--surface)}
-.page.k-blind .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
-.page.k-blind:not(.done) .question{font-size:17px;margin-top:24px}
-.page.k-blind .right{margin-top:16px}
+.v2 .cat.empty{font-weight:700;color:var(--text)}
+.page:is(.k-blind,.k-sort) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
+.page:is(.k-blind,.k-sort):not(.done) .question{font-size:17px;margin-top:24px}
+.page:is(.k-blind,.k-sort) .right{margin-top:16px}
 /* Rankle: the line under a filled category is all white; the value is the same size as the rest, just bold */
 .v2 .who,.v2 .unit{color:var(--text)}
 .v2 .res{gap:.28em}   /* name, value and unit read like one sentence: a normal word space, not 8px */
@@ -495,7 +496,7 @@ a{color:inherit}
   .title-sub{margin-top:10px}
   .page.v2.done .bar{gap:10px}
   .v2 .seg{margin-top:10px}
-  .page.k-blind .right{margin-top:10px}
+  .page:is(.k-blind,.k-sort) .right{margin-top:10px}
 }
 /* Short screens: the hint line goes first, then the question shrinks */
 @media (max-height:700px){
@@ -668,10 +669,15 @@ function pts(s, c){
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const announce = t => { $('live').textContent = t; };
 const cap = s => s[0].toUpperCase() + s.slice(1);
-const V2 = () => KIND === 'rankle' || KIND === 'blind';   // games in the new design
+const V2 = () => KIND === 'rankle' || KIND === 'blind' || KIND === 'sort';   // games in the new design
 // Rankle's category title with its direction, e.g. "Most playoff wins, all time" (made by the build, see TITLES in build.py)
 const catTitle = c => D.cats[c].title || `${cap(D.cats[c].dir)} ${D.cats[c].name}`;
 const catLabel = c => `${D.cats[c].emoji ? `<span class="emo">${D.cats[c].emoji}</span>` : ''}${catTitle(c)}`;   // emoji + title, for display only
+// The facts under the name card as chips ("Cincinnati Bengals · QB" -> two chips)
+function chips(sub){
+  $('title-sub').innerHTML = (sub || '').split(' · ').filter(Boolean).map(f => `<span class="chip">${f}</span>`).join('');
+  $('title-sub').hidden = !sub;
+}
 // Rankle rows: the category emoji as the icon in front, in its own 24px column like the icons in the menu
 const rowIcon = c => D.cats[c].emoji ? `<span class="row-ic" aria-hidden="true">${D.cats[c].emoji}</span>` : '';
 
@@ -1382,7 +1388,7 @@ function route(){
     return;
   }
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
-  $('page').className = `page k-${KIND}${V2() ? ' v2' : ''}`;   // k-rankle etc.: one game only; v2: the new design (Rankle, Blind ranking)
+  $('page').className = `page k-${KIND}${V2() ? ' v2' : ''}`;   // k-rankle etc.: one game only; v2: the new design (Rankle, Blind ranking, Sort it)
   $('title-sub').hidden = true;
   $('today').hidden = true;
   $('led').hidden = true;
@@ -1596,8 +1602,7 @@ function blindRound(){
   setCounter(false);
   const s = G.sports[G.round], [, sub] = showItem(s);
   const c = D.cats[G.cat];
-  $('title-sub').innerHTML = (sub || '').split(' · ').filter(Boolean).map(f => `<span class="chip">${f}</span>`).join('');
-  $('title-sub').hidden = !sub;
+  chips(sub);
   $('question').className = 'question';
   $('question').hidden = false;
   $('question').innerHTML = catLabel(G.cat);   // e.g. "⏳ Longest wait for a title": spot 1 is the one with the most
@@ -1669,10 +1674,9 @@ function startSort(){
   prevTitle = '';
   const rec = record('sort', MODE);
   if (rec && rec.order && rec.order.length === PICK && rec.order.every(s => items.includes(s))) G.order = rec.order;
-  const dir = D.cats[cat].dir;
   $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}">
-      <span class="c-rank"></span>
-      <span class="body"><span class="cat"></span>${i === 0 ? `<span class="hint">${cap(dir)}</span>` : ''}
+      <span class="c-rank"></span><span class="row-no">${i + 1}</span>
+      <span class="body"><span class="cat"></span>
         <span class="res"><span class="vals"></span><span class="unit"></span></span></span>
       <span class="pts"></span>
     </button></li>`).join('');
@@ -1700,10 +1704,10 @@ function sortRound(){
   G.phase = 'round';
   G.sel = null;
   const c = D.cats[G.cat];
-  showItem(G.order[0]);
+  chips(showItem(G.order[0])[1]);   // the name card shows the item you tapped last (the first one to begin with)
   $('question').className = 'question';
   $('question').hidden = false;
-  $('question').innerHTML = `${c.emoji ? `<span class="emo">${c.emoji}</span>` : ''}${c.name}<span class="qdir">Spot 1 = ${c.dir}. Tap two rows to swap them.</span>`;
+  $('question').innerHTML = catLabel(G.cat);
   mainButton('Reveal', () => sortReveal(), false);
   $('note').textContent = 'Tap two rows to swap them. Reveal when the order is right.';
   fitPhoto();
@@ -1714,7 +1718,7 @@ function sortSelect(i){
   if (G.sel == null) {
     G.sel = i;
     $(`row-${i}`).classList.add('sel');
-    showItem(G.order[i]);
+    chips(showItem(G.order[i])[1]);
     announce(`${D.items[G.order[i]].name} on spot ${i + 1} selected, tap another row to swap`);
   } else if (G.sel === i) {
     $(`row-${i}`).classList.remove('sel');
@@ -1832,7 +1836,9 @@ function guessResults(){
 // ================= Shared play controls =================
 function select(i){
   if (busy || G.phase !== 'round' || G.placed[i] != null) return;
+  const preview = (k, on) => { if (KIND === 'blind') $(`row-${k}`).querySelector('.cat').textContent = on ? nm(G.sports[G.round]) : 'Open'; };   // Blind: the chosen spot shows the name
   if (G.sel === i && V2()) {   // a second tap on the chosen row un-chooses it (the button locks it in)
+    preview(i, false);
     $(`row-${i}`).classList.remove('sel');
     G.sel = null;
     $('main').disabled = true;
@@ -1840,9 +1846,10 @@ function select(i){
     return;
   }
   if (G.sel === i) return confirmPick();
-  if (G.sel != null) $(`row-${G.sel}`).classList.remove('sel');
+  if (G.sel != null) { $(`row-${G.sel}`).classList.remove('sel'); preview(G.sel, false); }
   G.sel = i;
   $(`row-${i}`).classList.add('sel');
+  preview(i, true);
   $('main').disabled = false;
   announce(KIND === 'blind' ? `Spot ${i + 1} selected` : `${D.cats[G.cats[i]].name} selected`);
 }

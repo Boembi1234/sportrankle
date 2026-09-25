@@ -874,7 +874,7 @@ def ld_json(title, desc, url, crumbs=()):
 
 
 def social_images():
-    """og.jpg (1200x630) and the icons, from the team-sports cover."""
+    """og.jpg (1200x630) from the team-sports cover; the icons from the logo (covers/logo.png)."""
     from PIL import Image
 
     src = Image.open(HERE / "covers" / "sports.png").convert("RGB")
@@ -882,11 +882,19 @@ def social_images():
     band = round(w / 1.905)
     y0 = max(0, round(h * 0.5 - band / 2))
     src.crop((0, y0, w, y0 + band)).resize((1200, 630), Image.LANCZOS).save(DIST.parent / "og.jpg", "JPEG", quality=85, optimize=True)
-    side = round(w * 0.62)
-    x0, y0 = (w - side) // 2, round(h * 0.5 - side / 2)
-    icon = src.crop((x0, y0, x0 + side, y0 + side))
-    for name, px in (("icon-512.png", 512), ("apple-touch-icon.png", 180), ("favicon.png", 64)):
-        icon.resize((px, px), Image.LANCZOS).save(DIST.parent / name, "PNG", optimize=True)
+    # The logo, trimmed to its shape: the favicon keeps the transparency; the home-screen icons sit on the page background with
+    # some room around, since phones fill transparent icons with black or white
+    logo = Image.open(HERE / "covers" / "logo.png").convert("RGBA")
+    logo = logo.crop(logo.getchannel("A").getbbox())
+    side = max(logo.size)
+    square = Image.new("RGBA", (side, side))
+    square.paste(logo, ((side - logo.width) // 2, (side - logo.height) // 2))
+    square.resize((64, 64), Image.LANCZOS).save(DIST.parent / "favicon.png", "PNG", optimize=True)
+    for name, px in (("icon-512.png", 512), ("apple-touch-icon.png", 180)):
+        tile = Image.new("RGBA", (px, px), (0x12, 0x12, 0x10, 255))
+        inner = round(px * 0.72)
+        tile.alpha_composite(square.resize((inner, inner), Image.LANCZOS), ((px - inner) // 2, (px - inner) // 2))
+        tile.convert("RGB").save(DIST.parent / name, "PNG", optimize=True)
 
 
 def main():
@@ -920,6 +928,7 @@ def main():
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
             .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None))
+            .replace("__LOGO__", icon("covers/logo.png", size=96))   # the logo in the header, 32px shown
             .replace("__SITE__", SITE))
 
     def page(title, desc, url, route, intro, crumbs=()):

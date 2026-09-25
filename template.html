@@ -60,6 +60,7 @@ a{color:inherit}
 .top-mid{display:flex;align-items:center;justify-content:center}
 .top-left{display:flex;align-items:center;gap:6px}
 .top-right{display:flex;align-items:center;justify-content:flex-end;gap:14px}
+.logo img{display:block;width:32px;height:32px}   /* the logo mark instead of the word */
 .logo{font-weight:800;font-stretch:75%;font-size:24px;line-height:1;margin:0;text-decoration:none;display:flex;align-items:center;min-height:44px}
 .icon{width:44px;height:44px;background:none;border:0;padding:0;cursor:pointer;position:relative;flex:none;display:block}
 .stats-btn::before{content:"";position:absolute;left:13px;bottom:13px;width:4px;height:9px;background:var(--text);box-shadow:7px -5px 0 var(--text),14px -2px 0 var(--text)}
@@ -600,10 +601,10 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
   <header class="top">
     <div class="top-left">
       <button class="icon burger" id="menu-btn" type="button" aria-label="Menu" aria-controls="menu"></button>
-      <a class="logo logo-left" href="#">Sportrankle</a>
+      <a class="logo logo-left" href="#" aria-label="Sportrankle, home"><img src="__LOGO__" alt="Sportrankle" width="32" height="32"></a>
     </div>
     <div class="top-mid">
-      <a class="logo" href="#">Sportrankle</a>
+      <a class="logo" href="#" aria-label="Sportrankle, home"><img src="__LOGO__" alt="Sportrankle" width="32" height="32"></a>
       <nav class="sportnav" id="sportnav" aria-label="Sports"></nav>
       <div class="counter" id="counter"><span id="round">1/8</span><i id="csep"></i><span id="cpts"><span id="score">0</span> pts</span></div>
     </div>

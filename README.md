@@ -7,7 +7,7 @@ Three games, nine topics in five sports, one attempt per game and day. The home 
 | Game | Idea |
 |---|---|
 | **Rankle** | 8 categories, 8 items arriving one by one. Put each item in the category where it ranks highest among the whole pool. Each category can be used once. |
-| **Blind ranking** | One attribute, 8 items arriving one by one. Place each on spot 1–8 without knowing what comes next. |
+| **Blind ranking** | One attribute, 8 items arriving one by one. Place each on spot 1–8 without knowing what comes next. The draw takes eight different values, so the items never tie. |
 | **Sort it** | One attribute, all 8 items in view. Swap them into the right order, then reveal. |
 | **Guess the record** | One sports world record a day (official or crazy). Type your guess in its unit; points by closeness on a log scale (exact 100, twice or half 50, four times off 0), then the record, its holder and today's comparison. Data: `Sports_World_Records*.xlsx`, sheet 1, loaded by `load_records` (no categories). Only the World records pool carries this game (`"kinds": ["guess"]`); every other pool gets the three ranking games unless its `"kinds"` says otherwise. |
 | **Ringer** | Party game on one phone (3–12 players, not daily): everyone sees the same item from a pool except the ringer(s), who only learn the pool. Hints go round, the group votes, then the reveal. |

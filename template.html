@@ -577,11 +577,14 @@ function rankleDraw(m){
   const g = DATA[m], rnd = seeded(`${today()}|${m}`);
   return {cats: draw(range(g.cats.length), PICK, rnd), items: draw(range(g.items.length), PICK, rnd)};
 }
+// Blind ranking and Sort it: one attribute, eight items with eight different values, so no two ever tie.
+// The items are grouped by value, eight groups are drawn, then one item of each group.
 function blindDraw(m, kind = 'blind'){
   const g = DATA[m], rnd = seeded(`${today()}|${kind}|${m}`);
-  const usable = range(g.cats.length).filter(c => g.items.filter(it => it.ranks[c] != null).length >= PICK);
+  const groups = c => { const by = new Map(); g.items.forEach((it, i) => { const v = it.values[c]; if (v != null) by.set(v, [...(by.get(v) || []), i]); }); return [...by.values()]; };
+  const usable = range(g.cats.length).filter(c => groups(c).length >= PICK);
   const cat = usable[rnd() * usable.length | 0];
-  return {cat, items: draw(range(g.items.length).filter(i => g.items[i].ranks[cat] != null), PICK, rnd)};
+  return {cat, items: draw(groups(cat), PICK, rnd).map(grp => grp[rnd() * grp.length | 0])};
 }
 
 function split(name){ const m = name.match(/^(.*?) \((.*)\)$/); return m ? [m[1], m[1] === m[2] ? '' : m[2]] : [name, '']; }

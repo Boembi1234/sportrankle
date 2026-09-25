@@ -287,6 +287,7 @@ a{color:inherit}
    right; the rounded box in the card colour shows under the pointer and on the chosen row; chosen and filled rows are blue */
 .v2 .board{gap:6px}
 .v2 .board>li{height:48px;border-bottom:0}   /* 48px rows 6px apart, like the menu entries */
+.page.v2.done .board>li{height:48px;min-height:0}   /* the results keep the same 48px rows as the game */
 .v2 .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:none;border-radius:10px;padding:4px 12px;transition:background-color .15s}
 /* Rankle and Blind ranking: every row shows a faint box, so the eight fields read as fields; hover, choice and filled rows use the full box */
 .page:is(.k-rankle,.k-blind) .row{background:var(--surface-faint)}

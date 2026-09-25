@@ -410,6 +410,20 @@ a{color:inherit}
 .nav-more-list{position:absolute;z-index:31;top:calc(100% + 12px);left:0;min-width:220px;display:flex;flex-direction:column;gap:6px;padding:6px;
   background:var(--bg);border:1px solid var(--line-strong);border-radius:12px;box-shadow:0 3px 0 var(--surface-edge)}
 .nav-more-list[hidden]{display:none}
+/* Language: the flag in a round key with a white rim; it rises under the pointer and sinks when pressed, like the buttons */
+.lang-btn{display:block;width:36px;height:36px;padding:0;border:2px solid var(--text);border-radius:50%;overflow:hidden;background:var(--surface);cursor:pointer;
+  box-shadow:0 2px 0 var(--muted);transition:transform .12s,box-shadow .12s}
+@media (hover:hover){.lang-btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--muted)}}
+.lang-btn:active,.lang-btn[aria-expanded="true"]{transform:translateY(1px);box-shadow:0 1px 0 var(--muted)}
+.lang-btn svg,.dd-flag svg{display:block;width:100%;height:100%}
+.lang-list{left:auto;right:0;min-width:180px}
+.dd-item{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 12px;border:0;border-radius:10px;background:none;color:inherit;
+  font:700 15px var(--font);text-align:left;cursor:pointer;transition:background-color .15s}
+.dd-flag{flex:none;width:20px;height:20px;border:1.5px solid var(--text);border-radius:50%;overflow:hidden}
+.dd-item[aria-current="true"]{color:var(--signal);background:var(--surface)}
+@media (hover:hover){.dd-item:hover{background:var(--surface)}}
+.dd-item:active{background:var(--surface-edge)}
+@media (prefers-reduced-motion:reduce){.lang-btn,.dd-item{transition:none}}
 .sportnav a[aria-current="page"],.nav-more-btn.on{color:var(--signal);background:var(--surface)}
 .nav-more-btn[aria-expanded="true"]{background:var(--surface)}
 @media (hover:hover){.sportnav a:hover,.nav-more-btn:hover{background:var(--surface)}}
@@ -435,7 +449,10 @@ a{color:inherit}
       <div class="counter" id="counter"><span id="round">1/8</span><i id="csep"></i><span id="cpts"><span id="score">0</span> pts</span></div>
     </div>
     <div class="top-right">
-      <button class="nav" id="rules-btn" type="button" aria-expanded="false" aria-controls="rules-panel">Rules</button>
+      <div class="nav-more">
+        <button class="lang-btn" id="lang-btn" type="button" aria-expanded="false" aria-controls="lang-list"></button>
+        <div class="nav-more-list lang-list" id="lang-list" hidden></div>
+      </div>
       <button class="icon stats-btn" id="stats-btn" type="button" aria-label="Statistics" aria-expanded="false" aria-controls="stats-panel"></button>
     </div>
     <div class="panel" id="rules-panel" hidden></div>
@@ -731,7 +748,6 @@ function closePanels(){
   for (const id of ['rules-panel', 'stats-panel']) $(id).hidden = true;
   document.querySelectorAll('[aria-expanded]').forEach(b => b.setAttribute('aria-expanded', 'false'));
 }
-$('rules-btn').addEventListener('click', e => togglePanel('rules-panel', e.currentTarget));
 $('stats-btn').addEventListener('click', e => togglePanel('stats-panel', e.currentTarget));
 
 function statsHTML(){
@@ -1084,17 +1100,46 @@ function sportNav(){
     <button type="button" class="nav-more-btn${rest.includes(sport) ? ' on' : ''}" id="more-btn" aria-expanded="false" aria-controls="more-list">More</button>
     <div class="nav-more-list" id="more-list" hidden>${rest.map(link).join('')}</div></div>` : '');
 }
-function toggleMore(open){
-  const b = $('more-btn');
-  if (!b) return;
-  $('more-list').hidden = !open;
-  b.setAttribute('aria-expanded', String(open));
+// Dropdowns in the header (More, language): open and close them, only one at a time
+function dropdown(btn, list, open){
+  if (!$(btn)) return;
+  $(list).hidden = !open;
+  $(btn).setAttribute('aria-expanded', String(open));
 }
+const DROPDOWNS = [['more-btn', 'more-list'], ['lang-btn', 'lang-list']];
 document.addEventListener('click', e => {
-  if (e.target.closest('#more-btn')) toggleMore($('more-list').hidden);
-  else if (!e.target.closest('#more-list')) toggleMore(false);
+  const lang = e.target.closest('[data-lang]');
+  if (lang) { setLang(lang.dataset.lang); dropdown('lang-btn', 'lang-list', false); return; }
+  for (const [btn, list] of DROPDOWNS) {
+    if (e.target.closest(`#${btn}`)) dropdown(btn, list, $(list).hidden);
+    else if (!e.target.closest(`#${list}`)) dropdown(btn, list, false);
+  }
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleMore(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') for (const [btn, list] of DROPDOWNS) dropdown(btn, list, false); });
+
+// ---- Language: a flag button in the header; the choice is remembered on this device ----
+// The page text is English for now; the choice only picks the flag until translations exist.
+let flagN = 0;   // SVG ids must be unique on the page
+const FLAGS = {
+  en: () => { const n = ++flagN; return `<svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <clipPath id="uk-t${n}"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath>
+    <rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/>
+    <path d="M0,0L60,30M60,0L0,30" clip-path="url(#uk-t${n})" stroke="#C8102E" stroke-width="4"/>
+    <path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>`; },
+  de: () => `<svg viewBox="0 0 5 3" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="5" height="1" fill="#000"/><rect y="1" width="5" height="1" fill="#DD0000"/><rect y="2" width="5" height="1" fill="#FFCE00"/></svg>`,
+};
+const LANGS = {en: 'English', de: 'Deutsch'};
+let LANG = LANGS[load('lang')] ? load('lang') : 'en';
+function setLang(l){
+  LANG = l;
+  store('lang', l);
+  $('lang-btn').innerHTML = FLAGS[l]();
+  $('lang-btn').setAttribute('aria-label', `Language: ${LANGS[l]}`);
+  $('lang-list').innerHTML = Object.entries(LANGS).map(([k, name]) => `<button type="button" class="dd-item" data-lang="${k}"${k === l ? ' aria-current="true"' : ''}>`
+    + `<span class="dd-flag">${FLAGS[k]()}</span>${name}</button>`).join('');
+}
+setLang(LANG);
 function menuHTML(){
   const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;

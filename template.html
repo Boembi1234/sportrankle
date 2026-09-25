@@ -242,10 +242,10 @@ a{color:inherit}
    full width, 52px high, 20px bold, centred, 8px corners */
 .k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);transition:transform .12s,box-shadow .12s,filter .12s;
   font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;letter-spacing:0;text-transform:none;text-align:center}
-/* Rankle: the extra facts in a small full-width info box under the name card, as far from it as the Reveal button is from the last
-   row (16px, 10px on phones); the label size and weight of the menu's section headings, in normal case */
-.title-sub{display:block;margin:16px 0 0;padding:6px 12px;border-radius:8px;background:var(--surface);
-  font-size:12px;font-weight:700;letter-spacing:.02em;line-height:1.3;color:var(--muted);text-align:center}
+/* Rankle: the extra facts as chips under the name card, centred side by side, as far from it as the Reveal button is from
+   the last row (16px, 10px on phones). Each chip is a small grey key like the Play button (hard edge, white text), not clickable */
+.title-sub{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:16px 0 0}
+.chip{padding:6px 12px;border-radius:6px;background:var(--surface);box-shadow:0 2px 0 var(--surface-edge);font-size:13px;font-weight:700;line-height:1.2;color:var(--text)}
 .page.done .title-sub{display:none}
 /* Rankle: no photo; the name card comes first, 24px under the header */
 .k-rankle .photo{display:none}
@@ -539,7 +539,7 @@ a{color:inherit}
     <section class="left">
       <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
       <div class="title" id="title" role="img"></div>
-      <p class="title-sub" id="title-sub" hidden></p>
+      <div class="title-sub" id="title-sub" hidden></div>
       <div class="led" id="led" hidden>
         <div><span class="led-lbl">Points</span><span class="led-num" id="led-num"></span></div>
         <div class="led-side"><span class="led-lbl">Of max</span><span class="led-num" id="led-pct"></span></div>
@@ -1349,9 +1349,9 @@ function rankleRound(){
   setCounter(true);
   const s = G.sports[G.round], [title, sub, short] = showItem(s);
   const line = [short !== title ? title : '', sub].filter(Boolean).join(', ');
-  // The extra facts (team, position, division) go in a small info box under the name card
+  // The extra facts (team, position, division) go under the name card, one chip each ("Cincinnati Bengals · QB" -> two chips)
   $('question').hidden = true;
-  $('title-sub').textContent = line;
+  $('title-sub').innerHTML = line.split(' · ').map(f => `<span class="chip">${f}</span>`).join('');
   $('title-sub').hidden = !line;
   mainButton('Reveal', confirmPick, true);
   $('note').textContent = 'Tap a category, then reveal.';

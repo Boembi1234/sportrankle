@@ -379,7 +379,10 @@ a{color:inherit}
 .k-rankle .led-side .led-num{margin:0;font-size:20px;color:var(--signal)}
 .k-rankle .led-bar{display:block;grid-column:1/-1;height:8px;margin-top:12px;border-radius:4px;background:var(--bg);overflow:hidden}
 .led-bar i{display:block;width:0;height:100%;border-radius:4px;background:var(--signal);transition:width .8s cubic-bezier(.2,.7,.2,1)}
-.k-rankle .led-note{margin-top:10px;padding-top:0;border-top:0;font-size:13px}
+.k-rankle .led-note{display:none}   /* the card says it all; the sentence still goes to screen readers */
+/* Rankle results: ideally placed rows in green instead of blue (title and points box) */
+.k-rankle .row.ideal .cat{color:var(--led-ok)}
+.k-rankle .row.ideal .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}
 @media (prefers-reduced-motion:reduce){.led-bar i{transition:none}}
 .page.done .title{display:none}
 
@@ -1416,6 +1419,7 @@ function rankleResults(){
   G.cats.forEach((c, k) => {
     const row = $(`row-${k}`), s = G.placed[k], ideal = idealFor[k], ok = s === ideal || pts(s, c) === pts(ideal, c);
     const rank = row.querySelector('.rank');
+    row.classList.toggle('ideal', ok);   // Rankle shows ideally placed rows in green
     turn(rank, rank.dataset.ch, 300 + k * 90, ok ? 'ok' : 'no');
     G.share = (G.share || []).concat(ok ? '🟩' : '🟥');
   });
@@ -1451,7 +1455,7 @@ const rowIcon = () => SPORTS[D.sport]?.icon ? `<img class="row-ic" src="${SPORTS
 // ---- Second board on the results screen (perfect board / true order) ----
 const miniHTML = text => [...text].map(ch => `<i class="lit">${ch}</i>`).join('');
 function altRow(rankCh, tone, cat, who, v, pts, label, more = ''){
-  return `<li><button class="row done" type="button" disabled aria-label="${label}">
+  return `<li><button class="row done${tone === 'ok' ? ' ideal' : ''}" type="button" disabled aria-label="${label}">
       <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'rankle' ? rowIcon() : ''}
       <span class="body"><span class="cat">${cat}</span>
         <span class="res">${who ? `<span class="who">${who}</span>` : ''}<span class="vals">${v ? miniHTML(v[0]) : ''}</span><span class="unit">${v ? v[1] : 'no value'}</span>${more ? `<span class="more">${more}</span>` : ''}</span></span>

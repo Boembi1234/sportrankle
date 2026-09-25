@@ -309,9 +309,23 @@ a{color:inherit}
 .k-sort .row{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .k-sort .board>li.dragging .row{cursor:grabbing;box-shadow:0 8px 20px rgba(0,0,0,.5)}
 @media (prefers-reduced-motion:reduce){.k-sort .board>li{transition:none}}
-.page:is(.k-blind,.k-sort) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
-.page:is(.k-blind,.k-sort):not(.done) .question{font-size:17px;margin-top:24px}
-.page:is(.k-blind,.k-sort) .right{margin-top:16px}
+.page:is(.k-blind,.k-sort,.k-guess) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
+.page:is(.k-blind,.k-sort,.k-guess):not(.done) .question{font-size:17px;margin-top:24px}
+.page:is(.k-blind,.k-sort,.k-guess) .right{margin-top:16px}
+/* Guess the record: the answer field is one of our boxes (card colour, big white number, blue ring when typing), the unit beside it */
+.k-guess .guess-li{padding:0}
+.k-guess .guess{gap:12px}
+.k-guess .guess input{min-height:52px;padding:0 16px;border:0;border-radius:10px;background:var(--surface);color:var(--text);
+  font-family:var(--font);font-weight:800;font-size:24px;letter-spacing:0;text-shadow:none}
+.k-guess .guess input::placeholder{color:var(--muted);font-weight:700}
+.k-guess .guess input:focus{outline:2px solid var(--signal);outline-offset:0}
+.k-guess .guess-unit{margin-right:0;font-size:17px;font-weight:700;color:var(--muted)}
+/* Guess the record results: the facts as rows (faint box, label left, value right) */
+.page.k-guess .board>li.fact{min-height:48px}
+.k-guess .fact{align-items:center;padding:8px 12px;border-radius:10px;background:var(--surface-faint)}
+.k-guess .fact-k{font-size:15px;font-weight:700;color:var(--muted)}
+.k-guess .fact-v{font-size:15px;font-weight:700;color:var(--text)}
+.page.k-guess.done .right{margin-top:16px}
 /* Rankle: the line under a filled category is all white; the value is the same size as the rest, just bold */
 .v2 .who,.v2 .unit{color:var(--text)}
 .v2 .res{gap:.28em}   /* name, value and unit read like one sentence: a normal word space, not 8px */
@@ -506,7 +520,8 @@ a{color:inherit}
   .title-sub{margin-top:10px}
   .page.v2.done .bar{gap:10px}
   .v2 .seg{margin-top:10px}
-  .page:is(.k-blind,.k-sort) .right{margin-top:10px}
+  .page:is(.k-blind,.k-sort,.k-guess) .right{margin-top:10px}
+  .page.k-guess.done .right{margin-top:10px}
 }
 /* Short screens: the hint line goes first, then the question shrinks */
 @media (max-height:700px){
@@ -679,7 +694,7 @@ function pts(s, c){
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const announce = t => { $('live').textContent = t; };
 const cap = s => s[0].toUpperCase() + s.slice(1);
-const V2 = () => KIND === 'rankle' || KIND === 'blind' || KIND === 'sort';   // games in the new design
+const V2 = () => ['rankle', 'blind', 'sort', 'guess'].includes(KIND);   // games in the new design
 // Rankle's category title with its direction, e.g. "Most playoff wins, all time" (made by the build, see TITLES in build.py)
 const catTitle = c => D.cats[c].title || `${cap(D.cats[c].dir)} ${D.cats[c].name}`;
 const catLabel = c => `${D.cats[c].emoji ? `<span class="emo">${D.cats[c].emoji}</span>` : ''}${catTitle(c)}`;   // emoji + title, for display only
@@ -1398,7 +1413,7 @@ function route(){
     return;
   }
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
-  $('page').className = `page k-${KIND}${V2() ? ' v2' : ''}`;   // k-rankle etc.: one game only; v2: the new design (Rankle, Blind ranking, Sort it)
+  $('page').className = `page k-${KIND}${V2() ? ' v2' : ''}`;   // k-rankle etc.: one game only; v2: the new design (all four daily games)
   $('title-sub').hidden = true;
   $('today').hidden = true;
   $('led').hidden = true;
@@ -1808,12 +1823,14 @@ function startGuess(){
   G = {day: today(), item: it, guess: null, round: 0, score: 0, sel: null, placed: {}, sports: [], phase: 'round'};
   prevTitle = '';
   setPhoto(D.cover ? {img: D.cover, name: 'World records'} : null);
-  titleCards(it.cat, `${it.cat}${it.type ? ', ' + it.type : ''}`);
+  titleCards(it.name, `${it.name}${it.type ? ', ' + it.type : ''}`);   // the record on the name card, its sport and type as chips
+  chips([it.cat, it.type].filter(Boolean).join(' · '));
   const how = ['s', 'min', 'days', 'weeks', 'years'].includes(it.unit) ? 'long' : it.unit === 'km/h' ? 'fast' : ['m', 'km', 'cm', 'yards'].includes(it.unit) ? 'far' : it.unit === 'kg' ? 'heavy' : 'many';
   $('question').className = 'question';
   $('question').hidden = false;
   const fields = guessFields(it), words = fields.map(f => FIELD_WORD[f] || f), inWords = fields.length > 1 ? `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}` : (UNIT_WORD[it.unit] || it.unit);
-  $('question').innerHTML = `${it.name}<span class="qdir">${it.type ? it.type + ' · ' : ''}How ${how}? Guess the record in ${inWords}.</span>`;
+  const emo = {long: '⏱️', fast: '💨', far: '📏', heavy: '🏋️', many: '🔢'}[how];
+  $('question').innerHTML = `<span class="emo">${emo}</span>How ${how}? Guess the record in ${inWords}.`;
   $('board').innerHTML = `<li class="guess-li"><div class="guess">${fields.map((f, i) => `<input class="gf" id="gf-${i}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
       placeholder="${fields.length > 1 ? '0' : 'e.g. 100'}" aria-label="${FIELD_WORD[f] || f}"><span class="guess-unit">${f}</span>`).join('')}</div></li>`;
   $('round').textContent = ''; $('csep').hidden = $('cpts').hidden = true; shown = 0; $('score').textContent = 0;
@@ -1864,13 +1881,14 @@ function guessResults(){
   const score = Math.round(100 * Math.max(0, 1 - Math.abs(Math.log(g / v)) / Math.log(4)));
   G.score = score;
   $('page').classList.add('done');
-  $('csep').hidden = $('cpts').hidden = false; $('round').textContent = '';
+  $('csep').hidden = true; $('cpts').hidden = false; $('round').textContent = '';   // one guess: points only, no round and no separator
   setScore(score);
   saveHistory(score, 100);
   const off = Math.round(100 * (g - v) / v), offText = off === 0 ? 'spot on' : `${Math.abs(off)} % ${off > 0 ? 'over' : 'under'}`;
   G.share = [score >= 90 ? '\u{1F3AF}' : score >= 70 ? '\u{1F7E9}' : score >= 40 ? '\u{1F7E8}' : '\u{1F7E5}'];
+  $('title-sub').hidden = true;
   scoreboard(score, 100, `you said ${fmtGuess(g, it)}, the record is ${recDisplay(it)} (${offText})`);
-  const facts = [['Record', recDisplay(it)],
+  const facts = [['Your guess', `${fmtGuess(g, it)} · ${offText}`], ['Record', recDisplay(it)],
     ['Holder', `${it.holder}${it.nat ? ' · ' + it.nat : ''}`],
     ['Set', it.year ? `${it.year}${it.years > 0 ? ` · standing ${it.years} year${it.years === 1 ? '' : 's'}` : ' · this year'}` : '–'],
     [D.body_label || 'Ratified by', it.body || '–'], it.note ? ['Note', it.note] : null].filter(Boolean);

@@ -229,6 +229,7 @@ a{color:inherit}
 /* The photo gets exactly the spare height (fitPhoto), never the space between question and board */
 .photo{position:relative;flex:none;height:var(--ph,200px);border-radius:8px;background:var(--surface);display:block;overflow:hidden}
 .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px}
+@media (min-width:640px){.photo img.wide-contain{object-fit:contain!important}}
 .photo .ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px}
 /* Item name as an LED board under the photo: dot-matrix letters light up one by one */
 .title{flex:none;display:block;margin-top:10px;padding:11px 16px;border-radius:10px;border:1px solid var(--line-strong);
@@ -658,6 +659,7 @@ function setPhoto(it){
   if (it && it.img) {
     img.src = it.img; img.alt = it.name; img.hidden = false; $('photo-ph').hidden = true;
     img.style.objectFit = it.fit || 'cover';
+    img.classList.toggle('wide-contain', it.wide === 'contain');   // portraits: whole on wide strips
     a.style.background = it.bg || '';
     if (it.credit) { a.href = it.credit; a.title = 'Photo source'; }
     else { a.removeAttribute('href'); a.removeAttribute('title'); }

@@ -22,4 +22,6 @@ Source link (optional): put a credits.txt into the game folder, one line per pho
 
   Monaco.jpg = https://commons.wikimedia.org/wiki/File:Monaco_....jpg
 
-Photos with a credit become a link to that page.
+Photos with a credit become a link to that page. Anything after two spaces and a # on a line is a comment (e.g. the licence).
+
+Portrait photos: a pool can set "photo" options in build.py (band around the face, blurred fill, whole picture on wide screens) - see the Champions League entry.

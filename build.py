@@ -65,6 +65,7 @@ GAMES = {
     # "sub" columns go in brackets after the name and appear under the title; "filter" keeps matching rows only.
     "cl": {"file": "CL_Players*.xlsx", "tab": "Champions League players", "noun": "player", "plural": "players", "word": "CL",
            "english": True, "short": "surname", "sport": "soccer", "cover": {"file": "covers/cl.png", "width": 0.8, "cy": 0.46},
+           "photo": {"ratio": 2.4, "cy": 0.27, "fill": "blur", "fit": "cover", "wide": "contain"},   # portraits: the head band, blurred photo behind
            "format": "wide", "name_col": "Player", "sub": ["Club", "Nationality"], "filter": ("Top 101 by MV", "yes"),
            "cats": {
                "Market value (€)": ("Market value", "M €", "mio", "highest"),
@@ -361,7 +362,8 @@ def norm(s):
     return re.sub(r"[^a-z0-9]+", "", unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower())
 
 
-def local_photos(key):
+def local_photos(key, opts=None):
+    opts = opts or {}
     """Resize photos/<key>/*.jpg|png|webp into img/<key>/ and return {normalised file stem: {img, credit?}}."""
     from PIL import Image
 
@@ -373,7 +375,7 @@ def local_photos(key):
         for line in (folder / "credits.txt").read_text(encoding="utf-8").splitlines():
             if "=" in line:
                 name, url = line.split("=", 1)
-                credits[norm(Path(name.strip()).stem)] = url.strip()
+                credits[norm(Path(name.strip()).stem)] = url.split("  #")[0].strip()   # "  # licence" comments allowed
     out = {}
     for f in sorted(folder.iterdir()):
         if f.suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp"):
@@ -386,9 +388,20 @@ def local_photos(key):
             # The strip is wide: a square or portrait picture keeps only a centred band of PHOTO_RATIO,
             # so the subject fills it instead of shrinking with the empty top and bottom
             w, h = img.size
-            if h > w / PHOTO_RATIO:
-                band = round(w / PHOTO_RATIO)
-                img = img.crop((0, (h - band) // 2, w, (h - band) // 2 + band))
+            ratio = opts.get("ratio", PHOTO_RATIO)
+            if h > w / ratio:
+                band = round(w / ratio)
+                y0 = max(0, min(h - band, round(h * opts.get("cy", 0.5) - band / 2)))
+                img = img.crop((0, y0, w, y0 + band))
+            if opts.get("fill") == "blur":
+                # Portrait photos in a wide strip: the band whole in the middle, a blurred copy of it behind
+                from PIL import ImageEnhance, ImageFilter, ImageOps
+                W, H = 1260, 350   # 3.6:1, close to the desktop strip, still fine on a phone
+                bg = ImageOps.fit(img, (W, H)).filter(ImageFilter.GaussianBlur(28))
+                bg = ImageEnhance.Brightness(bg).enhance(0.5)
+                fg = img.resize((round(H * img.width / img.height), H), Image.LANCZOS)
+                bg.paste(fg, ((W - fg.width) // 2, 0))
+                img = bg
             img.thumbnail((IMG_LONG, IMG_LONG))
             img.save(target, "JPEG", quality=82, optimize=True, progressive=True)
         # Own pictures are shown whole, on a background in the picture's own edge colour
@@ -396,7 +409,7 @@ def local_photos(key):
         w, h = img.size
         edge = [img.getpixel((x, y)) for x in range(0, w, 8) for y in (0, h - 1)] + [img.getpixel((x, y)) for y in range(0, h, 8) for x in (0, w - 1)]
         bg = "#%02x%02x%02x" % tuple(sum(c[i] for c in edge) // len(edge) for i in range(3))
-        out[stem] = {"img": f"img/{key}/{target.name}", "fit": "contain", "bg": bg,
+        out[stem] = {"img": f"img/{key}/{target.name}", "fit": opts.get("fit", "contain"), "bg": bg, **({"wide": opts["wide"]} if opts.get("wide") else {}),
                      **({"credit": credits[stem]} if stem in credits else {})}
     return out
 
@@ -469,7 +482,7 @@ def load_game(key, cfg):
 def attach_photos(key, cfg, names, items):
     """Own photos beat spreadsheet URLs. A file matches the German or English name, the name without
     its bracket, any " / " part of it, or the short name: Monaco.jpg fits "Monaco (Monaco)"."""
-    own = local_photos(key)
+    own = local_photos(key, cfg.get("photo"))
     used = set()
     for n, it in zip(names, items):
         title = it["name"].split(" (")[0]

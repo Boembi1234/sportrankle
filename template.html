@@ -24,7 +24,7 @@
 <style>
 :root{
   color-scheme:dark;
-  --bg:#121210; --surface:#22282A; --surface-edge:#191D1F; /* 27 % darker, like --signal-edge to --signal */ --line:#2A2A27; --line-strong:#34332F; --text:#EDEBE4; --muted:#9A968C;
+  --bg:#121210; --surface:#22282A; --surface-faint:#191C1D; --surface-edge:#191D1F; /* 27 % darker, like --signal-edge to --signal */ --line:#2A2A27; --line-strong:#34332F; --text:#EDEBE4; --muted:#9A968C;
   --card:#6B6667; --card-edge:#4E4A4B; --card-stack:#3A3738; --card-mini:#3A3839; --card-open:#45443F;
   --glyph:#FAFAF7; --ring:#A9ADB2;
   --signal:#4FB3F6; --signal-edge:#2A86C4; --selected-bg:#151A1E;
@@ -288,6 +288,8 @@ a{color:inherit}
 .v2 .board{gap:6px}
 .v2 .board>li{height:48px;border-bottom:0}   /* 48px rows 6px apart, like the menu entries */
 .v2 .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:none;border-radius:10px;padding:4px 12px;transition:background-color .15s}
+/* Rankle and Sort it: every row shows a faint box, so the eight fields read as fields; hover, choice and filled rows use the full box */
+.page:is(.k-rankle,.k-sort) .row{background:var(--surface-faint)}
 @media (hover:hover){.v2 .row:not(:disabled):hover{background:var(--surface)}}
 .v2 .row.sel,.v2 .row.done{background:var(--surface);box-shadow:none}   /* chosen and filled rows: box like the active menu entry */
 .v2 .row.sel .cat{color:var(--signal)}   /* only the current choice is blue; filled rows stay white */

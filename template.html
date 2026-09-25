@@ -348,6 +348,9 @@ a{color:inherit}
 .k-rankle .share:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge);filter:none}
 @media (prefers-reduced-motion:reduce){.k-rankle .share{transition:none}}
 .page.k-rankle.done .note{display:none}   /* no "Played today ..." line under the buttons */
+/* Rankle results: the two buttons as far apart as the name card and the facts (16px, 10px on phones); 24px under the last
+   one, like the side margin */
+.page.k-rankle.done .bar{gap:16px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 .note{margin:0;color:var(--muted);font-size:13px;text-align:center}
 .share{width:100%;min-height:48px;border:1.5px solid var(--line-strong);border-radius:7px;background:none;color:var(--text);font:800 17px var(--font);cursor:pointer}
 .share.copied{border-color:var(--led-ok);color:var(--led-ok)}
@@ -446,6 +449,7 @@ a{color:inherit}
   .main{font-size:20px}
   .bar{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
   .title-sub{margin-top:10px}
+  .page.k-rankle.done .bar{gap:10px}
 }
 /* Short screens: the hint line goes first, then the question shrinks */
 @media (max-height:700px){

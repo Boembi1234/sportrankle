@@ -273,7 +273,7 @@ a{color:inherit}
 .k-rankle .board>li{height:48px;border-bottom:0}   /* 48px rows 6px apart, like the menu entries */
 .k-rankle .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:none;border-radius:10px;padding:4px 12px;transition:background-color .15s}
 @media (hover:hover){.k-rankle .row:not(:disabled):hover{background:var(--surface)}}
-.k-rankle .row.sel{background:var(--surface);box-shadow:none}
+.k-rankle .row.sel,.k-rankle .row.done{background:var(--surface);box-shadow:none}   /* chosen and filled rows: box like the active menu entry */
 .k-rankle .row.sel .cat,.k-rankle .row.done .cat{color:var(--signal)}
 .k-rankle .cat{font-size:17px}
 @media (prefers-reduced-motion:reduce){.k-rankle .row{transition:none}}
@@ -742,7 +742,7 @@ function setScore(v){
   shown = v;
   if (RM || instant || from === v) { el.textContent = v; return; }
   const t0 = performance.now();
-  const step = t => { const k = Math.min(1, (t - t0) / 450); el.textContent = Math.round(from + (v - from) * k); if (k < 1) requestAnimationFrame(step); };
+  const step = t => { const k = Math.min(1, Math.max(0, (t - t0) / 450));   // a frame can be stamped just before t0 el.textContent = Math.round(from + (v - from) * k); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
 function setCounter(showPts){

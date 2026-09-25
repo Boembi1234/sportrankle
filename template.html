@@ -279,13 +279,13 @@ a{color:inherit}
 
 /* Guess the record: one LED input, then the record's facts */
 .guess-li{height:auto!important;padding:12px 0 6px;border-bottom:0!important}
-.guess{display:flex;align-items:center;gap:12px;width:100%}
-.guess input{flex:1;min-width:0;min-height:60px;padding:6px 16px;border:1px solid var(--line-strong);border-radius:10px;
+.guess{display:flex;align-items:center;gap:10px;width:100%}
+.guess input{flex:1;min-width:0;width:0;min-height:60px;padding:6px 14px;border:1px solid var(--line-strong);border-radius:10px;
   background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px;color:var(--signal);
   font-family:"Doto",var(--font);font-weight:900;font-size:34px;letter-spacing:.04em;text-shadow:0 0 12px rgba(79,179,246,.55)}
 .guess input::placeholder{color:#2A3138;text-shadow:none}
 .guess input:focus{outline:2px solid var(--signal);outline-offset:2px}
-.guess-unit{flex:none;font-weight:800;font-size:20px;color:var(--muted)}
+.guess-unit{flex:none;font-weight:800;font-size:20px;color:var(--muted);margin-right:6px}
 .fact{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 10px;height:auto!important}
 .fact-k{flex:none;color:var(--muted);font-size:14px}
 .fact-v{font-weight:700;text-align:right;text-wrap:pretty}
@@ -1527,6 +1527,15 @@ function sortReveal(restored = false){
 // One record a day (the same for everyone). Points by closeness on a log scale: exact = 100, twice or half = 50, four times off = 0.
 const UNIT_WORD = {s: 'seconds', min: 'minutes', m: 'metres', km: 'kilometres', cm: 'centimetres', kg: 'kilograms'};
 const isTime = it => it.unit === 's' && it.display.includes(':');
+// The input fields of a record: plain number, or labelled time parts so 5:08 can never be read as 5.08 s
+function guessFields(it){
+  if (isTime(it)) return it.display.split(':').length > 2 ? ['h', 'min', 's'] : ['min', 's'];
+  if (it.unit === 'min' && /\bh\b/.test(it.display)) return ['h', 'min'];
+  return [it.unit];
+}
+const FIELD_WORD = {h: 'hours', min: 'minutes', s: 'seconds'};
+// The record as shown: the sheet's display text plus its unit when the text is bare (5:08 is minutes, not seconds)
+const recDisplay = it => /[a-z]/i.test(it.display) ? it.display : `${it.display} ${isTime(it) ? 'min' : it.unit}`;
 function startGuess(){
   const rnd = seeded(`${today()}|guess|${MODE}`), it = D.items[Math.floor(rnd() * D.items.length)];
   G = {day: today(), item: it, guess: null, round: 0, score: 0, sel: null, placed: {}, sports: [], phase: 'round'};
@@ -1536,33 +1545,47 @@ function startGuess(){
   const how = ['s', 'min', 'days', 'weeks', 'years'].includes(it.unit) ? 'long' : it.unit === 'km/h' ? 'fast' : ['m', 'km', 'cm', 'yards'].includes(it.unit) ? 'far' : it.unit === 'kg' ? 'heavy' : 'many';
   $('question').className = 'question';
   $('question').hidden = false;
-  $('question').innerHTML = `${it.name}<span class="qdir">${it.type} · How ${how}? Guess the world record in ${UNIT_WORD[it.unit] || it.unit}.</span>`;
-  $('board').innerHTML = `<li class="guess-li"><div class="guess"><input id="guess-in" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
-      placeholder="${isTime(it) ? 'e.g. 1:45.00' : 'e.g. 100'}" aria-label="Your guess in ${it.unit}"><span class="guess-unit">${it.unit}</span></div></li>`;
+  const fields = guessFields(it), words = fields.map(f => FIELD_WORD[f] || f), inWords = fields.length > 1 ? `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}` : (UNIT_WORD[it.unit] || it.unit);
+  $('question').innerHTML = `${it.name}<span class="qdir">${it.type} · How ${how}? Guess the world record in ${inWords}.</span>`;
+  $('board').innerHTML = `<li class="guess-li"><div class="guess">${fields.map((f, i) => `<input class="gf" id="gf-${i}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
+      placeholder="${fields.length > 1 ? '0' : 'e.g. 100'}" aria-label="${FIELD_WORD[f] || f}"><span class="guess-unit">${f}</span>`).join('')}</div></li>`;
   $('round').textContent = ''; $('csep').hidden = $('cpts').hidden = true; shown = 0; $('score').textContent = 0;
   const rec = record('guess', MODE);
   if (rec && rec.done && rec.guess > 0) { G.guess = rec.guess; guessResults(); return; }
-  const inp = $('guess-in');
-  inp.addEventListener('input', () => { $('main').disabled = parseGuess(inp.value, it) == null; });
+  document.querySelectorAll('.gf').forEach(el => el.addEventListener('input', () => { $('main').disabled = readGuess(it) == null; }));
   mainButton('Lock in my guess', guessConfirm, true);
-  $('note').textContent = isTime(it) ? 'Type it as 1:40.91, or in seconds. One guess.' : 'One guess, then the reveal.';
+  $('note').textContent = fields.length > 1 ? `Fill in ${fields.join(', ')}; empty parts count as 0. One guess.` : 'One guess, then the reveal.';
   fitPhoto();
-  if (innerWidth >= 640) setTimeout(() => inp.focus(), 50);
+  if (innerWidth >= 640) setTimeout(() => $('gf-0').focus(), 50);
 }
-function parseGuess(text, it){
+function parseNum(text){
   let s = text.trim();
   s = s.includes('.') ? s.replace(/,/g, '') : s.replace(/,(\d{3})(?!\d)/g, '$1').replace(',', '.');   // 1,234 and 9,58 both work
-  if (isTime(it) && /^\d{1,2}(:\d{1,2}){1,2}(\.\d+)?$/.test(s)) return s.split(':').map(Number).reduce((a, b) => a * 60 + b, 0);
+  if (s === '') return 0;
   const v = Number(s);
-  return s && Number.isFinite(v) && v > 0 ? v : null;
+  return Number.isFinite(v) && v >= 0 ? v : null;
+}
+// The fields as one number in the record's unit (times in seconds, durations stored in minutes as minutes)
+function readGuess(it){
+  const fields = guessFields(it), vals = fields.map((f, i) => parseNum($(`gf-${i}`).value));
+  if (vals.some(v => v == null)) return null;
+  const secs = {h: 3600, min: 60, s: 1};
+  const total = fields.length > 1 ? vals.reduce((a, v, i) => a + v * secs[fields[i]], 0) / (it.unit === 'min' ? 60 : 1) : vals[0];
+  return total > 0 ? total : null;
 }
 function fmtGuess(v, it){
-  if (isTime(it)) { const hh = Math.floor(v / 3600), mm = Math.floor(v % 3600 / 60), ss = v % 60; return (hh ? `${hh}:${String(mm).padStart(2, '0')}:` : `${mm}:`) + ss.toFixed(2).padStart(5, '0'); }
+  const fields = guessFields(it);
+  if (fields.length > 1) {
+    const secs = it.unit === 'min' ? v * 60 : v, hh = Math.floor(secs / 3600), mm = Math.floor(secs % 3600 / 60), ss = secs % 60;
+    if (it.unit === 'min') return `${hh} h ${String(Math.round(mm)).padStart(2, '0')} min`;
+    const sec = Number.isInteger(ss) ? String(ss).padStart(2, '0') : ss.toFixed(2).padStart(5, '0');
+    return `${hh ? `${hh}:${String(mm).padStart(2, '0')}:` : `${mm}:`}${sec} min`;
+  }
   return `${v.toLocaleString('en-US', {maximumFractionDigits: 3})} ${it.unit}`;
 }
 function guessConfirm(){
   if (busy || G.phase !== 'round') return;
-  const v = parseGuess($('guess-in').value, G.item);
+  const v = readGuess(G.item);
   if (v == null) return;
   G.guess = v; G.phase = 'done';
   save();
@@ -1579,8 +1602,8 @@ function guessResults(){
   saveHistory(score, 100);
   const off = Math.round(100 * (g - v) / v), offText = off === 0 ? 'spot on' : `${Math.abs(off)} % ${off > 0 ? 'over' : 'under'}`;
   G.share = [score >= 90 ? '\u{1F3AF}' : score >= 70 ? '\u{1F7E9}' : score >= 40 ? '\u{1F7E8}' : '\u{1F7E5}'];
-  scoreboard(score, 100, `you said ${fmtGuess(g, it)}, the record is ${it.display} (${offText})`);
-  const facts = [['Record', /[a-z]/i.test(it.display) ? it.display : `${it.display} ${it.unit}`],
+  scoreboard(score, 100, `you said ${fmtGuess(g, it)}, the record is ${recDisplay(it)} (${offText})`);
+  const facts = [['Record', recDisplay(it)],
     ['Holder', `${it.holder}${it.nat ? ' · ' + it.nat : ''}`],
     ['Set', it.year ? `${it.year}${it.years > 0 ? ` · standing ${it.years} year${it.years === 1 ? '' : 's'}` : ' · this year'}` : '–'],
     ['Ratified by', it.body || '–'], it.note ? ['Note', it.note] : null].filter(Boolean);

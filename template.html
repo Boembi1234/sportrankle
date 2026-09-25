@@ -819,7 +819,8 @@ function countUp(el, v){
   requestAnimationFrame(step);
 }
 function setCounter(showPts){
-  $('round').textContent = `${Math.min(G.round + 1, PICK)}/${PICK}`;
+  // Rankle counts the picks already locked in (they match the points next to it); the other games show the current round
+  $('round').textContent = `${KIND === 'rankle' ? G.round : Math.min(G.round + 1, PICK)}/${PICK}`;
   $('csep').hidden = $('cpts').hidden = !showPts;
 }
 function rulesHTML(){

@@ -78,16 +78,18 @@ a{color:inherit}
 .page:not(.at-home) .top .logo{display:none}
 .page.at-home .back{display:none}
 /* Menu: three bars top left; a drawer slides in from the left with the sports and the games */
-.burger::before,.burger::after{content:"";position:absolute;left:13px;width:18px;height:2px;background:var(--text)}
-.burger::before{top:15px;box-shadow:0 6px 0 var(--text)}
+.burger::before,.burger::after{content:"";position:absolute;left:13px;width:22px;height:2.5px;border-radius:1.25px;background:var(--text)}
+.burger::before{top:14px;box-shadow:0 7px 0 var(--text)}
 #menu-btn{margin-left:-13px}   /* the bars (not the 44px tap area) start at the 24px side margin */
 #stats-btn{margin-right:-13px}   /* likewise on the right: the bars end at the 24px side margin */
-.burger::after{top:27px}
+.burger::after{top:28px}
 /* The drawer's X: slides in with the drawer and stops exactly where the three bars are (openMenu measures them) */
 .drawer-x{position:fixed;z-index:42;transform:translateX(calc(-1 * var(--dw)));visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
 .menu-open .drawer-x{transform:none;visibility:visible;transition:transform .22s ease}
-.drawer-x::before{box-shadow:none;transform:translateY(6px) rotate(45deg)}
-.drawer-x::after{transform:translateY(-6px) rotate(-45deg)}
+/* The X lines are a little longer than the bars, so the X looks as big as the three bars */
+.drawer-x::before,.drawer-x::after{left:10px;width:28px}
+.drawer-x::before{box-shadow:none;transform:translateY(7px) rotate(45deg)}
+.drawer-x::after{transform:translateY(-7px) rotate(-45deg)}
 /* Drawer width: 367px, the whole screen up to 639px wide */
 :root{--dw:367px}
 .drawer-bg{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s}

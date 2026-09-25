@@ -1645,8 +1645,7 @@ function blindResults(){
     row.classList.toggle('ideal', d === 0);   // exact spot green, one off blue, two or more off red (like the share squares)
     row.classList.toggle('worst', d >= 2);
     row.querySelector('.unit').textContent = v ? v[1] : '';
-    // Your order: instead of the points, how far the item is from its spot: ✓ right, ↓2 two spots further down, ↑1 one up
-    row.querySelector('.pts').textContent = d === 0 ? '✓' : `${k < lo ? '↓' : '↑'}${d}`;
+    row.querySelector('.pts').textContent = `+${p}`;
     miniCards(row.querySelector('.vals'), v ? v[0] : '', 300 + k * 90);
     turn(row.querySelector('.rank'), String(k + 1), 300 + k * 90, d ? 'no' : 'ok');
     G.share = (G.share || []).concat(d === 0 ? '🟩' : d === 1 ? '🟨' : '🟥');
@@ -1655,15 +1654,14 @@ function blindResults(){
   });
   finishFooter();
 
-  // The perfect order: the same rows, each spot with the item that belongs there, the points you got for it and where you put it
+  // The perfect order: each spot with the item that belongs there and its value, all green with the full points (it is perfect)
   const order = [...G.sports].sort((a, b) => D.items[a].ranks[G.cat] - D.items[b].ranks[G.cat]);
   const yourSpot = {};
   for (const [k, s] of Object.entries(G.placed)) yourSpot[s] = +k;
   showAlt('Perfect order', `Perfect order by ${c.name}`, order.map((s, i) => {
-    const [p, d] = blindPts(s, yourSpot[s]), v = fmt(s, G.cat);
-    return altRow(String(i + 1), d === 0 ? 'ok' : d >= 2 ? 'no' : '', nm(s), '', v, `+${p}`,   // same colours as in your order
-      `Spot ${i + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, you put it on spot ${yourSpot[s] + 1}`,
-      d ? `· you: spot <b>${yourSpot[s] + 1}</b>` : '');
+    const v = fmt(s, G.cat);
+    return altRow(String(i + 1), 'ok', nm(s), '', v, `+${BLIND_PTS[0]}`,
+      `Spot ${i + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, you put it on spot ${yourSpot[s] + 1}`);
   }));
   announce(`${titleText[1]}, ${$('led-note').textContent}`);
 }

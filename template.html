@@ -320,9 +320,9 @@ a{color:inherit}
 .k-guess .guess input::placeholder{color:var(--muted);font-weight:700}
 .k-guess .guess input:focus{outline:2px solid var(--signal);outline-offset:0}
 .k-guess .guess-unit{margin-right:0;font-size:17px;font-weight:700;color:var(--muted)}
-/* Guess the record results: the facts as rows (faint box, label left, value right) */
+/* Guess the record results: the facts as rows in the card colour like the other results (label left, value right) */
 .page.k-guess .board>li.fact{min-height:48px}
-.k-guess .fact{align-items:center;padding:8px 12px;border-radius:10px;background:var(--surface-faint)}
+.k-guess .fact{align-items:center;padding:8px 12px;border-radius:10px;background:var(--surface)}
 .k-guess .fact-k{font-size:15px;font-weight:700;color:var(--muted)}
 .k-guess .fact-v{font-size:15px;font-weight:700;color:var(--text)}
 .page.k-guess.done .right{margin-top:16px}
@@ -1888,7 +1888,7 @@ function guessResults(){
   G.share = [score >= 90 ? '\u{1F3AF}' : score >= 70 ? '\u{1F7E9}' : score >= 40 ? '\u{1F7E8}' : '\u{1F7E5}'];
   $('title-sub').hidden = true;
   scoreboard(score, 100, `you said ${fmtGuess(g, it)}, the record is ${recDisplay(it)} (${offText})`);
-  const facts = [['Your guess', `${fmtGuess(g, it)} · ${offText}`], ['Record', recDisplay(it)],
+  const facts = [['Your guess', fmtGuess(g, it)], ['Record', recDisplay(it)],
     ['Holder', `${it.holder}${it.nat ? ' · ' + it.nat : ''}`],
     ['Set', it.year ? `${it.year}${it.years > 0 ? ` · standing ${it.years} year${it.years === 1 ? '' : 's'}` : ' · this year'}` : '–'],
     [D.body_label || 'Ratified by', it.body || '–'], it.note ? ['Note', it.note] : null].filter(Boolean);

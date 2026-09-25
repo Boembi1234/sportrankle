@@ -1642,8 +1642,8 @@ function blindResults(){
   range(PICK).forEach(k => {
     const row = $(`row-${k}`), s = G.placed[k], [p, d] = blindPts(s, k), [lo, hi] = trueSpots(s), v = fmt(s, G.cat);
     row.classList.add('done');
-    row.classList.toggle('ideal', d === 0);   // exact spot green, one off blue, two or more off red (like the share squares)
-    row.classList.toggle('worst', d >= 2);
+    row.classList.toggle('ideal', d === 0);   // exact spot green, 0 points red, everything in between blue
+    row.classList.toggle('worst', p === 0);
     row.querySelector('.unit').textContent = v ? v[1] : '';
     row.querySelector('.pts').textContent = `+${p}`;
     miniCards(row.querySelector('.vals'), v ? v[0] : '', 300 + k * 90);

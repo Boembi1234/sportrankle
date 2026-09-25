@@ -879,9 +879,6 @@ function bigTile(href, label, img, name, keys){
 const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
 // Sport tile over all games: to the sport page, or straight to the topic when the sport has only one
 const sportCard = s => { const t = topicsOf(s); return bigTile(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(t)); };
-// Guess the record sits in front of the sports: one tile straight into today's record for each pool that only has that game
-const guessCards = () => POOLS.filter(m => DATA[m].kinds.length === 1 && DATA[m].kinds[0] === 'guess')
-  .map(m => bigTile(`#guess-${m}`, `${GAMES.guess.name}, ${DATA[m].tab}`, DATA[m].cover, GAMES.guess.name, [`guess-${m}`]));
 const topicCard = m => bigTile(`#t/${m}`, `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, DATA[m].cover, DATA[m].tab, keysOf([m]));
 
 // Sport page: its topics
@@ -977,7 +974,7 @@ function renderHome(kind, sport){
           <span class="meta">${next ? `Next up: <b>${nextName}</b> · ` : `<b>All played for today</b> · `}${facts}</span></div>`}
       </section>
       <p class="sec">Pick a sport</p>
-      <div class="tiles">${guessCards().join('')}${Object.keys(SPORTS).filter(s => topicsOf(s).length).map(sportCard).join('')}</div>
+      <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length).map(sportCard).join('')}</div>
       <p class="sec">The games</p>
       <div class="tiles">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
         <a class="tile" href="#ringer" aria-label="Ringer. Party game on one phone, 3 to 12 players. Everyone knows the secret except the ringer. Find them.">

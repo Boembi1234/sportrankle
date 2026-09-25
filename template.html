@@ -242,15 +242,16 @@ a{color:inherit}
    full width, 52px high, 20px bold, centred, 8px corners */
 .k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);transition:transform .12s,box-shadow .12s,filter .12s;
   font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;letter-spacing:0;text-transform:none;text-align:center}
-/* Rankle: the extra facts on their own line above the name card: the size and weight of the menu's section labels,
-   but normal case and tighter spacing */
-.title-sub{margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.02em;line-height:1.3;color:var(--muted);text-align:center}
+/* Rankle: the extra facts in a small info box under the name card, as far from it as the Reveal button is from the last
+   row (16px, 10px on phones); the label size and weight of the menu's section headings, in normal case */
+.title-sub{display:table;margin:16px auto 0;padding:6px 12px;border-radius:8px;background:var(--surface);
+  font-size:12px;font-weight:700;letter-spacing:.02em;line-height:1.3;color:var(--muted);text-align:center}
 .page.done .title-sub{display:none}
 /* Rankle: no photo; the name card comes first, 24px under the header */
 .k-rankle .photo{display:none}
 .k-rankle .game{padding-top:24px}
 .k-rankle .title{margin-top:0}
-.k-rankle .right{margin-top:24px}   /* 24px from the name card to the first row */
+.k-rankle .right{margin-top:24px}   /* 24px from the info box (or the name card) to the first row */
 .k-rankle .title i{color:var(--surface)}
 @media (hover:hover){.k-rankle .title:hover{transform:translateY(-3px);box-shadow:0 6px 0 var(--surface-edge);filter:brightness(1.05)}}
 @media (prefers-reduced-motion:reduce){.k-rankle .title{transition:none}}
@@ -440,6 +441,7 @@ a{color:inherit}
   .pts{font-size:15px}
   .main{font-size:20px}
   .bar{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  .title-sub{margin-top:10px}
 }
 /* Short screens: the hint line goes first, then the question shrinks */
 @media (max-height:700px){
@@ -536,8 +538,8 @@ a{color:inherit}
   <main class="game" id="game" hidden>
     <section class="left">
       <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
-      <p class="title-sub" id="title-sub" hidden></p>
       <div class="title" id="title" role="img"></div>
+      <p class="title-sub" id="title-sub" hidden></p>
       <div class="led" id="led" hidden>
         <div><span class="led-lbl">Points</span><span class="led-num" id="led-num"></span></div>
         <div class="led-side"><span class="led-lbl">Of max</span><span class="led-num" id="led-pct"></span></div>
@@ -1347,7 +1349,7 @@ function rankleRound(){
   setCounter(true);
   const s = G.sports[G.round], [title, sub, short] = showItem(s);
   const line = [short !== title ? title : '', sub].filter(Boolean).join(', ');
-  // The extra facts (team, position, division) go on their own small line above the name card
+  // The extra facts (team, position, division) go in a small info box under the name card
   $('question').hidden = true;
   $('title-sub').textContent = line;
   $('title-sub').hidden = !line;

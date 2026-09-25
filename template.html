@@ -238,6 +238,10 @@ a{color:inherit}
   font-family:var(--font);font-weight:900;font-size:34px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance;color:var(--signal)}
 .title i{font-style:normal;color:#1C2126;transition:color .12s}
 .title i.lit{color:inherit;text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
+/* Rankle: the name on a plain card like the others (card colour, hard edge, no dots or glow), in the narrow heading style */
+.k-rankle .title{background:var(--surface);border:0;box-shadow:0 3px 0 var(--surface-edge);font-weight:800;font-stretch:85%;letter-spacing:0;text-transform:none}
+.k-rankle .title i{color:var(--surface)}
+.k-rankle .title i.lit{color:inherit;text-shadow:none}
 /* Two rows of cards: the first row hangs fully on the photo, so the screen stays the same height */
 .question{flex:none;font-weight:700;font-stretch:85%;font-size:32px;line-height:1.1;margin:16px 0 0;text-wrap:balance}
 .question.sub{font-weight:400;font-stretch:100%;font-size:15px;color:var(--muted);margin-top:12px}
@@ -670,7 +674,7 @@ let prevTitle = '';
 function titleCards(text, label){
   const box = $('title');
   box.setAttribute('aria-label', label || text);
-  const up = text.toUpperCase(), lit = up === prevTitle || RM || instant;
+  const up = KIND === 'rankle' ? text : text.toUpperCase(), lit = up === prevTitle || RM || instant;   // Rankle keeps the name's own case
   prevTitle = up;
   box.innerHTML = '';
   const chars = [];

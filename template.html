@@ -298,7 +298,7 @@ a{color:inherit}
 @media (hover:hover){.k-rankle .pts:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}   /* looks alive; clicking does nothing */
 @media (prefers-reduced-motion:reduce){.k-rankle .pts{transition:none}}
 .k-rankle .row.done{padding-right:9px}
-.k-rankle:not(.done) .row.done .res{display:none}   /* during play a filled row shows only its title and points; name and value come with the results */   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
+.k-rankle:not(.done) .row.done .who{display:none}   /* during play a filled row shows its value at once; the name (already on the card) joins in the results */   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
 .row:disabled{cursor:default}
 .body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .cat{font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

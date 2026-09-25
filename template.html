@@ -295,6 +295,7 @@ a{color:inherit}
 @media (prefers-reduced-motion:reduce){.v2 .row{transition:none}}
 .v2 .c-rank{display:none}
 /* Blind ranking: the spot number in front instead of an emoji, the attribute as a heading over the list, filled spots keep the box */
+.row-ic{flex:none;width:24px;text-align:center;font-size:20px;line-height:24px}   /* the emoji as the row's icon, the size of the menu icons */
 .row-no{flex:none;width:24px;text-align:center;font-size:17px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
 .v2 .row.filled{background:var(--surface)}
 .page.k-blind .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
@@ -671,6 +672,8 @@ const V2 = () => KIND === 'rankle' || KIND === 'blind';   // games in the new de
 // Rankle's category title with its direction, e.g. "Most playoff wins, all time" (made by the build, see TITLES in build.py)
 const catTitle = c => D.cats[c].title || `${cap(D.cats[c].dir)} ${D.cats[c].name}`;
 const catLabel = c => `${D.cats[c].emoji ? `<span class="emo">${D.cats[c].emoji}</span>` : ''}${catTitle(c)}`;   // emoji + title, for display only
+// Rankle rows: the category emoji as the icon in front, in its own 24px column like the icons in the menu
+const rowIcon = c => D.cats[c].emoji ? `<span class="row-ic" aria-hidden="true">${D.cats[c].emoji}</span>` : '';
 
 // Daily games: the date seeds the draw, the device keeps its progress.
 const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -1398,7 +1401,7 @@ function startRankle(){
   prevTitle = '';
   $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${catTitle(c)}, open">
       <span class="c-rank"></span>
-      <span class="body"><span class="cat">${catLabel(c)}</span>
+      ${rowIcon(c)}<span class="body"><span class="cat">${catTitle(c)}</span>
         <span class="res"><span class="who"></span><span class="vals"></span><span class="unit"></span></span></span>
       <span class="pts"></span>
     </button></li>`).join('');
@@ -1500,8 +1503,8 @@ function rankleResults(){
   // The perfect board: the same rows, each category with the item that belongs there
   showAlt('Perfect board', `Perfect board, ${opt} points`, G.cats.map((c, k) => {
     const s = idealFor[k], r = D.items[s].ranks[c], v = fmt(s, c);
-    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', catLabel(c), nm(s), v, `+${pts(s, c)}`,
-      `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
+    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', catTitle(c), nm(s), v, `+${pts(s, c)}`,
+      `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`, '', rowIcon(c));
   }));
   announce(`${titleText[1]}, ${$('led-note').textContent}`);
 }
@@ -1525,9 +1528,9 @@ function scoreboard(score, max, note){
 
 // ---- Second board on the results screen (perfect board / true order) ----
 const miniHTML = text => [...text].map(ch => `<i class="lit">${ch}</i>`).join('');
-function altRow(rankCh, tone, cat, who, v, pts, label, more = ''){
+function altRow(rankCh, tone, cat, who, v, pts, label, more = '', icon = ''){   // icon: Rankle's category emoji
   return `<li><button class="row done${tone === 'ok' ? ' ideal' : ''}" type="button" disabled aria-label="${label}">
-      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'blind' ? `<span class="row-no">${rankCh}</span>` : ''}
+      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'blind' ? `<span class="row-no">${rankCh}</span>` : icon}
       <span class="body"><span class="cat">${cat}</span>
         <span class="res">${who ? `<span class="who">${who}</span>` : ''}<span class="vals">${v ? miniHTML(v[0]) : ''}</span><span class="unit">${v ? v[1] : 'no value'}</span>${more ? `<span class="more">${more}</span>` : ''}</span></span>
       <span class="pts">${pts}</span>

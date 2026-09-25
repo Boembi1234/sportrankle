@@ -261,13 +261,16 @@ a{color:inherit}
 .row{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:14px;background:none;border:0;border-radius:6px;
   font:inherit;text-align:left;padding:4px 10px;cursor:pointer}
 .row.sel{background:var(--selected-bg);box-shadow:inset 0 0 0 2px var(--signal)}
-/* Rankle: the rows are rounded boxes in the card colour like the menu entries (always shown), the sport icon in front,
-   the points on the right; no rank tile */
+/* Rankle: rows like the menu entries: the sport icon in front, the category (direction in the title) and the points on the
+   right; the rounded box in the card colour shows under the pointer and on the chosen row; chosen and filled rows are blue */
 .k-rankle .board{gap:6px}
-.k-rankle .board>li{height:clamp(48px,6.2dvh,60px);border-bottom:0}
-.k-rankle .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:var(--surface);border-radius:10px;padding:4px 12px}
-.k-rankle .row.sel{background:var(--selected-bg)}
+.k-rankle .board>li{height:48px;border-bottom:0}   /* 48px rows 6px apart, like the menu entries */
+.k-rankle .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:none;border-radius:10px;padding:4px 12px;transition:background-color .15s}
+@media (hover:hover){.k-rankle .row:not(:disabled):hover{background:var(--surface)}}
+.k-rankle .row.sel{background:var(--surface);box-shadow:none}
+.k-rankle .row.sel .cat,.k-rankle .row.done .cat{color:var(--signal)}
 .k-rankle .cat{font-size:17px}
+@media (prefers-reduced-motion:reduce){.k-rankle .row{transition:none}}
 .k-rankle .c-rank{display:none}
 .row-ic{flex:none;width:24px;height:24px;object-fit:contain}
 .row:disabled{cursor:default}
@@ -564,6 +567,8 @@ const pts = (s, c) => { const r = D.items[s].ranks[c]; return r == null ? 0 : N 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const announce = t => { $('live').textContent = t; };
 const cap = s => s[0].toUpperCase() + s.slice(1);
+// Rankle's category title with its direction, e.g. "Most playoff wins, all time" (made by the build, see TITLES in build.py)
+const catTitle = c => D.cats[c].title || `${cap(D.cats[c].dir)} ${D.cats[c].name}`;
 
 // Daily games: the date seeds the draw, the device keeps its progress.
 const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -1258,9 +1263,9 @@ function startRankle(){
   const {cats, items} = rankleDraw(MODE);
   G = {day: today(), cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
-  $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${D.cats[c].name}, rank 1 = ${D.cats[c].dir}, open">
+  $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${catTitle(c)}, open">
       <span class="c-rank"></span>${rowIcon()}
-      <span class="body"><span class="cat">${D.cats[c].name}</span><span class="hint">Rank 1 = ${D.cats[c].dir}</span>
+      <span class="body"><span class="cat">${catTitle(c)}</span>
         <span class="res"><span class="who"></span><span class="vals"></span><span class="unit"></span></span></span>
       <span class="pts"></span>
     </button></li>`).join('');
@@ -1349,7 +1354,7 @@ function rankleResults(){
   // The perfect board: the same rows, each category with the item that belongs there
   showAlt('Perfect board', `Perfect board, ${opt} points`, G.cats.map((c, k) => {
     const s = idealFor[k], r = D.items[s].ranks[c], v = fmt(s, c);
-    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', D.cats[c].name, nm(s), v, `+${pts(s, c)}`,
+    return altRow(r == null ? '–' : String(r), s === G.placed[k] ? 'ok' : '', catTitle(c), nm(s), v, `+${pts(s, c)}`,
       `${D.cats[c].name}: ${D.items[s].name}, ${valText(s, c)}, ${rankText(r)}, plus ${pts(s, c)} points`);
   }));
   announce(`${titleText[1]}, ${$('led-note').textContent}`);

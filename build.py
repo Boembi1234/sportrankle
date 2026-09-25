@@ -278,7 +278,45 @@ DIR_EN = {"meiste": "most", "grösste": "largest", "grösster": "largest", "län
           "frühester Pick": "earliest pick", "frühester Pick (Nr. 1)": "earliest pick", "ältester": "oldest", "grösster": "tallest",
           "schwerster": "heaviest", "frühestes (dienstältester)": "earliest", "jüngstes Debüt": "youngest", "kleinste Nummer": "lowest",
           "längste Bindung": "latest", "grösste Stadt": "largest", "neueste Aufnahme": "most recent", "meiste Teams": "most",
-          "jüngste Aufnahme": "youngest", "ältester beim Rücktritt": "oldest", "älteste Uni": "oldest"}
+          "jüngste Aufnahme": "youngest", "ältester beim Rücktritt": "oldest", "älteste Uni": "oldest", "grösste Uni": "largest", "Grösste Uni": "largest"}
+
+# Rankle shows each category as one title with its direction: "most" + "Playoff wins, all time" -> "Most playoff wins, all time".
+# Where that reads badly (a doubled word, a lowercased name), the full title is spelled out here, keyed by the automatic one.
+TITLES = {
+    # names that keep their capitals
+    "Most olympic Games": "Most Olympic Games", "Most olympic medals": "Most Olympic medals", "Most olympic golds": "Most Olympic golds",
+    "Most olympic + World Champs medals": "Most Olympic + World Champs medals", "Most instagram followers": "Most Instagram followers",
+    "Most laureus awards": "Most Laureus awards", "Most heisman winners": "Most Heisman winners", "Most hall of Famers": "Most Hall of Famers",
+    "Most recent hall of Fame induction": "Most recent Hall of Fame induction", "Most pro Bowl selections": "Most Pro Bowl selections",
+    "Most super Bowl appearances": "Most Super Bowl appearances", "Earliest world Cup debut": "Earliest World Cup debut",
+    "Youngest age at World Cup debut": "Youngest at World Cup debut", "Most world Cup seasons": "Most World Cup seasons",
+    "Most world Cup wins": "Most World Cup wins", "Most world Cup podiums": "Most World Cup podiums",
+    "Most world Cup wins 2025/26": "Most World Cup wins 2025/26", "Most world Championship medals": "Most World Championship medals",
+    "Most champions League appearances": "Most Champions League appearances", "Most champions League goals": "Most Champions League goals",
+    # doubled or clumsy
+    "Tallest height": "Tallest", "Heaviest weight": "Heaviest", "Oldest age": "Oldest", "Oldest date of birth": "Oldest",
+    "Youngest date of birth": "Youngest", "Longest longest straight": "Longest straight", "Most highest single score": "Highest single score",
+    "Earliest pick first pick, 2026 draft": "Earliest pick, 2026 draft", "Earliest pick draft position": "Earliest draft pick",
+    "Longest years without a title": "Longest wait for a title", "Longest in current city since": "Longest in current city",
+    "Earliest owner family since": "Longest-serving owner family", "Longest years since last AP title": "Longest since last AP title",
+    "Oldest stadium opened": "Oldest stadium", "Oldest university founded": "Oldest university", "Oldest circuit opened": "Oldest circuit",
+    "Oldest modern rules codified": "Oldest modern rules", "Oldest world federation founded": "Oldest world federation",
+    "Tallest elevation change": "Biggest elevation change", "Most travel to division rivals": "Longest travel to division rivals",
+    "Most expensive stadium construction cost": "Most expensive stadium", "Latest contract runs until": "Longest-running contract",
+    "Heaviest ball / puck / stone weight": "Heaviest ball / puck / stone", "Largest ball size": "Largest ball",
+    "Most race weekend attendance": "Biggest race weekend crowd", "Largest population of birthplace": "Largest birthplace",
+    "Largest population of college town": "Largest college town", "Highest transfer fees, all careers": "Highest transfer fees, whole career",
+    "Largest students": "Most students", "Northernmost latitude": "Northernmost", "Longest track length": "Longest track",
+    "Longest field length": "Longest field", "Highest goal / hoop / net height": "Highest goal / hoop / net",
+    "Most first-team All-Pro": "Most first-team All-Pro picks",
+}
+
+
+def cat_title(cat):
+    """The category as one title with its direction (see TITLES)."""
+    name = cat["name"] if re.match(r"[A-Z0-9]{2}", cat["name"]) else cat["name"][:1].lower() + cat["name"][1:]
+    auto = f"{cat['dir'][:1].upper()}{cat['dir'][1:]} {name}"
+    return TITLES.get(auto, auto)
 
 # "Rang 1 =" directions where the smallest value wins. "am längsten (dabei)" ranks a year or date, so the
 # earliest wins; "jüngste/r" on a birth date means the latest date wins, on an age the smallest number.
@@ -689,6 +727,8 @@ def main():
         if g.get("sport") not in SPORTS:
             raise SystemExit(f"{key}: unknown sport '{g.get('sport')}'")
     for g in data.values():   # the page each topic's share text links to
+        for cat in g['cats']:
+            cat['title'] = cat_title(cat)
         g["url"] = f"{SITE}/{slug(g['tab'])}"
     base = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))

@@ -369,6 +369,18 @@ a{color:inherit}
 .led-side .led-num{font-size:44px;margin-bottom:2px}
 .led-note{grid-column:1/-1;margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
 .led-note b{color:var(--text);font-weight:600}
+.led-bar{display:none}
+/* Rankle results: the score on a card like the name card (card colour, hard edge, 24px under the header): points / maximum
+   left, the share right, and a blue bar underneath filled to that share */
+.k-rankle .led{margin-top:0;padding:14px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);align-items:center;gap:0 16px}
+.k-rankle .led-lbl{display:none}
+.k-rankle .led-num{margin:0;font-size:20px;font-weight:800;color:var(--text);text-shadow:none}
+.k-rankle .led-num i{font:inherit;color:var(--muted);margin-inline:4px;vertical-align:0}
+.k-rankle .led-side .led-num{margin:0;font-size:20px;color:var(--signal)}
+.k-rankle .led-bar{display:block;grid-column:1/-1;height:8px;margin-top:12px;border-radius:4px;background:var(--bg);overflow:hidden}
+.led-bar i{display:block;width:0;height:100%;border-radius:4px;background:var(--signal);transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.k-rankle .led-note{margin-top:10px;padding-top:0;border-top:0;font-size:13px}
+@media (prefers-reduced-motion:reduce){.led-bar i{transition:none}}
 .page.done .title{display:none}
 
 /* Today's scores: a small histogram, your score bucket in the accent colour */
@@ -551,6 +563,7 @@ a{color:inherit}
       <div class="led" id="led" hidden>
         <div><span class="led-lbl">Points</span><span class="led-num" id="led-num"></span></div>
         <div class="led-side"><span class="led-lbl">Of max</span><span class="led-num" id="led-pct"></span></div>
+        <div class="led-bar" aria-hidden="true"><i id="led-fill"></i></div>
         <p class="led-note" id="led-note"></p>
       </div>
       <h1 class="question" id="question"></h1>
@@ -1424,6 +1437,8 @@ function scoreboard(score, max, note){
   $('question').hidden = true;
   $('led-num').innerHTML = `${score}<i>/</i>${max}`;
   $('led-pct').textContent = `${pct}%`;
+  $('led-fill').style.width = '0';   // Rankle's progress bar fills up to the share of the maximum
+  requestAnimationFrame(() => requestAnimationFrame(() => { $('led-fill').style.width = `${pct}%`; }));
   $('led-note').innerHTML = score === max
     ? `<b>Perfect</b> — the maximum, ${note}.`
     : `You got <b>${pct} %</b> of the maximum points, ${note}.`;

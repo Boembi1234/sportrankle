@@ -294,7 +294,6 @@ a{color:inherit}
 .k-rankle .cat{font-size:17px}
 @media (prefers-reduced-motion:reduce){.k-rankle .row{transition:none}}
 .k-rankle .c-rank{display:none}
-.row-ic{flex:none;width:24px;height:24px;object-fit:contain}
 /* Rankle: the line under a filled category is all white; the value is the same size as the rest, just bold */
 .k-rankle .who,.k-rankle .unit{color:var(--text)}
 .k-rankle .res{gap:.28em}   /* name, value and unit read like one sentence: a normal word space, not 8px */
@@ -1390,7 +1389,7 @@ function startRankle(){
   G = {day: today(), cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
   $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${catTitle(c)}, open">
-      <span class="c-rank"></span>${rowIcon()}
+      <span class="c-rank"></span>
       <span class="body"><span class="cat">${catLabel(c)}</span>
         <span class="res"><span class="who"></span><span class="vals"></span><span class="unit"></span></span></span>
       <span class="pts"></span>
@@ -1515,13 +1514,12 @@ function scoreboard(score, max, note){
 }
 
 // Rankle rows start with the topic's sport icon
-const rowIcon = () => SPORTS[D.sport]?.icon ? `<img class="row-ic" src="${SPORTS[D.sport].icon}" alt="">` : '';
 
 // ---- Second board on the results screen (perfect board / true order) ----
 const miniHTML = text => [...text].map(ch => `<i class="lit">${ch}</i>`).join('');
 function altRow(rankCh, tone, cat, who, v, pts, label, more = ''){
   return `<li><button class="row done${tone === 'ok' ? ' ideal' : ''}" type="button" disabled aria-label="${label}">
-      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'rankle' ? rowIcon() : ''}
+      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>
       <span class="body"><span class="cat">${cat}</span>
         <span class="res">${who ? `<span class="who">${who}</span>` : ''}<span class="vals">${v ? miniHTML(v[0]) : ''}</span><span class="unit">${v ? v[1] : 'no value'}</span>${more ? `<span class="more">${more}</span>` : ''}</span></span>
       <span class="pts">${pts}</span>

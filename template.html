@@ -741,8 +741,8 @@ function setScore(v){
   const el = $('score'), from = shown;
   shown = v;
   if (RM || instant || from === v) { el.textContent = v; return; }
-  const t0 = performance.now();
-  const step = t => { const k = Math.min(1, Math.max(0, (t - t0) / 450));   // a frame can be stamped just before t0 el.textContent = Math.round(from + (v - from) * k); if (k < 1) requestAnimationFrame(step); };
+  const t0 = performance.now();   // a frame can be stamped just before t0, hence the max(0, ...)
+  const step = t => { const k = Math.min(1, Math.max(0, (t - t0) / 450)); el.textContent = Math.round(from + (v - from) * k); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
 function setCounter(showPts){

@@ -431,7 +431,7 @@ a{color:inherit}
 /* Language: the flag as a flat circle */
 .lang-btn{display:block;width:30px;height:30px;padding:0;border:0;border-radius:50%;overflow:hidden;background:var(--surface);cursor:pointer}
 .lang-btn svg,.dd-flag svg{display:block;width:100%;height:100%}
-.lang-list{left:auto;right:0;min-width:180px}
+.lang-list{left:auto;right:0;min-width:200px;max-height:calc(100dvh - 88px);overflow-y:auto;overscroll-behavior:contain}   /* scrolls when the languages don't fit */
 .dd-item{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 12px;border:0;border-radius:10px;background:none;color:inherit;
   font:700 15px var(--font);text-align:left;cursor:pointer;transition:background-color .15s}
 .dd-flag{flex:none;width:20px;height:20px;border-radius:50%;overflow:hidden}
@@ -1131,6 +1131,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') for (const [
 // ---- Language: a flag button in the header; the choice is remembered on this device ----
 // The page text is English for now; the choice only picks the flag until translations exist.
 let flagN = 0;   // SVG ids must be unique on the page
+// A five-pointed star as an SVG polygon (for the Chinese and Turkish flags)
+const star = (cx, cy, r) => `<polygon points="${range(10).map(i => { const a = Math.PI * (i / 5 - .5), q = i % 2 ? r * .38 : r;
+  return `${(cx + q * Math.cos(a)).toFixed(2)},${(cy + q * Math.sin(a)).toFixed(2)}`; }).join(' ')}"/>`;
 const FLAGS = {
   en: () => { const n = ++flagN; return `<svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <clipPath id="uk-t${n}"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath>
@@ -1145,8 +1148,30 @@ const FLAGS = {
     <rect width="3" height="2" fill="#AA151B"/><rect y=".5" width="3" height="1" fill="#F1BF00"/></svg>`,
   it: () => `<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#CE2B37"/></svg>`,
+  pt: () => `<svg viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="30" height="20" fill="#DA291C"/><rect width="12" height="20" fill="#046A38"/><circle cx="12" cy="10" r="4" fill="#FFE900"/></svg>`,
+  zh: () => `<svg viewBox="0 0 30 20" preserveAspectRatio="xMinYMid slice" aria-hidden="true">
+    <rect width="30" height="20" fill="#EE1C25"/><g fill="#FFFF00">${star(5, 5, 3)}${star(10, 2, 1)}${star(12, 4, 1)}${star(12, 7, 1)}${star(10, 9, 1)}</g></svg>`,
+  ar: () => `<svg viewBox="0 0 12 6" preserveAspectRatio="xMinYMid slice" aria-hidden="true">
+    <rect width="12" height="2" fill="#00732F"/><rect y="2" width="12" height="2" fill="#fff"/><rect y="4" width="12" height="2" fill="#000"/><rect width="3" height="6" fill="#FF0000"/></svg>`,
+  hi: () => `<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="3" height=".67" fill="#FF9933"/><rect y=".67" width="3" height=".66" fill="#fff"/><rect y="1.33" width="3" height=".67" fill="#138808"/>
+    <circle cx="1.5" cy="1" r=".24" fill="none" stroke="#000080" stroke-width=".05"/><circle cx="1.5" cy="1" r=".05" fill="#000080"/></svg>`,
+  id: () => `<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="3" height="1" fill="#CE1126"/><rect y="1" width="3" height="1" fill="#fff"/></svg>`,
+  ja: () => `<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r=".6" fill="#BC002D"/></svg>`,
+  ko: () => `<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r=".5" fill="#0047A0"/><path d="M1,1a.5.5 0 0 1 1,0z" fill="#CD2E3A"/>
+    <circle cx="1.25" cy="1" r=".25" fill="#CD2E3A"/><circle cx="1.75" cy="1" r=".25" fill="#0047A0"/></svg>`,
+  tr: () => `<svg viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="30" height="20" fill="#E30A17"/><circle cx="11" cy="10" r="5" fill="#fff"/><circle cx="12.25" cy="10" r="4" fill="#E30A17"/>
+    <g fill="#fff">${star(16.5, 10, 2.2)}</g></svg>`,
+  ru: () => `<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="3" height=".67" fill="#fff"/><rect y=".67" width="3" height=".66" fill="#0039A6"/><rect y="1.33" width="3" height=".67" fill="#D52B1E"/></svg>`,
 };
-const LANGS = {en: 'English', de: 'Deutsch', fr: 'Français', es: 'Español', it: 'Italiano'};   // in this order in the dropdown
+const LANGS = {en: 'English', de: 'Deutsch', fr: 'Français', es: 'Español', it: 'Italiano', pt: 'Português', zh: '中文', ar: 'العربية',
+  hi: 'हिन्दी', id: 'Bahasa Indonesia', ja: '日本語', ko: '한국어', tr: 'Türkçe', ru: 'Русский'};   // in this order in the dropdown
 let LANG = LANGS[load('lang')] ? load('lang') : 'en';
 function setLang(l){
   LANG = l;

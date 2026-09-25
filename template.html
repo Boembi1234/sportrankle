@@ -277,6 +277,19 @@ a{color:inherit}
 .more b{color:var(--text);font-weight:600}
 .row:not(.done) .pts,.pts:empty{display:none}
 
+/* Guess the record: one LED input, then the record's facts */
+.guess-li{height:auto!important;padding:12px 0 6px;border-bottom:0!important}
+.guess{display:flex;align-items:center;gap:12px;width:100%}
+.guess input{flex:1;min-width:0;min-height:60px;padding:6px 16px;border:1px solid var(--line-strong);border-radius:10px;
+  background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px;color:var(--signal);
+  font-family:"Doto",var(--font);font-weight:900;font-size:34px;letter-spacing:.04em;text-shadow:0 0 12px rgba(79,179,246,.55)}
+.guess input::placeholder{color:#2A3138;text-shadow:none}
+.guess input:focus{outline:2px solid var(--signal);outline-offset:2px}
+.guess-unit{flex:none;font-weight:800;font-size:20px;color:var(--muted)}
+.fact{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 10px;height:auto!important}
+.fact-k{flex:none;color:var(--muted);font-size:14px}
+.fact-v{font-weight:700;text-align:right;text-wrap:pretty}
+
 /* Main button */
 .bar{flex:none;padding-top:16px;display:flex;flex-direction:column;gap:10px}
 .main{width:100%;min-height:52px;border:0;border-radius:7px;font-weight:800;font-size:22px;cursor:pointer;background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
@@ -498,13 +511,14 @@ const GAMES = {
   rankle: {name: 'Rankle', word: 'RANKLE', blurb: 'Eight categories, eight arrivals. Put each one where it ranks highest.'},
   blind: {name: 'Blind ranking', word: 'BLIND', blurb: 'One attribute, eight arrivals. Rank them 1 to 8 without knowing what comes next.'},
   sort: {name: 'Sort it', word: 'SORT', blurb: 'One attribute, all eight in view. Swap them into the right order, then reveal.'},
+  guess: {name: 'Guess the record', word: 'GUESS', blurb: 'One world record a day. How fast, how far, how many? Guess the number and see how close you got.'},
 };
 const KIND_ART = __KINDS__;
 const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cover?}}
 const ROUTE = __ROUTE__;   // the view a real URL opens on (e.g. "#t/nfl" on /nfl-teams), "" on the home page
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
-const POOLS = ['athletes', 'sports', 'f1', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl'];
-const ORDER = ['rankle', 'blind', 'sort'].flatMap(k => POOLS.filter(m => !DATA[m].kinds || DATA[m].kinds.includes(k)).map(m => `${k}-${m}`));
+const POOLS = ['athletes', 'sports', 'f1', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'records'];
+const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !DATA[m].kinds || DATA[m].kinds.includes(k)).map(m => `${k}-${m}`));
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
 const poolsFor = (kind, sport) => POOLS.filter(m => (!DATA[m].kinds || DATA[m].kinds.includes(kind)) && (!sport || DATA[m].sport === sport))
   .sort((a, b) => (DATA[b].flagship ? 1 : 0) - (DATA[a].flagship ? 1 : 0));
@@ -549,8 +563,9 @@ function load(key){ try { return JSON.parse(localStorage.getItem(key) || 'null')
 function store(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
 function record(kind, m){ const r = load(`${kind}-daily-${m}`); return r && r.day === today() ? r : null; }
 // Sort it keeps the current arrangement and a done flag, the other games the placed items
-const save = () => store(`${KIND}-daily-${MODE}`, KIND === 'sort' ? {day: G.day, order: G.order, done: G.phase === 'done'} : {day: G.day, placed: G.placed});
-const progress = (kind, m) => { const r = record(kind, m); return !r ? 0 : kind === 'sort' ? (r.done ? PICK : 0) : Object.keys(r.placed).length; };
+const save = () => store(`${KIND}-daily-${MODE}`, KIND === 'sort' ? {day: G.day, order: G.order, done: G.phase === 'done'}
+  : KIND === 'guess' ? {day: G.day, guess: G.guess, done: G.phase === 'done'} : {day: G.day, placed: G.placed});
+const progress = (kind, m) => { const r = record(kind, m); return !r ? 0 : kind === 'sort' || kind === 'guess' ? (r.done ? PICK : 0) : Object.keys(r.placed).length; };
 function countdown(){
   const now = new Date(), next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
   const m = Math.ceil((next - now) / 6e4);
@@ -698,8 +713,9 @@ function rulesHTML(){
   const common = `<p>One attempt per game, day and device. New cards at midnight. Keyboard: 1 to 8 or the arrow keys pick a row, Enter confirms.${Object.values(DATA).some(g => g.items.some(it => it.credit)) ? ' Click a photo for its source.' : ''}</p>`;
   const sort = `<p><b>Sort it.</b> Every day brings one attribute and 8 items, all in view from the start. Tap two rows to swap them until the order is right, then reveal. Scored like Blind ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;
   const ringer = `<p><b>Ringer.</b> A party game for ${PLAYERS_MIN} to ${PLAYERS_MAX} people on one phone. Everyone gets the same secret from the chosen pool, except the ringer, who only learns the pool. Pass the phone round, then take turns giving one-word hints about the secret. Vote on who is bluffing, then reveal. The ringer wins by staying hidden or by guessing the secret.</p>`;
+  const guess = `<p><b>Guess the record.</b> Every day one sports world record comes up, an official one or a crazy one. Type your guess in the record's unit and lock it in. The closer you are, the more points: 100 for the exact value, about 90 within 10 %, 50 for twice or half the value, 0 from four times off. Then you see the record, its holder and how everyone else did today.</p>`;
   if (!$('party').hidden) return ringer;
-  return (KIND ? {rankle, blind, sort}[KIND] : rankle + blind + sort) + common;
+  return (KIND ? {rankle, blind, sort, guess}[KIND] : rankle + blind + sort + guess) + common;
 }
 function togglePanel(id, btn){
   const open = $(id).hidden;
@@ -820,7 +836,7 @@ function mainButton(label, fn, disabled = false){
 }
 // The next open game: the other games on this topic first, then the rest in order
 function nextGame(){
-  const cur = `${KIND}-${MODE}`, same = ['rankle', 'blind', 'sort'].map(k => `${k}-${MODE}`).filter(k => ORDER.includes(k));
+  const cur = `${KIND}-${MODE}`, same = Object.keys(GAMES).map(k => `${k}-${MODE}`).filter(k => ORDER.includes(k));
   return [...same, ...ORDER].find(k => k !== cur && progress(...k.split('-')) < PICK);
 }
 function finishFooter(){
@@ -852,17 +868,17 @@ const topicCard = m => bigTile(`#t/${m}`, `${DATA[m].tab}, ${SPORTS[DATA[m].spor
 // Sport page: its topics
 function renderSport(s){
   $('home').innerHTML = `<h1>${SPORTS[s].name}</h1>
-    <p class="today">Pick a topic. Every topic has ${['rankle', 'blind', 'sort'].filter(k => poolsFor(k, s).length).length} daily games.</p>
+    <p class="today">Pick a topic. Every topic has ${Object.keys(GAMES).filter(k => poolsFor(k, s).length).length} daily games.</p>
     <div class="tiles">${topicsOf(s).map(topicCard).join('')}</div>`;
 }
 // Topic page: the games on it side by side, with today's status, and a button to the next open one
 function renderTopic(m){
-  const g = DATA[m], kinds = ['rankle', 'blind', 'sort'].filter(k => poolsFor(k).includes(m));
+  const g = DATA[m], kinds = Object.keys(GAMES).filter(k => poolsFor(k).includes(m));
   const next = kinds.map(k => `${k}-${m}`).find(k => progress(...k.split('-')) < PICK);
   const rows = kinds.map(k => `<li><a class="grow" href="#${k}-${m}" aria-label="${GAMES[k].name}, ${g.tab}">
       <span class="grow-name">${GAMES[k].name}</span>${statusOf([`${k}-${m}`])}<span class="grow-blurb">${GAMES[k].blurb}</span></a></li>`).join('');
   $('home').innerHTML = `<h1>${g.tab}</h1>
-    <p class="today">${SPORTS[g.sport].name} · ${g.items.length} ${g.plural} · ${g.cats.length} categories. ${kinds.length === 1 ? 'One daily game.' : `${kinds.length} daily games, one attempt each.`}</p>
+    <p class="today">${SPORTS[g.sport].name} · ${g.items.length} ${g.plural}${g.cats.length ? ` · ${g.cats.length} categories` : ''}. ${kinds.length === 1 ? 'One daily game.' : `${kinds.length} daily games, one attempt each.`}</p>
     <div class="topic">
       <div class="topic-art">${g.cover ? `<img src="${g.cover}" alt="">` : ''}</div>
       <div><ul class="games">${rows}</ul>
@@ -886,8 +902,7 @@ function renderHome(kind, sport){
   };
   const tile = (kind, m) => {
     const g = DATA[m], n = progress(kind, m);
-    const first = (kind === 'rankle' ? rankleDraw(m) : blindDraw(m, kind)).items[0];
-    const img = g.cover || g.items[first].img;
+    const img = g.cover || (g.cats.length ? g.items[(kind === 'rankle' ? rankleDraw(m) : blindDraw(m, kind)).items[0]].img : '');
     const h = load(`${kind}-history-${m}`) || {};
     const status = n >= PICK
       ? `<span class="tile-status done">✓ ${h[today()] ? h[today()][0] : ''} pts</span>`
@@ -1049,7 +1064,7 @@ $('party-play').addEventListener('click', e => { if (e.target.id === 'pp-setup')
 // ---- Menu: a drawer from the left with every sport and every game ----
 // Where you are: the sport of the open sport, topic or game page, and the game type being played
 function here(){
-  const h = (location.hash || ROUTE || '').slice(1), [, kind, rest] = h.match(/^(rankle|blind|sort|ringer)?(?:[-/]?)(.*)$/);
+  const h = (location.hash || ROUTE || '').slice(1), [, kind, rest] = h.match(/^(rankle|blind|sort|guess|ringer)?(?:[-/]?)(.*)$/);
   const topic = rest.replace(/^[st]\//, '');
   return {kind, sport: SPORTS[topic] ? topic : DATA[topic]?.sport};
 }
@@ -1131,8 +1146,8 @@ function route(){
     return;
   }
   const legacy = {sports: 'rankle-sports', f1: 'rankle-f1'};
-  const m = (legacy[h] || h).match(/^(rankle|blind|sort)(?:-([a-z0-9]+))?$/);
-  const ms = h.match(/^(rankle|blind|sort)\/([a-z]+)$/);   // one game, the pools of one sport
+  const m = (legacy[h] || h).match(/^(rankle|blind|sort|guess)(?:-([a-z0-9]+))?$/);
+  const ms = h.match(/^(rankle|blind|sort|guess)\/([a-z]+)$/);   // one game, the pools of one sport
   const msp = h.match(/^s\/([a-z]+)$/), mt = h.match(/^t\/([a-z0-9]+)$/);   // a sport page, a topic page
   busy = false;
   if ((msp && SPORTS[msp[1]]) || (mt && DATA[mt[1]])) {
@@ -1179,7 +1194,8 @@ function route(){
   $('share').hidden = true;
   $('home').hidden = true; $('game').hidden = false; $('alt').hidden = true;
   scrollTo(0, 0);
-  ({rankle: startRankle, blind: startBlind, sort: startSort})[KIND]();
+  $('seg').hidden = KIND === 'guess';
+  ({rankle: startRankle, blind: startBlind, sort: startSort, guess: startGuess})[KIND]();
 }
 addEventListener('hashchange', route);
 
@@ -1507,6 +1523,72 @@ function sortReveal(restored = false){
   blindResults();
 }
 
+// ================= Guess the record =================
+// One record a day (the same for everyone). Points by closeness on a log scale: exact = 100, twice or half = 50, four times off = 0.
+const UNIT_WORD = {s: 'seconds', min: 'minutes', m: 'metres', km: 'kilometres', cm: 'centimetres', kg: 'kilograms'};
+const isTime = it => it.unit === 's' && it.display.includes(':');
+function startGuess(){
+  const rnd = seeded(`${today()}|guess|${MODE}`), it = D.items[Math.floor(rnd() * D.items.length)];
+  G = {day: today(), item: it, guess: null, round: 0, score: 0, sel: null, placed: {}, sports: [], phase: 'round'};
+  prevTitle = '';
+  setPhoto(D.cover ? {img: D.cover, name: 'World records'} : null);
+  titleCards(it.cat, `${it.cat}, ${it.type}`);
+  const how = ['s', 'min', 'days', 'weeks', 'years'].includes(it.unit) ? 'long' : it.unit === 'km/h' ? 'fast' : ['m', 'km', 'cm', 'yards'].includes(it.unit) ? 'far' : it.unit === 'kg' ? 'heavy' : 'many';
+  $('question').className = 'question';
+  $('question').hidden = false;
+  $('question').innerHTML = `${it.name}<span class="qdir">${it.type} · How ${how}? Guess the world record in ${UNIT_WORD[it.unit] || it.unit}.</span>`;
+  $('board').innerHTML = `<li class="guess-li"><div class="guess"><input id="guess-in" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
+      placeholder="${isTime(it) ? 'e.g. 1:45.00' : 'e.g. 100'}" aria-label="Your guess in ${it.unit}"><span class="guess-unit">${it.unit}</span></div></li>`;
+  $('round').textContent = ''; $('csep').hidden = $('cpts').hidden = true; shown = 0; $('score').textContent = 0;
+  const rec = record('guess', MODE);
+  if (rec && rec.done && rec.guess > 0) { G.guess = rec.guess; guessResults(); return; }
+  const inp = $('guess-in');
+  inp.addEventListener('input', () => { $('main').disabled = parseGuess(inp.value, it) == null; });
+  mainButton('Lock in my guess', guessConfirm, true);
+  $('note').textContent = isTime(it) ? 'Type it as 1:40.91, or in seconds. One guess.' : 'One guess, then the reveal.';
+  fitPhoto();
+  if (innerWidth >= 640) setTimeout(() => inp.focus(), 50);
+}
+function parseGuess(text, it){
+  let s = text.trim();
+  s = s.includes('.') ? s.replace(/,/g, '') : s.replace(/,(\d{3})(?!\d)/g, '$1').replace(',', '.');   // 1,234 and 9,58 both work
+  if (isTime(it) && /^\d{1,2}(:\d{1,2}){1,2}(\.\d+)?$/.test(s)) return s.split(':').map(Number).reduce((a, b) => a * 60 + b, 0);
+  const v = Number(s);
+  return s && Number.isFinite(v) && v > 0 ? v : null;
+}
+function fmtGuess(v, it){
+  if (isTime(it)) { const hh = Math.floor(v / 3600), mm = Math.floor(v % 3600 / 60), ss = v % 60; return (hh ? `${hh}:${String(mm).padStart(2, '0')}:` : `${mm}:`) + ss.toFixed(2).padStart(5, '0'); }
+  return `${v.toLocaleString('en-US', {maximumFractionDigits: 3})} ${it.unit}`;
+}
+function guessConfirm(){
+  if (busy || G.phase !== 'round') return;
+  const v = parseGuess($('guess-in').value, G.item);
+  if (v == null) return;
+  G.guess = v; G.phase = 'done';
+  save();
+  guessResults();
+}
+function guessResults(){
+  const it = G.item, v = it.value, g = G.guess;
+  G.phase = 'done';
+  const score = Math.round(100 * Math.max(0, 1 - Math.abs(Math.log(g / v)) / Math.log(4)));
+  G.score = score;
+  $('page').classList.add('done');
+  $('csep').hidden = $('cpts').hidden = false; $('round').textContent = '';
+  setScore(score);
+  saveHistory(score, 100);
+  const off = Math.round(100 * (g - v) / v), offText = off === 0 ? 'spot on' : `${Math.abs(off)} % ${off > 0 ? 'over' : 'under'}`;
+  G.share = [score >= 90 ? '\u{1F3AF}' : score >= 70 ? '\u{1F7E9}' : score >= 40 ? '\u{1F7E8}' : '\u{1F7E5}'];
+  scoreboard(score, 100, `you said ${fmtGuess(g, it)}, the record is ${it.display} (${offText})`);
+  const facts = [['Record', /[a-z]/i.test(it.display) ? it.display : `${it.display} ${it.unit}`],
+    ['Holder', `${it.holder}${it.nat ? ' · ' + it.nat : ''}`],
+    ['Set', it.year ? `${it.year}${it.years > 0 ? ` · standing ${it.years} year${it.years === 1 ? '' : 's'}` : ' · this year'}` : '–'],
+    ['Ratified by', it.body || '–'], it.note ? ['Note', it.note] : null].filter(Boolean);
+  $('board').innerHTML = facts.map(([k, val]) => `<li class="fact"><span class="fact-k">${k}</span><span class="fact-v">${val}</span></li>`).join('');
+  finishFooter();
+  announce(`${score} of 100 points. The record is ${it.display}, set by ${it.holder}.`);
+}
+
 // ================= Shared play controls =================
 function select(i){
   if (busy || G.phase !== 'round' || G.placed[i] != null) return;
@@ -1545,6 +1627,10 @@ async function confirmPick(){
 document.addEventListener('keydown', e => {
   if (e.metaKey || e.ctrlKey || e.altKey || !KIND || !G) return;
   if (e.key === 'Escape') { closePanels(); return; }
+  if (e.target && e.target.tagName === 'INPUT') {   // typing a guess: only Enter is ours
+    if (e.key === 'Enter') { const b = $('main'); if (!b.hidden && !b.disabled) { e.preventDefault(); b.click(); } }
+    return;
+  }
   const rows = [...document.querySelectorAll('.row:not(:disabled)')];
   if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && rows.length) {
     e.preventDefault();

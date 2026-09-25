@@ -112,6 +112,10 @@ GAMES["athletes"] = {
         "Children": ("Children", "children", "", "most"),
         "Laureus awards": ("Laureus awards", "awards", "", "most"),
     }}
+GAMES["records"] = {
+    # Guess the record: one world record a day, guess the number. Not a ranking pool: no categories, its own loader.
+    "file": "Sports_World_Records*.xlsx", "tab": "World records", "noun": "record", "plural": "records", "word": "RECORD",
+    "sport": "mixed", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/records.png", "ratio": 1.5, "pad": True}}
 # Title-board names that the surname rule gets wrong
 SHORT_NAMES = {"Vinicius Junior": "Vinicius", "Vinícius Júnior": "Vinícius", "Cristiano Ronaldo": "Cristiano", "Ronaldo Nazário": "Ronaldo",
                "Son Heung-min": "Son", "Yao Ming": "Yao Ming", "Magic Johnson": "Magic", "Canelo Álvarez": "Canelo"}
@@ -126,6 +130,7 @@ SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "s
 # Pictures on the two game-type cards of the home page (tall subjects: cropped 2:1 around them)
 # Home page pictures per game type; a dict entry overrides the crop (see cover())
 KIND_COVERS = {"rankle": "covers/rankle.png", "blind": "covers/blind.png", "sort": "covers/sort.png",
+               "guess": {"file": "covers/records.png", "pad": True},
                "ringer": {"file": "covers/ringer.png", "width": 1.0, "cy": 0.45}}
 
 NAMES_EN = {
@@ -312,7 +317,7 @@ def photo(url):
     return "data:image/jpeg;base64," + base64.b64encode(cached.read_bytes()).decode()
 
 
-def cover(pattern, ratio=1.5, width=0.6, cy=0.53, size=800):
+def cover(pattern, ratio=1.5, width=0.6, cy=0.53, size=800, pad=False):
     """Tile picture from a local file, as a file under img/covers/: the middle `width` share of the image,
     cropped to `ratio` (w:h) around the vertical centre `cy`, shrunk to `size` px. Returns its page path."""
     from PIL import Image
@@ -320,16 +325,25 @@ def cover(pattern, ratio=1.5, width=0.6, cy=0.53, size=800):
     path = next(HERE.glob(pattern))
     out_dir = IMG_OUT / "covers"
     out_dir.mkdir(parents=True, exist_ok=True)
-    tag = hashlib.sha1(f"{path.stat().st_mtime_ns}-{ratio}-{width}-{cy}-{size}".encode()).hexdigest()[:8]
-    target = out_dir / f"{path.stem}-{tag}.jpg"
+    # name: <stem>-<crop>-<version>.jpg; a new version of the same crop replaces the old one, other crops stay
+    crop = hashlib.sha1(f"{ratio}-{width}-{cy}-{size}-{pad}".encode()).hexdigest()[:6]
+    version = hashlib.sha1(str(path.stat().st_mtime_ns).encode()).hexdigest()[:6]
+    target = out_dir / f"{path.stem}-{crop}-{version}.jpg"
     if not target.exists():
-        for stale in out_dir.glob(f"{path.stem}-*.jpg"):
+        for stale in out_dir.glob(f"{path.stem}-{crop}-*.jpg"):
             stale.unlink()
         img = Image.open(path).convert("RGB")
         w, h = img.size
-        cw = round(w * width); ch = min(h, round(cw / ratio))
-        x0, y0 = (w - cw) // 2, max(0, min(h - ch, round(h * cy - ch / 2)))
-        img = img.crop((x0, y0, x0 + cw, y0 + ch))
+        if pad:   # the whole picture, widened to the ratio with its own edge colour
+            edge = [img.getpixel((x, y)) for x in range(0, w, 16) for y in (0, h - 1)]
+            bg = tuple(sum(c[i] for c in edge) // len(edge) for i in range(3))
+            canvas = Image.new("RGB", (round(h * ratio), h), bg)
+            canvas.paste(img, ((canvas.width - w) // 2, 0))
+            img = canvas
+        else:
+            cw = round(w * width); ch = min(h, round(cw / ratio))
+            x0, y0 = (w - cw) // 2, max(0, min(h - ch, round(h * cy - ch / 2)))
+            img = img.crop((x0, y0, x0 + cw, y0 + ch))
         img.thumbnail((size, size))
         img.save(target, "JPEG", quality=80, optimize=True, progressive=True)
     return f"img/covers/{target.name}"
@@ -503,10 +517,27 @@ def game(key, cfg, path, items, cats):
     out = {**{k: v for k, v in cfg.items() if k in ("tab", "noun", "plural", "word", "kinds", "flagship", "sport")}, "source": path.name,
            "items": items, "cats": cats}
     if c and next(HERE.glob(opts["file"]), None):
-        out["cover"] = cover(opts["file"], ratio=opts.get("ratio", 1.5), width=opts.get("width", 0.6), cy=opts.get("cy", 0.53))
+        out["cover"] = cover(opts["file"], ratio=opts.get("ratio", 1.5), width=opts.get("width", 0.6), cy=opts.get("cy", 0.53), pad=opts.get("pad", False))
         if opts.get("bg"):
             out["cover_bg"] = opts["bg"]
     return out
+
+
+def load_records(key, cfg):
+    """The world-records sheet: one row per record, no categories. Kept as items with the fields the game shows."""
+    path = next(HERE.glob(cfg["file"]))
+    ws = openpyxl.load_workbook(path, data_only=True).worksheets[0]
+    col = {h: i for i, h in enumerate(c.value for c in ws[1]) if h}
+    items = []
+    for r in ws.iter_rows(min_row=2, values_only=True):
+        if r[col["ID"]] is None or not r[col["Record"]] or not isinstance(r[col["Value"]], (int, float)):
+            continue
+        g = lambda h: (str(r[col[h]]).strip() if r[col[h]] is not None else "")
+        items.append({"name": g("Record"), "cat": g("Category"), "type": g("Type"), "holder": g("Holder"), "nat": g("Nationality"),
+                      "value": float(r[col["Value"]]), "unit": g("Unit"), "display": g("Display") or str(r[col["Value"]]),
+                      "year": r[col["Year set"]], "years": r[col["Years standing"]], "body": g("Record body"), "note": g("Note"),
+                      "ranks": [], "values": []})
+    return game(key, cfg, path, items, [])
 
 
 def load_wide(key, cfg):
@@ -548,9 +579,11 @@ GAME_PAGES = {
     "rankle": ("Rankle", "Eight categories, eight items arriving one by one: put each one where it ranks highest among the whole pool. Each category can be used once. The perfect board is revealed at the end."),
     "blind-ranking": ("Blind ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
     "sort-it": ("Sort it", "One attribute, all eight items in view: swap them into the right order, then reveal."),
+    "guess-the-record": ("Guess the record", "One sports world record a day, from the 100 m to the most pull-ups in 24 hours. Guess the number, score by how close you are, compare with everyone."),
     "ringer": ("Ringer", "The sports party game on one phone for 3 to 12 players: everyone gets the same secret except the ringer, who has to bluff along. Find out who it is."),
 }
-GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "ringer": "#ringer"}
+GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "guess-the-record": "#guess", "ringer": "#ringer"}
+KIND_NAMES = {"rankle": "Rankle", "blind": "Blind ranking", "sort": "Sort it", "guess": "Guess the record"}
 
 
 def slug(text):
@@ -568,11 +601,17 @@ def pages(data, sports):
     out = []
     for k, g in data.items():
         kinds = g.get("kinds") or ["rankle", "blind", "sort"]
-        games = "Rankle, Blind ranking and Sort it" if len(kinds) == 3 else "Rankle"
-        desc = (f"{g['tab']} quiz: rank {len(g['items'])} {g['plural']} by {len(g['cats'])} real categories such as {cats(g)}. "
-                f"Play {games}, new cards every day, one attempt each, compare your score with everyone else's.")
-        intro = (f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Categories</h2><ul>"
-                 + "".join(f"<li>{esc(c['name'])} (rank 1 = {esc(c['dir'])})</li>" for c in g["cats"]) + "</ul>")
+        games = ", ".join(KIND_NAMES[k] for k in kinds)
+        if g["cats"]:
+            desc = (f"{g['tab']} quiz: rank {len(g['items'])} {g['plural']} by {len(g['cats'])} real categories such as {cats(g)}. "
+                    f"Play {games}, new cards every day, one attempt each, compare your score with everyone else's.")
+            intro = (f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Categories</h2><ul>"
+                     + "".join(f"<li>{esc(c['name'])} (rank 1 = {esc(c['dir'])})</li>" for c in g["cats"]) + "</ul>")
+        else:
+            areas = sorted({it["cat"] for it in g["items"]})
+            desc = (f"{g['tab']} quiz: {len(g['items'])} sports world records, one a day. Guess how fast, how far or how many, "
+                    f"score by how close you are, compare with everyone. {', '.join(areas[:6])} and more.")
+            intro = f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Areas</h2><ul>" + "".join(f"<li>{esc(a)}</li>" for a in areas) + "</ul>"
         out.append((topic_slug[k], f"{g['tab']} quiz - daily ranking puzzle | Sportrankle", desc, f"#t/{k}", intro))
     for sk, sp in sports.items():
         topics = [g for g in data.values() if g["sport"] == sk]
@@ -629,7 +668,8 @@ def social_images():
 
 
 def main():
-    data = {key: (load_wide if cfg.get("format") == "wide" else load_game)(key, cfg) for key, cfg in GAMES.items()}
+    loaders = {"wide": load_wide, "records": load_records}
+    data = {key: loaders.get(cfg.get("format"), load_game)(key, cfg) for key, cfg in GAMES.items()}
     for key, g in data.items():
         if len(g["items"]) < 8 or any(all(it["ranks"][i] is None for it in g["items"]) for i in range(len(g["cats"]))):
             raise SystemExit(f"{g['source']}: fewer than 8 rows or a category without values, build stopped.")
@@ -638,7 +678,7 @@ def main():
     for k, f in KIND_COVERS.items():
         opts = f if isinstance(f, dict) else {"file": f}
         if next(HERE.glob(opts["file"]), None):
-            kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000)
+            kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000, pad=opts.get("pad", False))
     # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's;
     # a menu icon if covers/icon-<key>.png exists (a transparent PNG)
     sports = {k: {"name": s["name"], **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {}),

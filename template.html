@@ -279,6 +279,11 @@ a{color:inherit}
 @media (prefers-reduced-motion:reduce){.k-rankle .row{transition:none}}
 .k-rankle .c-rank{display:none}
 .row-ic{flex:none;width:24px;height:24px;object-fit:contain}
+/* Rankle: the line under a filled category is all white; the value is the same size as the rest, just bold */
+.k-rankle .who,.k-rankle .unit{color:var(--text)}
+.k-rankle .vals{font-size:14px;font-weight:800;letter-spacing:0;color:var(--text);text-shadow:none}
+.k-rankle .vals i{color:transparent}
+.k-rankle .vals i.lit{color:inherit;text-shadow:none}
 .row:disabled{cursor:default}
 .body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .cat{font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -411,6 +416,7 @@ a{color:inherit}
   .vals{font-size:15px}
   .cat{font-size:15px}
   .hint,.who,.unit,.more{font-size:12px}
+  .k-rankle .vals{font-size:12px}
   .pts{font-size:15px}
   .main{font-size:20px}
   .bar{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}

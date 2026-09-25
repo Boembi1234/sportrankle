@@ -720,7 +720,7 @@ function setPhoto(it){
   }
 }
 function showItem(s){
-  const [title, sub] = split(D.items[s].name), short = D.items[s].short || title.split(' / ').pop();
+  const [title, sub] = split(D.items[s].name), short = KIND === 'rankle' ? title : D.items[s].short || title.split(' / ').pop();   // Rankle: the full name
   setPhoto(D.items[s]);
   titleText = [short, D.items[s].name];
   titleCards(short, D.items[s].name);

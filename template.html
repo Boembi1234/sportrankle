@@ -1645,12 +1645,12 @@ function blindResults(){
     row.classList.toggle('ideal', d === 0);   // exact spot green, one off blue, two or more off red (like the share squares)
     row.classList.toggle('worst', d >= 2);
     row.querySelector('.unit').textContent = v ? v[1] : '';
-    row.querySelector('.pts').textContent = `+${p}`;
+    // Your order: instead of the points, how far the item is from its spot: ✓ right, ↓2 two spots further down, ↑1 one up
+    row.querySelector('.pts').textContent = d === 0 ? '✓' : `${k < lo ? '↓' : '↑'}${d}`;
     miniCards(row.querySelector('.vals'), v ? v[0] : '', 300 + k * 90);
     turn(row.querySelector('.rank'), String(k + 1), 300 + k * 90, d ? 'no' : 'ok');
     G.share = (G.share || []).concat(d === 0 ? '🟩' : d === 1 ? '🟨' : '🟥');
     const belongs = lo === hi ? String(lo + 1) : `${lo + 1} to ${hi + 1}`;
-    if (d) row.querySelector('.res').insertAdjacentHTML('beforeend', `<span class="more">· belongs on <b>${belongs}</b></span>`);
     row.setAttribute('aria-label', `Spot ${k + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, plus ${p} points${d ? `, belongs on spot ${belongs}` : ''}`);
   });
   finishFooter();

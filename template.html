@@ -261,6 +261,15 @@ a{color:inherit}
 .row{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:14px;background:none;border:0;border-radius:6px;
   font:inherit;text-align:left;padding:4px 10px;cursor:pointer}
 .row.sel{background:var(--selected-bg);box-shadow:inset 0 0 0 2px var(--signal)}
+/* Rankle: the rows are rounded boxes in the card colour like the menu entries (always shown), the sport icon in front,
+   the points on the right; no rank tile */
+.k-rankle .board{gap:6px}
+.k-rankle .board>li{height:clamp(48px,6.2dvh,60px);border-bottom:0}
+.k-rankle .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:var(--surface);border-radius:10px;padding:4px 12px}
+.k-rankle .row.sel{background:var(--selected-bg)}
+.k-rankle .cat{font-size:17px}
+.k-rankle .c-rank{display:none}
+.row-ic{flex:none;width:24px;height:24px;object-fit:contain}
 .row:disabled{cursor:default}
 .body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .cat{font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -295,6 +304,11 @@ a{color:inherit}
 .bar{flex:none;padding-top:16px;display:flex;flex-direction:column;gap:10px}
 .main{width:100%;min-height:52px;border:0;border-radius:7px;font-weight:800;font-size:22px;cursor:pointer;background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
 .main:disabled{background:var(--line);color:var(--muted);box-shadow:none;cursor:default}
+/* Rankle: the same blue key as the Play buttons; rises under the pointer, sinks when pressed; still while disabled */
+.k-rankle .main{border-radius:8px;font-size:20px;transition:transform .12s,box-shadow .12s,filter .12s}
+@media (hover:hover){.k-rankle .main:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--signal-edge);filter:brightness(1.08)}}
+.k-rankle .main:not(:disabled):active{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge);filter:none}
+@media (prefers-reduced-motion:reduce){.k-rankle .main{transition:none}}
 .note{margin:0;color:var(--muted);font-size:13px;text-align:center}
 .share{width:100%;min-height:48px;border:1.5px solid var(--line-strong);border-radius:7px;background:none;color:var(--text);font:800 17px var(--font);cursor:pointer}
 .share.copied{border-color:var(--led-ok);color:var(--led-ok)}
@@ -1228,7 +1242,7 @@ function route(){
     return;
   }
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
-  $('page').className = 'page';
+  $('page').className = `page k-${KIND}`;   // k-rankle etc.: styles for one game only
   $('today').hidden = true;
   $('led').hidden = true;
   $('share').hidden = true;
@@ -1245,7 +1259,7 @@ function startRankle(){
   G = {day: today(), cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
   $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${D.cats[c].name}, rank 1 = ${D.cats[c].dir}, open">
-      <span class="c-rank"></span>
+      <span class="c-rank"></span>${rowIcon()}
       <span class="body"><span class="cat">${D.cats[c].name}</span><span class="hint">Rank 1 = ${D.cats[c].dir}</span>
         <span class="res"><span class="who"></span><span class="vals"></span><span class="unit"></span></span></span>
       <span class="pts"></span>
@@ -1354,11 +1368,14 @@ function scoreboard(score, max, note){
   $('led').hidden = false;
 }
 
+// Rankle rows start with the topic's sport icon
+const rowIcon = () => SPORTS[D.sport]?.icon ? `<img class="row-ic" src="${SPORTS[D.sport].icon}" alt="">` : '';
+
 // ---- Second board on the results screen (perfect board / true order) ----
 const miniHTML = text => [...text].map(ch => `<i class="lit">${ch}</i>`).join('');
 function altRow(rankCh, tone, cat, who, v, pts, label, more = ''){
   return `<li><button class="row done" type="button" disabled aria-label="${label}">
-      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>
+      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'rankle' ? rowIcon() : ''}
       <span class="body"><span class="cat">${cat}</span>
         <span class="res">${who ? `<span class="who">${who}</span>` : ''}<span class="vals">${v ? miniHTML(v[0]) : ''}</span><span class="unit">${v ? v[1] : 'no value'}</span>${more ? `<span class="more">${more}</span>` : ''}</span></span>
       <span class="pts">${pts}</span>

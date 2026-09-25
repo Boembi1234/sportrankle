@@ -285,7 +285,7 @@ a{color:inherit}
 .k-rankle .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:none;border-radius:10px;padding:4px 12px;transition:background-color .15s}
 @media (hover:hover){.k-rankle .row:not(:disabled):hover{background:var(--surface)}}
 .k-rankle .row.sel,.k-rankle .row.done{background:var(--surface);box-shadow:none}   /* chosen and filled rows: box like the active menu entry */
-.k-rankle .row.sel .cat,.k-rankle .row.done .cat{color:var(--signal)}
+.k-rankle .row.sel .cat{color:var(--signal)}   /* only the current choice is blue; filled rows stay white */
 .k-rankle .cat{font-size:17px}
 @media (prefers-reduced-motion:reduce){.k-rankle .row{transition:none}}
 .k-rankle .c-rank{display:none}

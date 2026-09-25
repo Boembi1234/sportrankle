@@ -38,8 +38,9 @@ SPORTS = {
     "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
     "soccer": {"name": "Football", "cover": "covers/sport-soccer.png"},
     "football": {"name": "American football", "cover": "covers/sport-football.png"},
-    "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png"},
-    "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png"},
+    # "soon": the sport shows as "Coming soon" (tile, nav, menu) and its topics are not playable or crawlable yet
+    "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},
+    "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png", "soon": True},
 }
 
 GAMES = {
@@ -672,6 +673,8 @@ def pages(data, sports):
     topic_slug = {k: slug(g["tab"]) for k, g in data.items()}
     out = []
     for k, g in data.items():
+        if sports[g["sport"]].get("soon"):
+            continue
         kinds = g["kinds"]
         games = ", ".join(KIND_NAMES[k] for k in kinds)
         if g["cats"]:
@@ -687,7 +690,7 @@ def pages(data, sports):
         out.append((topic_slug[k], f"{g['tab']} quiz - daily ranking puzzle | Sportrankle", desc, f"#t/{k}", intro))
     for sk, sp in sports.items():
         topics = [g for g in data.values() if g["sport"] == sk]
-        if not topics:
+        if not topics or sp.get("soon"):
             continue
         names = ", ".join(t["tab"] for t in topics)
         desc = f"{sp['name']} quizzes: {names}. Daily ranking puzzles on real stats, three games per topic, one attempt a day."
@@ -741,7 +744,8 @@ def main():
             kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000, pad=opts.get("pad", False))
     # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's;
     # a menu icon if covers/icon-<key>.png exists (a transparent PNG)
-    sports = {k: {"name": s["name"], **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {}),
+    sports = {k: {"name": s["name"], **({"soon": True} if s.get("soon") else {}),
+                  **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {}),
                   **({"icon": icon(f"covers/icon-{k}.png")} if (HERE / "covers" / f"icon-{k}.png").exists() else {})}
               for k, s in SPORTS.items()}
     for key, g in data.items():

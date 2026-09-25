@@ -102,7 +102,7 @@ a{color:inherit}
 /* Each entry: no dividers, an arrow on the right in the text colour. Under the pointer a rounded box in the card colour
    appears behind it; the current entry has the same box and blue text */
 .drawer ul{display:flex;flex-direction:column;gap:6px}
-.drawer li a{display:flex;align-items:center;min-height:48px;margin-inline:-12px;padding-inline:12px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;
+.drawer li a,.drawer li .soon-link{display:flex;align-items:center;min-height:48px;margin-inline:-12px;padding-inline:12px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;
   transition:background-color .15s,color .15s}
 .drawer li a::after{content:"";flex:none;margin-left:auto;margin-right:4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;
   transform:rotate(45deg)}
@@ -208,6 +208,13 @@ a{color:inherit}
 .tile-name{font-weight:800;font-size:20px}
 .tile-status{flex:none;white-space:nowrap;font-weight:800;font-size:15px;border-radius:6px;padding:8px 14px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge)}
 .tile-status.done{background:none;box-shadow:none;padding-inline:0;color:var(--muted);font-weight:600}
+.tile.soon{cursor:default}
+.tile.soon .tile-art img{filter:grayscale(.7) brightness(.55)}
+.tile.soon .tile-name{color:var(--muted)}
+.soon-sign{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-7deg);padding:8px 18px;border:2px solid var(--text);border-radius:8px;
+  background:rgba(18,18,16,.8);color:var(--text);font-weight:800;font-size:18px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+.soon-link{color:var(--muted);cursor:default}
+.soon-link small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-left:8px;padding:2px 6px;border:1px solid var(--line-strong);border-radius:6px}
 .legal-line{margin:44px 0 8px;text-align:center;color:var(--muted);font-size:13px}
 .legal-line a{color:var(--muted)}
 /* Play button on a tile: rises on its hard edge like a key under the pointer, sinks when pressed */
@@ -393,7 +400,7 @@ a{color:inherit}
 }
 /* Wide screens: no menu button; the logo goes left and the sports sit in the middle of the header (not during a game) */
 .logo-left,.sportnav{display:none}
-.sportnav a{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:15px;white-space:nowrap;text-decoration:none;
+.sportnav a,.sportnav .soon-link{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:15px;white-space:nowrap;text-decoration:none;
   transition:background-color .15s}
 .sportnav img{flex:none;width:20px;height:20px;object-fit:contain}
 .nav-more{position:relative}
@@ -511,9 +518,11 @@ const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cove
 const ROUTE = __ROUTE__;   // the view a real URL opens on (e.g. "#t/nfl" on /nfl-teams), "" on the home page
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
 const POOLS = ['athletes', 'sports', 'f1', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'records'];
-const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !DATA[m].kinds || DATA[m].kinds.includes(k)).map(m => `${k}-${m}`));
+const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !SPORTS[DATA[m].sport].soon && (!DATA[m].kinds || DATA[m].kinds.includes(k))).map(m => `${k}-${m}`));
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
-const poolsFor = (kind, sport) => POOLS.filter(m => (!DATA[m].kinds || DATA[m].kinds.includes(kind)) && (!sport || DATA[m].sport === sport))
+// A sport marked "soon" is shown but not playable yet: its pools are out of every list, route and the next-game cycle
+const SOON = s => !!SPORTS[s].soon, open = m => !SOON(DATA[m].sport);
+const poolsFor = (kind, sport) => POOLS.filter(m => open(m) && (!DATA[m].kinds || DATA[m].kinds.includes(kind)) && (!sport || DATA[m].sport === sport))
   .sort((a, b) => (DATA[b].flagship ? 1 : 0) - (DATA[a].flagship ? 1 : 0));
 const sportsFor = kind => Object.keys(SPORTS).filter(s => poolsFor(kind, s).length);
 // Home page order: sport -> topic -> game. A topic's back arrow goes to its sport page when the sport has
@@ -868,7 +877,12 @@ function bigTile(href, label, img, name, keys){
 }
 const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
 // Sport tile over all games: to the sport page, or straight to the topic when the sport has only one
-const sportCard = s => { const t = topicsOf(s); return bigTile(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(t)); };
+const sportCard = s => { const t = topicsOf(s); return SOON(s) ? soonTile(s) : bigTile(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(t)); };
+// A sport that is not open yet: the same tile, greyed, a sign across the picture, nothing to click
+const soonTile = s => `<div class="tile soon" aria-disabled="true" aria-label="${SPORTS[s].name}, coming soon">
+    <span class="tile-art">${sportImg(s) ? `<img src="${sportImg(s)}" alt="">` : ''}<span class="soon-sign">Coming soon</span></span>
+    <span class="tile-body"><span class="tile-name">${SPORTS[s].name}</span><span class="tile-status done">Soon</span></span>
+  </div>`;
 // Guess the record sits in front of the sports: one tile straight into today's record for each pool that only has that game
 const guessCards = () => POOLS.filter(m => DATA[m].kinds.length === 1 && DATA[m].kinds[0] === 'guess')
   .map(m => bigTile(`#guess-${m}`, `${GAMES.guess.name}, ${DATA[m].tab}`, DATA[m].cover, GAMES.guess.name, [`guess-${m}`]));
@@ -1079,7 +1093,8 @@ const sportHref = s => { const t = topicsOf(s); return t.length > 1 ? `#s/${s}` 
 const NAV_MAX = 5;
 function sportNav(){
   const {sport} = here(), all = Object.keys(SPORTS).filter(s => topicsOf(s).length);
-  const link = s => `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
+  const link = s => SOON(s) ? `<span class="soon-link" title="Coming soon">${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}<small>soon</small></span>`
+    : `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
     + `${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}</a>`;
   const shown = all.length > NAV_MAX ? all.slice(0, NAV_MAX - 1) : all, rest = all.slice(shown.length);
   $('sportnav').innerHTML = shown.map(link).join('') + (rest.length ? `<div class="nav-more">
@@ -1100,7 +1115,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleMore(f
 function menuHTML(){
   const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;
-  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
+  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => SOON(s)
+    ? `<li><span class="soon-link">${SPORTS[s].icon ? `<img class="menu-ic" src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}<small>Coming soon</small></span></li>`
+    : link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
   const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind)), link('#ringer', 'Ringer', kind === 'ringer')];
   return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
 }
@@ -1155,7 +1172,7 @@ function route(){
   const ms = h.match(/^(rankle|blind|sort|guess)\/([a-z]+)$/);   // one game, the pools of one sport
   const msp = h.match(/^s\/([a-z]+)$/), mt = h.match(/^t\/([a-z0-9]+)$/);   // a sport page, a topic page
   busy = false;
-  if ((msp && SPORTS[msp[1]]) || (mt && DATA[mt[1]])) {
+  if ((msp && SPORTS[msp[1]] && !SOON(msp[1])) || (mt && DATA[mt[1]] && open(mt[1]))) {
     KIND = null;
     $('page').className = `page at-home at-kind${mt ? ' at-topic' : ''}`;
     $('back').href = mt ? upLink(mt[1]) : '#';

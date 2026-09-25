@@ -66,6 +66,10 @@ The build enables it when `supabase/anon.key` exists (the project's public "anon
 
 The build writes one real page per topic, sport and game next to `index.html` (`nfl-teams.html`, `american-football.html`, `rankle.html`, ...; `_redirects` serves them as `/nfl-teams` etc.). Each is the full app opened on that view, with its own title, description, canonical URL, Open Graph tags and JSON-LD, plus a static intro that search engines read before the app renders. `sitemap.xml`, `robots.txt`, `og.jpg` and the icons are generated too; search engines find every page through the sitemap and the links between the static intros. Cover pictures are files under `img/covers/` with a content hash in the name (long cache), not data URIs.
 
+## Legal notice and privacy
+
+`legal.html` is the legal notice (Impressum) and privacy policy, served as `/legal` and linked from the bottom of the home page. The build fills in `OPERATOR` from `build.py` (name, place, e-mail: what Art. 19 FADP asks for as the controller's identity and contact) and the date. It describes exactly what the site does with data: Netlify server logs, Google Fonts, the anonymous score rows in Supabase (EU, Ireland) and the local storage in the browser. Update it when a game starts to need other data.
+
 ## Deploying
 
 The site is a Netlify project: `netlify deploy --prod --dir dist` after a build. Only maintainers with access to the Netlify site can deploy; contributions go through pull requests.

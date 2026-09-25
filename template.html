@@ -6,7 +6,7 @@
 <meta property="og:title" content="__TITLE__">
 <meta property="og:description" content="__DESC__">
 <meta property="og:url" content="__CANON__">
-<meta property="og:image" content="https://sportrankle.netlify.app/og.jpg">
+<meta property="og:image" content="__SITE__/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -208,6 +208,8 @@ a{color:inherit}
 .tile-name{font-weight:800;font-size:20px}
 .tile-status{flex:none;white-space:nowrap;font-weight:800;font-size:15px;border-radius:6px;padding:8px 14px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge)}
 .tile-status.done{background:none;box-shadow:none;padding-inline:0;color:var(--muted);font-weight:600}
+.legal-line{margin:44px 0 8px;text-align:center;color:var(--muted);font-size:13px}
+.legal-line a{color:var(--muted)}
 /* Play button on a tile: rises on its hard edge like a key under the pointer, sinks when pressed */
 .tile-status:not(.done){transition:transform .12s,box-shadow .12s,filter .12s}
 @media (hover:hover){.tile-status:not(.done):hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}
@@ -962,7 +964,7 @@ function renderHome(kind, sport){
           <span class="tile-art kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">RINGER</span>`}</span>
           <span class="tile-body"><span class="tile-name">Ringer</span><span class="tile-status">Play</span></span>
         </a></div>
-      `;
+      <p class="legal-line">© ${new Date().getFullYear()} Sportrankle · <a href="/legal">Legal notice &amp; privacy</a></p>`;
   if (!kind && FLAG) flagCount();
 }
 // How many have played today's flagship so far (the same histogram call the results screen uses)

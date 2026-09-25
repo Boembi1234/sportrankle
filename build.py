@@ -596,6 +596,9 @@ def load_wide(key, cfg):
 
 
 SITE = "https://sport-minigames.com"
+# Who runs the site, shown on /legal (legal notice and privacy policy). Swiss data protection law (Art. 19 FADP)
+# requires the controller's identity and a contact for it; a name, a place and an e-mail address are enough.
+OPERATOR = {"name": "", "place": "", "email": ""}
 OLD_HOSTS = ["https://sportrankle.netlify.app"]   # old addresses: everything there redirects to SITE
 GAME_PAGES = {
     "rankle": ("Rankle", "Eight categories, eight items arriving one by one: put each one where it ranks highest among the whole pool. Each category can be used once. The perfect board is revealed at the end."),
@@ -704,7 +707,7 @@ def main():
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
             .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None))
-            )
+            .replace("__SITE__", SITE))
 
     def page(title, desc, url, route, intro):
         return (base.replace("__TITLE__", esc(title)).replace("__DESC__", esc(desc)).replace("__CANON__", url)
@@ -727,6 +730,14 @@ def main():
         (DIST.parent / f"{path}.html").write_text(f"{head}{page(title, desc, f'{SITE}/{path}', route, intro)}\n</html>\n", encoding="utf-8")
         urls.append(f"{SITE}/{path}")
         redirects.append(f"/{path}  /{path}.html  200")
+    # Legal notice and privacy policy: a plain page of its own, not in the sitemap
+    if not all(OPERATOR.values()):
+        print("  legal: OPERATOR name, place or e-mail missing in build.py, the page shows placeholders")
+    legal = (HERE / "legal.html").read_text(encoding="utf-8").replace("__SITE__", SITE)
+    for k, v in OPERATOR.items():
+        legal = legal.replace(f"__OPERATOR_{k.upper()}__", esc(v) or f"[{k} to be added]")
+    (DIST.parent / "legal.html").write_text(legal.replace("__DATE__", time.strftime("%d %B %Y").lstrip("0")), encoding="utf-8")
+    redirects.append("/legal  /legal.html  200")
     redirects = [f"{h}/* {SITE}/:splat 301!" for h in OLD_HOSTS] + redirects
     (DIST.parent / "_redirects").write_text("\n".join(redirects) + "\n", encoding="utf-8")
     (DIST.parent / "_headers").write_text("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n", encoding="utf-8")

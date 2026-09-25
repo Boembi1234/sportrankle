@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Legal notice and privacy | Sportrankle</title>
+<meta name="description" content="Who runs Sportrankle, and what the site does with your data: no accounts, no cookies, no tracking, anonymous scores.">
+<link rel="canonical" href="__SITE__/legal">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#121210">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+<style>
+:root{color-scheme:dark;--bg:#121210;--surface:#22282A;--line:#2A2A27;--text:#EDEBE4;--muted:#9A968C;--signal:#4FB3F6;--font:"Archivo","Arial Narrow",sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:400 16px/1.55 var(--font);padding:0 16px 64px}
+.top{display:flex;align-items:center;justify-content:space-between;min-height:64px;border-bottom:1px solid var(--line);margin:0 -16px 8px;padding:0 16px}
+.logo{font-weight:800;font-stretch:75%;font-size:24px;text-decoration:none;color:var(--text)}
+.top a.back{color:var(--muted);text-decoration:none;font-weight:700;font-size:15px}
+.top a.back:hover{color:var(--text)}
+main{max-width:720px;margin:0 auto}
+h1{font-weight:800;font-stretch:80%;font-size:34px;line-height:1.05;margin:28px 0 6px}
+h2{font-weight:800;font-stretch:85%;font-size:22px;margin:40px 0 8px;padding-top:20px;border-top:1px solid var(--line)}
+h3{font-weight:700;font-size:17px;margin:22px 0 4px}
+p,li{color:var(--text)}
+p.lead,.muted{color:var(--muted)}
+a{color:var(--signal)}
+ul{padding-left:20px}
+li{margin:4px 0}
+.box{background:var(--surface);border-radius:10px;padding:14px 18px;margin:12px 0}
+.box p{margin:4px 0}
+code{font:600 14px/1.4 ui-monospace,Consolas,monospace;color:var(--muted)}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px 18px;margin:18px 0 6px;font-weight:700;font-size:15px}
+nav.toc a{text-decoration:none}
+</style>
+</head>
+<body>
+<header class="top"><a class="logo" href="/">Sportrankle</a><a class="back" href="/">← Back to the games</a></header>
+<main>
+<h1>Legal notice and privacy</h1>
+<p class="lead">Sportrankle at sport-minigames.com is a private, non-commercial website from Switzerland. Nothing is sold here, there are no ads, no accounts and no tracking. This page says who runs the site and what happens with your data.</p>
+<nav class="toc"><a href="#impressum">Legal notice</a><a href="#privacy">Privacy policy</a><a href="#rights">Your rights</a><a href="#content">Content and pictures</a></nav>
+
+<h2 id="impressum">Legal notice (Impressum)</h2>
+<div class="box">
+<p><b>Responsible for this website</b></p>
+<p>__OPERATOR_NAME__<br>__OPERATOR_PLACE__, Switzerland</p>
+<p>Contact: <a href="mailto:__OPERATOR_EMAIL__">__OPERATOR_EMAIL__</a></p>
+</div>
+<p>The site is run privately and without commercial intent. It is not affiliated with, sponsored by or endorsed by any league, federation, club or athlete named in the games (for example the NFL, UEFA, FIS, Formula 1 or the NCAA). Names of teams, competitions and people are used only to describe the puzzles; all trademarks belong to their owners.</p>
+
+<h2 id="privacy">Privacy policy</h2>
+<p class="muted">Information under Art. 19 of the Swiss Federal Act on Data Protection (FADP). Last updated: __DATE__.</p>
+<h3>Controller</h3>
+<p>The person named in the legal notice above. Questions about data: <a href="mailto:__OPERATOR_EMAIL__">__OPERATOR_EMAIL__</a>.</p>
+
+<h3>The short version</h3>
+<ul>
+<li>No registration, no name, no e-mail address is asked for or stored.</li>
+<li>No cookies, no analytics, no advertising, no social-media plug-ins.</li>
+<li>Your game progress stays in your browser. Only an anonymous score goes to a database so scores can be compared.</li>
+</ul>
+
+<h3>Hosting (server logs)</h3>
+<p>The site is delivered by <b>Netlify, Inc.</b>, San Francisco, USA, through its content delivery network. When you open a page, Netlify's servers receive the technical data every web request carries: your IP address, the page requested, date and time, browser type and referring page. Netlify keeps these logs for a short time for security and to run the service, and provides them to us only in aggregated form. This is necessary to show you the site at all (Art. 31 para. 2 FADP). Netlify processes the data in the USA under its data processing agreement, which contains the EU standard contractual clauses recognised by the Swiss Federal Data Protection and Information Commissioner.</p>
+
+<h3>Fonts</h3>
+<p>The typefaces are loaded from <b>Google Fonts</b> (Google LLC, USA; for users in Switzerland and the EEA: Google Ireland Ltd.). To fetch a font file your browser sends its IP address and browser details to Google. Google states that it does not use Google Fonts requests for profiling or advertising and does not set cookies with them. No other Google service is used.</p>
+
+<h3>Scores and the daily comparison</h3>
+<p>When you finish a game, the page stores one row in a database run by <b>Supabase, Inc.</b> on servers in Ireland (EU, Amazon Web Services region eu-west-1):</p>
+<div class="box"><p><code>day · game · score · maximum · device id</code></p></div>
+<p>The <b>device id</b> is a random number your browser generates the first time you finish a game and keeps in its local storage. It is not derived from your device, your IP address or anything about you, and we cannot link it to a person. Its only purpose is to allow one result per device, game and day. The rows are used to show you how your score compares with everyone else's that day ("You beat 73 %"). Nobody can read individual rows through the website; the page only receives counts per score. The rows are anonymous statistics and are kept without time limit. Supabase's servers see your IP address while the row is sent, as any server does, and keep short-term access logs.</p>
+<p id="myid" hidden>Your current device id: <code id="myid-v"></code>. Quote it if you want your rows deleted.</p>
+
+<h3>Data in your browser (local storage)</h3>
+<p>The site keeps in your browser's local storage: today's progress in each game, your past scores and streak, the device id, and small settings such as the last view. This data never leaves your device except as described above. You can delete it at any time by clearing the site data in your browser; the site then starts fresh, and old results in the database can no longer be attributed to your browser.</p>
+
+<h3>Sharing a score</h3>
+<p>"Share my score" hands a short text to your phone's share sheet or copies it to your clipboard. Nothing is sent to us or to a social network by the site itself.</p>
+
+<h3>Ringer (party game)</h3>
+<p>Ringer runs entirely on the phone it is played on. Names entered for a round are not stored and not transmitted.</p>
+
+<h3>Links to other sites</h3>
+<p>Photos link to their source page on Wikimedia Commons. Those sites have their own privacy policies; this policy ends where you leave sport-minigames.com.</p>
+
+<h2 id="rights">Your rights</h2>
+<p>Under the FADP you may ask what personal data we hold about you, have it corrected or deleted, or object to its processing (Art. 25 ff. FADP). Because the site holds no name, e-mail address or IP address that we could search for, a request has to include your device id (shown above when your browser has one) so we can find your rows. Write to <a href="mailto:__OPERATOR_EMAIL__">__OPERATOR_EMAIL__</a>.</p>
+<p>You may also complain to the <a href="https://www.edoeb.admin.ch/" rel="noopener">Federal Data Protection and Information Commissioner (FDPIC)</a>, Bern.</p>
+<p>This policy may change when the site changes, for example if a new game needs other data. The date at the top says when it was last updated.</p>
+
+<h2 id="content">Content and pictures</h2>
+<p><b>Data.</b> The numbers behind the puzzles are compiled from public sources such as league statistics, Wikipedia, Forbes and official federation records, and reflect the date noted in each puzzle. They are provided without guarantee of accuracy or completeness; a correction with a source is always welcome at the contact address above.</p>
+<p><b>Pictures.</b> The illustrations are our own or were generated for this site. Portraits of players come from Wikimedia Commons under free licences (public domain, CC0, CC BY or CC BY-SA); each photo links to its source page, where the author and licence are named.</p>
+<p><b>Liability.</b> The site is provided as is, for entertainment. We accept no liability for damage arising from its use or from the content of linked external pages, as far as the law allows.</p>
+<p><b>Applicable law.</b> Swiss law. Place of jurisdiction is the controller's place of residence in Switzerland, unless mandatory law provides otherwise.</p>
+</main>
+<script>
+try { const id = JSON.parse(localStorage.getItem('device') || 'null'); if (id) { document.getElementById('myid-v').textContent = id; document.getElementById('myid').hidden = false; } } catch (e) {}
+</script>
+</body>
+</html>

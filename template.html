@@ -245,7 +245,7 @@ a{color:inherit}
 .title i.lit{color:inherit;text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
 /* Rankle: the name on a card like the tiles on the home page (card colour, hard edge, white text; no hover, it does nothing), sized like the main button:
    full width, 52px high, 20px bold, centred, 8px corners */
-.k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);
+.v2 .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);
   font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;letter-spacing:0;text-transform:none;text-align:center}
 /* Rankle: the extra facts as chips under the name card, centred side by side, as far from it as the Reveal button is from
    the last row (16px, 10px on phones). Each chip is a small grey key like the Play button (hard edge, white text), not clickable */
@@ -253,13 +253,13 @@ a{color:inherit}
 .chip{padding:6px 12px;border-radius:6px;background:var(--surface);box-shadow:0 2px 0 var(--surface-edge);font-size:13px;font-weight:700;line-height:1.2;color:var(--text)}
 .page.done .title-sub{display:none}
 /* Rankle: no photo; the name card comes first, 24px under the header */
-.k-rankle .photo{display:none}
-.k-rankle .game{padding-top:24px}
-.k-rankle .title{margin-top:0}
-.k-rankle .right{margin-top:24px}   /* 24px from the info box (or the name card) to the first row */
-.k-rankle .title i{color:var(--surface)}
+.v2 .photo{display:none}
+.v2 .game{padding-top:24px}
+.v2 .title{margin-top:0}
+.v2 .right{margin-top:24px}   /* 24px from the info box (or the name card) to the first row */
+.v2 .title i{color:var(--surface)}
 
-.k-rankle .title i.lit{color:inherit;text-shadow:none}
+.v2 .title i.lit{color:inherit;text-shadow:none}
 /* Two rows of cards: the first row hangs fully on the photo, so the screen stays the same height */
 .question{flex:none;font-weight:700;font-stretch:85%;font-size:32px;line-height:1.1;margin:16px 0 0;text-wrap:balance}
 .question.sub{font-weight:400;font-stretch:100%;font-size:15px;color:var(--muted);margin-top:12px}
@@ -285,27 +285,33 @@ a{color:inherit}
 .row.sel{background:var(--selected-bg);box-shadow:inset 0 0 0 2px var(--signal)}
 /* Rankle: rows like the menu entries: the sport icon in front, the category (direction in the title) and the points on the
    right; the rounded box in the card colour shows under the pointer and on the chosen row; chosen and filled rows are blue */
-.k-rankle .board{gap:6px}
-.k-rankle .board>li{height:48px;border-bottom:0}   /* 48px rows 6px apart, like the menu entries */
-.k-rankle .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:none;border-radius:10px;padding:4px 12px;transition:background-color .15s}
-@media (hover:hover){.k-rankle .row:not(:disabled):hover{background:var(--surface)}}
-.k-rankle .row.sel,.k-rankle .row.done{background:var(--surface);box-shadow:none}   /* chosen and filled rows: box like the active menu entry */
-.k-rankle .row.sel .cat{color:var(--signal)}   /* only the current choice is blue; filled rows stay white */
-.k-rankle .cat{font-size:17px}
-@media (prefers-reduced-motion:reduce){.k-rankle .row{transition:none}}
-.k-rankle .c-rank{display:none}
+.v2 .board{gap:6px}
+.v2 .board>li{height:48px;border-bottom:0}   /* 48px rows 6px apart, like the menu entries */
+.v2 .row{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;background:none;border-radius:10px;padding:4px 12px;transition:background-color .15s}
+@media (hover:hover){.v2 .row:not(:disabled):hover{background:var(--surface)}}
+.v2 .row.sel,.v2 .row.done{background:var(--surface);box-shadow:none}   /* chosen and filled rows: box like the active menu entry */
+.v2 .row.sel .cat{color:var(--signal)}   /* only the current choice is blue; filled rows stay white */
+.v2 .cat{font-size:17px}
+@media (prefers-reduced-motion:reduce){.v2 .row{transition:none}}
+.v2 .c-rank{display:none}
+/* Blind ranking: the spot number in front instead of an emoji, the attribute as a heading over the list, filled spots keep the box */
+.row-no{flex:none;width:24px;text-align:center;font-size:17px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.v2 .row.filled{background:var(--surface)}
+.page.k-blind .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
+.page.k-blind:not(.done) .question{font-size:17px;margin-top:24px}
+.page.k-blind .right{margin-top:16px}
 /* Rankle: the line under a filled category is all white; the value is the same size as the rest, just bold */
-.k-rankle .who,.k-rankle .unit{color:var(--text)}
-.k-rankle .res{gap:.28em}   /* name, value and unit read like one sentence: a normal word space, not 8px */
-.k-rankle .row.done .body{gap:0}   /* the info line sits tight under the category, a touch smaller and lighter */
-.k-rankle .who,.k-rankle .unit,.k-rankle .vals{font-size:13px;line-height:1.25}
-.k-rankle .vals{font-weight:700;letter-spacing:0;color:var(--text);text-shadow:none}
-.k-rankle .vals i{color:transparent}
-.k-rankle .vals i.lit{color:inherit;text-shadow:none}
+.v2 .who,.v2 .unit{color:var(--text)}
+.v2 .res{gap:.28em}   /* name, value and unit read like one sentence: a normal word space, not 8px */
+.v2 .row.done .body{gap:0}   /* the info line sits tight under the category, a touch smaller and lighter */
+.v2 .who,.v2 .unit,.v2 .vals{font-size:13px;line-height:1.25}
+.v2 .vals{font-weight:700;letter-spacing:0;color:var(--text);text-shadow:none}
+.v2 .vals i{color:transparent}
+.v2 .vals i.lit{color:inherit;text-shadow:none}
 /* Rankle: the points sit in a blue box like the Play button (same colour, corners and hard edge); no hover, only buttons that act have one */
-.k-rankle .pts{min-width:0;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge);
+.v2 .pts{min-width:0;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge);
   font-size:15px;line-height:1.2;text-align:center}
-.k-rankle .row.done{padding-right:9px}   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
+.v2 .row.done{padding-right:9px}   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
 .row:disabled{cursor:default}
 .body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .cat{font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -342,23 +348,23 @@ a{color:inherit}
 .main{width:100%;min-height:52px;border:0;border-radius:7px;font-weight:800;font-size:22px;cursor:pointer;background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
 .main:disabled{background:var(--line);color:var(--muted);box-shadow:none;cursor:default}
 /* Rankle: the same blue key as the Play buttons; rises under the pointer, sinks when pressed; still while disabled */
-.k-rankle .main{border-radius:8px;font-size:20px;transition:transform .12s,box-shadow .12s,filter .12s}
-@media (hover:hover){.k-rankle .main:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--signal-edge);filter:brightness(1.08)}}
-.k-rankle .main:not(:disabled):active{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge);filter:none}
-@media (prefers-reduced-motion:reduce){.k-rankle .main{transition:none}}
+.v2 .main{border-radius:8px;font-size:20px;transition:transform .12s,box-shadow .12s,filter .12s}
+@media (hover:hover){.v2 .main:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--signal-edge);filter:brightness(1.08)}}
+.v2 .main:not(:disabled):active{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge);filter:none}
+@media (prefers-reduced-motion:reduce){.v2 .main{transition:none}}
 /* Rankle results: "Share my score" is the same key as the main button, in the dark card colours of the name card, with the hover */
-.k-rankle .share{min-height:52px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);font-size:20px;font-weight:800;
+.v2 .share{min-height:52px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);font-size:20px;font-weight:800;
   transition:transform .12s,box-shadow .12s,filter .12s}
-@media (hover:hover){.k-rankle .share:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--surface-edge);filter:brightness(1.08)}}
-.k-rankle .share:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge);filter:none}
-@media (prefers-reduced-motion:reduce){.k-rankle .share{transition:none}}
-.page.k-rankle .note,.page.k-rankle.done .note{display:none}   /* no hint line under Reveal and no "Played today ..." under the results buttons */
+@media (hover:hover){.v2 .share:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--surface-edge);filter:brightness(1.08)}}
+.v2 .share:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge);filter:none}
+@media (prefers-reduced-motion:reduce){.v2 .share{transition:none}}
+.page.v2 .note,.page.v2.done .note{display:none}   /* no hint line under Reveal and no "Played today ..." under the results buttons */
 /* Rankle results: the two buttons as far apart as the name card and the facts (16px, 10px on phones); 24px under the last
    one, like the side margin */
-.page.k-rankle.done .bar{gap:16px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.page.v2.done .bar{gap:16px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 /* Rankle play: Reveal right under the rows, then 24px to the end of the page like Share in the results */
-.page.k-rankle:not(.done) .bar{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
-.page.k-rankle:not(.done){height:auto;min-height:0}
+.page.v2:not(.done) .bar{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.page.v2:not(.done){height:auto;min-height:0}
 .note{margin:0;color:var(--muted);font-size:13px;text-align:center}
 .share{width:100%;min-height:48px;border:1.5px solid var(--line-strong);border-radius:7px;background:none;color:var(--text);font:800 17px var(--font);cursor:pointer}
 .share.copied{border-color:var(--led-ok);color:var(--led-ok)}
@@ -380,32 +386,32 @@ a{color:inherit}
 .led-bar{display:none}
 /* Rankle results: the score on a card like the name card (card colour, hard edge, 24px under the header): points / maximum
    left, the share right, and a blue bar underneath filled to that share */
-.k-rankle .led{margin-top:0;padding:14px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);align-items:center;gap:0 16px}
-.k-rankle .led-lbl{display:none}
-.k-rankle .led-num{margin:0;font-size:20px;font-weight:800;color:var(--text);text-shadow:none}
-.k-rankle .led-num i{font:inherit;color:var(--muted);margin-inline:4px;vertical-align:0}
-.k-rankle .led-side .led-num{margin:0;font-size:20px;color:var(--signal)}
-.k-rankle .led-bar{display:block;grid-column:1/-1;height:8px;margin-top:12px;border-radius:4px;background:var(--bg);overflow:hidden}
+.v2 .led{margin-top:0;padding:14px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);align-items:center;gap:0 16px}
+.v2 .led-lbl{display:none}
+.v2 .led-num{margin:0;font-size:20px;font-weight:800;color:var(--text);text-shadow:none}
+.v2 .led-num i{font:inherit;color:var(--muted);margin-inline:4px;vertical-align:0}
+.v2 .led-side .led-num{margin:0;font-size:20px;color:var(--signal)}
+.v2 .led-bar{display:block;grid-column:1/-1;height:8px;margin-top:12px;border-radius:4px;background:var(--bg);overflow:hidden}
 .led-bar i{display:block;width:0;height:100%;border-radius:4px;background:var(--signal);transition:width .8s cubic-bezier(.2,.7,.2,1)}
-.k-rankle .led-note{display:none}   /* the card says it all; the sentence still goes to screen readers */
+.v2 .led-note{display:none}   /* the card says it all; the sentence still goes to screen readers */
 /* Rankle results: ideally placed rows in green instead of blue (title and points box) */
-.k-rankle .row.ideal .cat{color:var(--led-ok)}
-.k-rankle .row.ideal .pts,.k-rankle #board2 .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}   /* the perfect board is all green */
-.page.k-rankle.done .row .cat{color:var(--text)}   /* results: the titles white; only the points box carries the colour */
-.k-rankle .row.worst .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}   /* a pick in the item's worst category: red */
+.v2 .row.ideal .cat{color:var(--led-ok)}
+.v2 .row.ideal .pts,.k-rankle #board2 .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}   /* the perfect board is all green */
+.page.v2.done .row .cat{color:var(--text)}   /* results: the titles white; only the points box carries the colour */
+.v2 .row.worst .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}   /* a pick in the item's worst category: red */
 /* During play: green when the pick matches the perfect board, red when it is the item's worst category of all */
 .page.k-rankle:not(.done) .row.good .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}
 .page.k-rankle:not(.done) .row.bad .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}
 /* Rankle results: "Your board" / "Perfect board" as two chips, half the width each; the active one blue, the other grey
    with the buttons' hover */
-.k-rankle .seg{gap:8px;margin-top:16px}   /* as far from the score card as the two buttons are apart (10px on phones) */
-.page.k-rankle.done #board,.page.k-rankle.done .alt{margin-top:24px}   /* 24px from the switch to the list, like the facts to the rows */
-.k-rankle .segbtn{flex:1;min-height:40px;border-radius:6px;background:var(--surface);box-shadow:0 2px 0 var(--surface-edge);color:var(--text);
+.v2 .seg{gap:8px;margin-top:16px}   /* as far from the score card as the two buttons are apart (10px on phones) */
+.page.v2.done #board,.page.v2.done .alt{margin-top:24px}   /* 24px from the switch to the list, like the facts to the rows */
+.v2 .segbtn{flex:1;min-height:40px;border-radius:6px;background:var(--surface);box-shadow:0 2px 0 var(--surface-edge);color:var(--text);
   font-size:15px;font-weight:700;text-decoration:none;transition:transform .12s,box-shadow .12s,filter .12s}
-.k-rankle .segbtn[aria-pressed="true"]{background:var(--signal);box-shadow:0 2px 0 var(--signal-edge);color:var(--bg);cursor:default}
-@media (hover:hover){.k-rankle .segbtn[aria-pressed="false"]:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--surface-edge);filter:brightness(1.08)}}
-.k-rankle .segbtn[aria-pressed="false"]:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge);filter:none}
-@media (prefers-reduced-motion:reduce){.k-rankle .segbtn{transition:none}}
+.v2 .segbtn[aria-pressed="true"]{background:var(--signal);box-shadow:0 2px 0 var(--signal-edge);color:var(--bg);cursor:default}
+@media (hover:hover){.v2 .segbtn[aria-pressed="false"]:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--surface-edge);filter:brightness(1.08)}}
+.v2 .segbtn[aria-pressed="false"]:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge);filter:none}
+@media (prefers-reduced-motion:reduce){.v2 .segbtn{transition:none}}
 @media (prefers-reduced-motion:reduce){.led-bar i{transition:none}}
 .page.done .title{display:none}
 
@@ -481,13 +487,14 @@ a{color:inherit}
   .vals{font-size:15px}
   .cat{font-size:15px}
   .hint,.who,.unit,.more{font-size:12px}
-  .k-rankle .who,.k-rankle .unit,.k-rankle .vals{font-size:12px}
+  .v2 .who,.v2 .unit,.v2 .vals{font-size:12px}
   .pts{font-size:15px}
   .main{font-size:20px}
   .bar{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
   .title-sub{margin-top:10px}
-  .page.k-rankle.done .bar{gap:10px}
-  .k-rankle .seg{margin-top:10px}
+  .page.v2.done .bar{gap:10px}
+  .v2 .seg{margin-top:10px}
+  .page.k-blind .right{margin-top:10px}
 }
 /* Short screens: the hint line goes first, then the question shrinks */
 @media (max-height:700px){
@@ -660,6 +667,7 @@ function pts(s, c){
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const announce = t => { $('live').textContent = t; };
 const cap = s => s[0].toUpperCase() + s.slice(1);
+const V2 = () => KIND === 'rankle' || KIND === 'blind';   // games in the new design
 // Rankle's category title with its direction, e.g. "Most playoff wins, all time" (made by the build, see TITLES in build.py)
 const catTitle = c => D.cats[c].title || `${cap(D.cats[c].dir)} ${D.cats[c].name}`;
 const catLabel = c => `${D.cats[c].emoji ? `<span class="emo">${D.cats[c].emoji}</span>` : ''}${catTitle(c)}`;   // emoji + title, for display only
@@ -768,7 +776,7 @@ function titleCards(text, label){
   const box = $('title');
   box.setAttribute('aria-label', label || text);
   // Rankle keeps the name's own case and shows the next name at once; the other games light it up letter by letter
-  const up = KIND === 'rankle' ? text : text.toUpperCase(), lit = up === prevTitle || RM || instant || KIND === 'rankle';
+  const up = V2() ? text : text.toUpperCase(), lit = up === prevTitle || RM || instant || V2();
   prevTitle = up;
   box.innerHTML = '';
   const chars = [];
@@ -814,7 +822,7 @@ function setPhoto(it){
   }
 }
 function showItem(s){
-  const [title, sub] = split(D.items[s].name), short = KIND === 'rankle' ? title : D.items[s].short || title.split(' / ').pop();   // Rankle: the full name
+  const [title, sub] = split(D.items[s].name), short = V2() ? title : D.items[s].short || title.split(' / ').pop();   // the new design: the full name
   setPhoto(D.items[s]);
   titleText = [short, D.items[s].name];
   titleCards(short, D.items[s].name);
@@ -842,7 +850,7 @@ function countUp(el, v){
 }
 function setCounter(showPts){
   // Rankle counts the picks already locked in (they match the points next to it); the other games show the current round
-  $('round').textContent = `${KIND === 'rankle' ? G.round : Math.min(G.round + 1, PICK)}/${PICK}`;
+  $('round').textContent = `${V2() ? G.round : Math.min(G.round + 1, PICK)}/${PICK}`;
   $('csep').hidden = $('cpts').hidden = !showPts;
 }
 function rulesHTML(){
@@ -1371,7 +1379,7 @@ function route(){
     return;
   }
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
-  $('page').className = `page k-${KIND}`;   // k-rankle etc.: styles for one game only
+  $('page').className = `page k-${KIND}${V2() ? ' v2' : ''}`;   // k-rankle etc.: one game only; v2: the new design (Rankle, Blind ranking)
   $('title-sub').hidden = true;
   $('today').hidden = true;
   $('led').hidden = true;
@@ -1519,7 +1527,7 @@ function scoreboard(score, max, note){
 const miniHTML = text => [...text].map(ch => `<i class="lit">${ch}</i>`).join('');
 function altRow(rankCh, tone, cat, who, v, pts, label, more = ''){
   return `<li><button class="row done${tone === 'ok' ? ' ideal' : ''}" type="button" disabled aria-label="${label}">
-      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>
+      <span class="c-rank"><span class="card rank ${tone}" aria-hidden="true"><b>${rankCh}</b></span></span>${KIND === 'blind' ? `<span class="row-no">${rankCh}</span>` : ''}
       <span class="body"><span class="cat">${cat}</span>
         <span class="res">${who ? `<span class="who">${who}</span>` : ''}<span class="vals">${v ? miniHTML(v[0]) : ''}</span><span class="unit">${v ? v[1] : 'no value'}</span>${more ? `<span class="more">${more}</span>` : ''}</span></span>
       <span class="pts">${pts}</span>
@@ -1547,10 +1555,9 @@ function startBlind(){
   const {cat, items} = blindDraw(MODE);
   G = {day: today(), cat, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
-  const dir = D.cats[cat].dir;
   $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}" aria-label="Spot ${i + 1}, open">
-      <span class="c-rank"></span>
-      <span class="body"><span class="cat empty">Open</span>${i === 0 ? `<span class="hint">${cap(dir)}</span>` : ''}
+      <span class="c-rank"></span><span class="row-no">${i + 1}</span>
+      <span class="body"><span class="cat empty">Open</span>
         <span class="res"><span class="vals"></span><span class="unit"></span></span></span>
       <span class="pts"></span>
     </button></li>`).join('');
@@ -1576,6 +1583,7 @@ function blindFill(i){
   name.textContent = nm(s);
   name.classList.remove('empty');
   row.querySelector('.hint')?.remove();
+  row.classList.add('filled');
   row.setAttribute('aria-label', `Spot ${i + 1}: ${D.items[s].name}`);
 }
 
@@ -1583,11 +1591,13 @@ function blindRound(){
   G.phase = 'round';
   G.sel = null;
   setCounter(false);
-  const s = G.sports[G.round], [title, sub] = showItem(s);
+  const s = G.sports[G.round], [, sub] = showItem(s);
   const c = D.cats[G.cat];
+  $('title-sub').innerHTML = (sub || '').split(' · ').filter(Boolean).map(f => `<span class="chip">${f}</span>`).join('');
+  $('title-sub').hidden = !sub;
   $('question').className = 'question';
   $('question').hidden = false;
-  $('question').innerHTML = `${c.emoji ? `<span class="emo">${c.emoji}</span>` : ''}${c.name}<span class="qdir">Spot 1 = ${c.dir}${sub ? `. ${title}, ${sub}` : ''}</span>`;
+  $('question').innerHTML = catLabel(G.cat);   // e.g. "⏳ Longest wait for a title": spot 1 is the one with the most
   mainButton('Place', confirmPick, true);
   $('note').textContent = 'Tap a spot, then place. Spots are final.';
   fitPhoto();
@@ -1616,11 +1626,14 @@ function blindResults(){
 
   setPhoto(null);
   const c = D.cats[G.cat];
+  $('title-sub').hidden = true;
   scoreboard(G.score, max, G.score === max ? `all ${PICK} on the right spot` : `${exact} of ${PICK} on the right spot`);
 
   range(PICK).forEach(k => {
     const row = $(`row-${k}`), s = G.placed[k], [p, d] = blindPts(s, k), [lo, hi] = trueSpots(s), v = fmt(s, G.cat);
     row.classList.add('done');
+    row.classList.toggle('ideal', d === 0);   // exact spot green, one off blue, two or more off red (like the share squares)
+    row.classList.toggle('worst', d >= 2);
     row.querySelector('.unit').textContent = v ? v[1] : '';
     row.querySelector('.pts').textContent = `+${p}`;
     miniCards(row.querySelector('.vals'), v ? v[0] : '', 300 + k * 90);
@@ -1816,11 +1829,11 @@ function guessResults(){
 // ================= Shared play controls =================
 function select(i){
   if (busy || G.phase !== 'round' || G.placed[i] != null) return;
-  if (G.sel === i && KIND === 'rankle') {   // Rankle: a second tap on the chosen row un-chooses it (Reveal locks it in)
+  if (G.sel === i && V2()) {   // a second tap on the chosen row un-chooses it (the button locks it in)
     $(`row-${i}`).classList.remove('sel');
     G.sel = null;
     $('main').disabled = true;
-    announce(`${D.cats[G.cats[i]].name} unselected`);
+    announce(KIND === 'blind' ? `Spot ${i + 1} unselected` : `${D.cats[G.cats[i]].name} unselected`);
     return;
   }
   if (G.sel === i) return confirmPick();

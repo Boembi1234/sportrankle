@@ -339,7 +339,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 @media (hover:hover){.k-ringer .stepper button:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--surface-edge);filter:brightness(1.08)}}
 .k-ringer .stepper button:disabled{color:var(--muted);box-shadow:none;opacity:.5}
 .k-ringer .stepper b{min-width:24px;font-size:17px}
-.k-ringer .party .bar{padding-top:16px}
+.k-ringer .party .bar{padding-top:16px;gap:16px}   /* two buttons as far apart as Next and Share (10px on phones) */
+.k-ringer #party-play .deal{margin-top:0}   /* the card first, 24px under the header */
 .k-ringer #pp-note{display:block;margin:12px 0 0;text-align:center;color:var(--muted)}
 .k-ringer .deal{margin-top:16px;padding:20px;border-radius:10px;min-height:240px}
 .k-ringer .deal.ringer{background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
@@ -551,6 +552,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
   .v2 .seg{margin-top:10px}
   .page:is(.k-blind,.k-sort,.k-guess) .right{margin-top:10px}
   .page.k-guess.done .right{margin-top:10px}
+  .k-ringer .party .bar{gap:10px}
 }
 /* Short screens: the hint line goes first, then the question shrinks */
 @media (max-height:700px){
@@ -641,9 +643,9 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
       <div class="bar"><button class="main" id="p-start" type="button">Deal the cards</button><p class="note">Pass the phone round: each player looks at their card alone.</p></div>
     </section>
     <section id="party-play" hidden>
-      <p class="title" id="pp-step"></p>
+      <p class="sr" id="pp-step" aria-live="polite"></p>
       <div class="deal" id="pp-card"></div>
-      <div class="bar"><button class="main" id="pp-main" type="button"></button><p class="note" id="pp-note"></p></div>
+      <div class="bar"><button class="main" id="pp-main" type="button"></button><button class="share" id="pp-alt" type="button" hidden></button><p class="note" id="pp-note"></p></div>
     </section>
   </main>
 
@@ -1257,6 +1259,8 @@ function partyRender(){
   const plural = ringers.length > 1;
   card.className = 'deal';
   note.innerHTML = '';
+  $('pp-alt').hidden = true;
+  const last = P.i === n - 1, passOn = () => { if (last) P.phase = 'talk'; else { P.i++; P.phase = 'pass'; } partyRender(); };
   if (P.phase === 'pass') {
     $('pp-step').textContent = `${who(P.i)} · ${P.i + 1} of ${n}`;
     card.innerHTML = `<p class="deal-k">Your turn</p><p class="deal-h">${who(P.i)}</p><p class="deal-t">Hold the phone so only you can see it, then tap the button.</p>`;
@@ -1270,8 +1274,16 @@ function partyRender(){
       card.innerHTML = `${it.img ? `<img class="deal-img" src="${it.img}" alt="" style="object-fit:${it.fit || 'cover'};background:${it.bg || 'transparent'}">` : ''}
         <p class="deal-k">${g.tab}</p><p class="deal-h">${it.name}</p><p class="deal-t">Keep it to yourself. ${plural ? 'Some of you don\'t' : 'One of you doesn\'t'} know it.</p>`;
     }
-    const last = P.i === n - 1;
-    partyButton(last ? 'Hide it — everyone is in' : 'Hide it and pass on', () => { if (last) P.phase = 'talk'; else { P.i++; P.phase = 'pass'; } partyRender(); });
+    partyButton('Hide my card', () => { P.phase = 'hidden'; partyRender(); });   // hide first; passing on is the next step
+  } else if (P.phase === 'hidden') {
+    // The card is hidden again: look once more, or hand the phone on
+    $('pp-step').textContent = `${who(P.i)}, card hidden`;
+    card.innerHTML = `<p class="deal-k">Card hidden</p><p class="deal-h">${last ? 'Everyone is in' : `Pass to ${who(P.i + 1)}`}</p>`
+      + `<p class="deal-t">${last ? 'All cards are dealt. Put the phone down where everyone can see it.' : 'Want another look first? Show your card again.'}</p>`;
+    partyButton(last ? 'Everyone is in' : `Pass to ${who(P.i + 1)}`, passOn);
+    $('pp-alt').textContent = 'Show my card again';
+    $('pp-alt').onclick = () => { P.phase = 'peek'; partyRender(); };
+    $('pp-alt').hidden = false;
   } else if (P.phase === 'talk') {
     $('pp-step').textContent = 'Everyone has a card';
     card.innerHTML = `<p class="deal-k">Talk</p><p class="deal-h">${who(P.first)} starts</p><p class="deal-t">Go round the table: each of you says one word or short hint about the secret — precise enough to show you know it, vague enough to give the ${plural ? 'ringers' : 'ringer'} nothing. After a round or two, vote on who is bluffing.</p>`;

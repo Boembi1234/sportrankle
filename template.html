@@ -17,7 +17,7 @@
 <script type="application/ld+json">__LDJSON__</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Doto:wght@600..900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
 <style>
 :root{
   color-scheme:dark;
@@ -162,7 +162,7 @@ a{color:inherit}
 .flag-art{position:relative;display:grid;place-items:center;min-height:240px;background:var(--card-stack)}
 .flag-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .flag-art.led{background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
-.flag-art .tile-cards{font-family:"Doto",var(--font);font-weight:900;font-size:64px;line-height:1;letter-spacing:.08em;color:var(--signal);text-shadow:0 0 14px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
+.flag-art .tile-cards{font-family:var(--font);font-weight:900;font-size:64px;line-height:1;letter-spacing:.08em;color:var(--signal);text-shadow:0 0 14px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
 .flag-body{padding:22px 28px 24px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
 .flag-body .eyebrow{margin:0}
 .flag-name{margin:0;font-weight:800;font-stretch:85%;font-size:34px;line-height:1.05}
@@ -201,7 +201,7 @@ a{color:inherit}
 .kind-art{display:grid;place-items:center}
 /* A game without a picture: its name as an LED board */
 .kind-art.led{background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
-.kind-art .tile-cards{font-family:"Doto",var(--font);font-weight:900;font-size:56px;line-height:1;letter-spacing:.08em;color:var(--signal);text-shadow:0 0 14px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
+.kind-art .tile-cards{font-family:var(--font);font-weight:900;font-size:56px;line-height:1;letter-spacing:.08em;color:var(--signal);text-shadow:0 0 14px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px;margin-top:28px}
 .tile{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);overflow:hidden}
 /* Clickable cards: the same key as the buttons, they rise on their edge under the pointer and sink when pressed */
@@ -235,7 +235,7 @@ a{color:inherit}
 /* Item name as an LED board under the photo: dot-matrix letters light up one by one */
 .title{flex:none;display:block;margin-top:10px;padding:11px 16px;border-radius:10px;border:1px solid var(--line-strong);
   background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px;
-  font-family:"Doto",var(--font);font-weight:900;font-size:34px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance;color:var(--signal)}
+  font-family:var(--font);font-weight:900;font-size:34px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;text-wrap:balance;color:var(--signal)}
 .title i{font-style:normal;color:#1C2126;transition:color .12s}
 .title i.lit{color:inherit;text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
 /* Two rows of cards: the first row hangs fully on the photo, so the screen stays the same height */
@@ -247,7 +247,7 @@ a{color:inherit}
 /* LED tile: a small dark panel with one dot-matrix glyph. Blue when lit, green when right, red when wrong. */
 .card{position:relative;flex:none;display:grid;place-items:center;width:var(--w);height:var(--h);border-radius:var(--r,6px);
   border:1px solid var(--line-strong);background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/5px 5px;
-  font-family:"Doto",var(--font);font-weight:900;font-size:var(--f);line-height:1;color:var(--signal);
+  font-family:var(--font);font-weight:900;font-size:var(--f);line-height:1;color:var(--signal);
   text-shadow:0 0 8px rgba(79,179,246,.55),0 0 2px rgba(79,179,246,.9)}
 .card>b{font-weight:inherit}
 .card.open{border-style:dashed;border-color:var(--card-open);background:none;color:transparent;text-shadow:none}
@@ -283,7 +283,7 @@ a{color:inherit}
 .row.done .res{display:flex}
 .who{color:var(--text)}
 /* Values in the result rows: LED digits, lit one after another */
-.vals{flex:none;font-family:"Doto",var(--font);font-weight:900;font-size:19px;line-height:1;letter-spacing:.03em;color:var(--signal);text-shadow:0 0 6px rgba(79,179,246,.5)}
+.vals{flex:none;font-family:var(--font);font-weight:900;font-size:19px;line-height:1;letter-spacing:.03em;color:var(--signal);text-shadow:0 0 6px rgba(79,179,246,.5)}
 .vals i{font-style:normal;color:#22282E;text-shadow:none}
 .vals i.lit{color:inherit;text-shadow:inherit}
 .pts{font-weight:800;font-size:18px;color:var(--signal);font-variant-numeric:tabular-nums;min-width:36px;text-align:right}
@@ -295,7 +295,7 @@ a{color:inherit}
 .guess{display:flex;align-items:center;gap:10px;width:100%}
 .guess input{flex:1;min-width:0;width:0;min-height:60px;padding:6px 14px;border:1px solid var(--line-strong);border-radius:10px;
   background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px;color:var(--signal);
-  font-family:"Doto",var(--font);font-weight:900;font-size:34px;letter-spacing:.04em;text-shadow:0 0 12px rgba(79,179,246,.55)}
+  font-family:var(--font);font-weight:900;font-size:34px;letter-spacing:.04em;text-shadow:0 0 12px rgba(79,179,246,.55)}
 .guess input::placeholder{color:#2A3138;text-shadow:none}
 .guess input:focus{outline:2px solid var(--signal);outline-offset:2px}
 .guess-unit{flex:none;font-weight:800;font-size:20px;color:var(--muted);margin-right:6px}
@@ -324,7 +324,7 @@ a{color:inherit}
 .led{display:grid;grid-template-columns:1fr auto;gap:2px 28px;align-items:end;margin-top:14px;padding:14px 18px 12px;border-radius:10px;
   border:1px solid var(--line-strong);background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
 .led-lbl{display:block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.led-num{display:block;font-family:"Doto",var(--font);font-weight:900;font-size:64px;line-height:1;margin-top:4px;color:var(--signal);
+.led-num{display:block;font-family:var(--font);font-weight:900;font-size:64px;line-height:1;margin-top:4px;color:var(--signal);
   text-shadow:0 0 12px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9);font-variant-numeric:tabular-nums;white-space:nowrap}
 .led-num i{font:400 .55em/1 var(--font);font-style:normal;color:var(--muted);text-shadow:none;margin-inline:6px;vertical-align:.15em}
 .led-side .led-num{font-size:44px;margin-bottom:2px}

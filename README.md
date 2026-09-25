@@ -17,7 +17,7 @@ Three games, nine topics in five sports, one attempt per game and day. The home 
 ```
 Mannschaftssportarten_20x15.xlsx ─┐
 F1-Strecken_20x15.xlsx            ├─ build.py ─► sportrankle.html (dev copy)
-NFL_Teams_Rankle_32x15.xlsx       │             dist/index.html  (deployed)
+NFL_Teams_Rankle_*.xlsx (+3 NFL) │             dist/index.html  (deployed)
 Ski_Alpin_Rankle_40x15.xlsx      ─┘             dist/img/        (photos)
 template.html  (all HTML, CSS and JS)
 photos/<pool>/ (own photos)   covers/ (tile pictures)

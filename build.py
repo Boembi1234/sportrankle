@@ -211,6 +211,17 @@ CATS_EN = {
     "Punkte erzielt Regular Season 2025": ("Points scored 2025", "pts"),
     "Besitzerfamilie seit": ("Owner family since", ""),
     "Erster Pick im Draft 2026": ("First pick, 2026 draft", "overall"),
+    "Cap Space Saison 2026": ("Cap space 2026", "M USD"),
+    "Franchise-Wert 2026 (Forbes)": ("Franchise value 2026", "B USD"),
+    "Super-Bowl-Teilnahmen all-time": ("Super Bowl appearances", ""),
+    "Jahre seit letztem Playoff-Sieg": ("Years since last playoff win", "years"),
+    "Head Coach im Amt seit": ("Head coach in charge since", ""),
+    "Zuschauerschnitt Heimspiele 2025": ("Average home crowd 2025", ""),
+    "Bierpreis im Stadion 2025": ("Stadium beer price 2025", "USD"),
+    "Nr.-1-Overall-Picks all-time": ("No. 1 overall picks, all time", ""),
+    "Spiele im Ausland all-time": ("Games played abroad", "games"),
+    "Durchschnittsalter Kader 2026": ("Average roster age 2026", "years"),
+    "Längste Siegesserie Regular Season": ("Longest regular-season win streak", "games"),
     # NFL players and Hall of Fame
     "Geburtsdatum": ("Date of birth", ""),
     "Grösse": ("Height", "cm"),
@@ -227,6 +238,8 @@ CATS_EN = {
     "Ø Jahresgehalt aktueller Vertrag": ("Average salary, current deal", "M USD"),
     "Vertrag läuft bis": ("Contract runs until", ""),
     "Einwohner Geburtsort": ("Population of birthplace", "thousand"),
+    "Spiele Regular Season Karriere": ("Regular-season games", "games"),
+    "Anzahl Head Coaches in der Karriere": ("Head coaches in career", ""),
     "HOF-Aufnahmejahr": ("Hall of Fame induction", ""),
     "Spiele Regular Season": ("Regular-season games", "games"),
     "Anzahl NFL-Teams": ("NFL teams played for", "teams"),
@@ -247,6 +260,8 @@ CATS_EN = {
     "Einwohner Uni-Stadt": ("Population of college town", "thousand"),
     "NFL-Draft-Picks 2026": ("2026 NFL draft picks", "players"),
     "Unentschieden all-time": ("Ties, all time", "ties"),
+    "Cheftrainer-Gehalt 2025": ("Head coach salary 2025", "M USD"),
+    "Alumni auf NFL-Kadern Woche 1 2026": ("Alumni on NFL rosters 2026", "players"),
     # Alpine skiers
     "Geburtsdatum (Alter)": ("Date of birth", ""),
     "Weltcup-Debüt": ("World Cup debut", ""),
@@ -278,14 +293,18 @@ DIR_EN = {"meiste": "most", "grösste": "largest", "grösster": "largest", "län
           "frühester Pick": "earliest pick", "frühester Pick (Nr. 1)": "earliest pick", "ältester": "oldest", "grösster": "tallest",
           "schwerster": "heaviest", "frühestes (dienstältester)": "earliest", "jüngstes Debüt": "youngest", "kleinste Nummer": "lowest",
           "längste Bindung": "latest", "grösste Stadt": "largest", "neueste Aufnahme": "most recent", "meiste Teams": "most",
-          "jüngste Aufnahme": "youngest", "ältester beim Rücktritt": "oldest", "älteste Uni": "oldest"}
+          "jüngste Aufnahme": "youngest", "ältester beim Rücktritt": "oldest", "älteste Uni": "oldest",
+          "meister Platz unter dem Cap": "most", "wertvollste": "most valuable", "dienstältester Head Coach": "longest-serving",
+          "günstigstes Bier": "cheapest", "ältester Kader": "oldest", "längste Serie": "longest", "meiste Head Coaches": "most",
+          "bestbezahlter Trainer": "highest paid", "meiste NFL-Profis": "most", "grösste Uni": "largest"}
 
 # "Rang 1 =" directions where the smallest value wins. "am längsten (dabei)" ranks a year or date, so the
 # earliest wins; "jüngste/r" on a birth date means the latest date wins, on an age the smallest number.
 LOW_FIRST = {"ältestes", "älteste", "frühestes", "früheste", "schnellste", "kürzeste", "kleinste", "leichteste", "südlichste", "tiefste", "wenigste",
              "am längsten", "am längsten dabei", "jüngste/r Debütant/in",
              "am längsten (ältestes Jahr)", "ältestes Stadion", "frühester Pick", "frühester Pick (Nr. 1)", "ältester",
-             "frühestes (dienstältester)", "jüngstes Debüt", "kleinste Nummer", "jüngste Aufnahme", "älteste Uni"}
+             "frühestes (dienstältester)", "jüngstes Debüt", "kleinste Nummer", "jüngste Aufnahme", "älteste Uni",
+             "dienstältester Head Coach", "günstigstes Bier"}
 
 # Spreadsheet unit -> (unit shown, value format)
 UNIT_FMT = {"Anzahl": ("", ""), "Jahr": ("", "year"), "Sekunden": ("", "laptime"), "Grad": ("", "lat"),
@@ -481,6 +500,8 @@ def load_game(key, cfg):
         if n not in NAMES_EN and not cfg.get("english"):
             print(f"  No English name for '{n}', using German")
     for cat in cats:
+        if cat["dir"] not in DIR_EN:
+            print(f"  Unknown direction '{cat['dir']}' for '{cat['name']}' (largest value ranks first)")
         cat["dir"] = DIR_EN.get(cat["dir"], cat["dir"])
     items = [{"name": NAMES_EN.get(n, n) + (f" ({subs[n]})" if subs.get(n) else ""), "ranks": ranks[n], "values": values[n],
               **images.get(n, {})} for n in names]

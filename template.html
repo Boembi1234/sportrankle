@@ -888,8 +888,13 @@ const soonTile = s => `<div class="tile soon" aria-disabled="true" aria-label="$
     <span class="tile-body"><span class="tile-name">${SPORTS[s].name}</span><span class="tile-status done">Soon</span></span>
   </div>`;
 // Guess the record sits in front of the sports: one tile straight into today's record for each pool that only has that game
-const guessCards = () => POOLS.filter(m => DATA[m].kinds.length === 1 && DATA[m].kinds[0] === 'guess' && DATA[m].sport === 'mixed')
-  .map(m => bigTile(`#guess-${m}`, `${GAMES.guess.name}, ${DATA[m].tab}`, DATA[m].cover, GAMES.guess.name, [`guess-${m}`]));
+const guessCards = () => {
+  const ps = poolsFor('guess');
+  if (!ps.length) return [];
+  const lead = ps.find(m => DATA[m].sport === 'mixed') || ps[0];
+  return [bigTile(ps.length > 1 ? '#guess' : `#guess-${lead}`, `${GAMES.guess.name}, ${ps.map(m => DATA[m].tab).join(', ')}`,
+    DATA[lead].cover, GAMES.guess.name, ps.map(m => `guess-${m}`))];
+};
 const topicCard = m => bigTile(`#t/${m}`, `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, DATA[m].cover, DATA[m].tab, keysOf([m]));
 
 // Sport page: its topics
@@ -941,6 +946,7 @@ function renderHome(kind, sport){
   };
   // Level 1: one card per game type; level 2: that game's sports; level 3: the pools of one sport
   const pools = poolsFor(kind || 'blind', sport);
+  const flat = kind && !sport && sportsFor(kind).every(s => poolsFor(kind, s).length === 1);   // one topic per sport: skip the sport level
   const kindCard = (kind, g) => {
     const kp = poolsFor(kind), done = kp.filter(m => progress(kind, m) >= PICK).length;
     const started = kp.filter(m => progress(kind, m) > 0).length;
@@ -975,8 +981,8 @@ function renderHome(kind, sport){
   };
   $('home').innerHTML = kind
     ? `<h1>${GAMES[kind].name}${sport ? ` · ${SPORTS[sport].name}` : ''}</h1>
-      <p class="today">${GAMES[kind].blurb} ${sport ? 'Pick a topic:' : 'Pick a sport:'}</p>
-      <div class="tiles">${sport ? pools.map(m => tile(kind, m)).join('') : sportsFor(kind).map(s => sportTile(kind, s)).join('')}</div>`
+      <p class="today">${GAMES[kind].blurb} ${sport || flat ? 'Pick a topic:' : 'Pick a sport:'}</p>
+      <div class="tiles">${sport || flat ? pools.map(m => tile(kind, m)).join('') : sportsFor(kind).map(s => sportTile(kind, s)).join('')}</div>`
     : `<section class="hero">
         <p class="eyebrow">Daily sports puzzles</p>
         <h1>How much of a sports freak are you?</h1>

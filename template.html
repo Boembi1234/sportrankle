@@ -242,14 +242,15 @@ a{color:inherit}
    full width, 52px high, 20px bold, centred, 8px corners */
 .k-rankle .title{min-height:52px;padding:15px 16px;border:0;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);color:var(--text);transition:transform .12s,box-shadow .12s,filter .12s;
   font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;letter-spacing:0;text-transform:none;text-align:center}
-/* Rankle: the extra facts on their own line under the name card: the size and weight of the menu's section labels,
+/* Rankle: the extra facts on their own line above the name card: the size and weight of the menu's section labels,
    but normal case and tighter spacing */
-.title-sub{margin:8px 0 0;font-size:12px;font-weight:700;letter-spacing:.02em;line-height:1.3;color:var(--muted);text-align:center}
+.title-sub{margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.02em;line-height:1.3;color:var(--muted);text-align:center}
 .page.done .title-sub{display:none}
 /* Rankle: no photo; the name card comes first, 24px under the header */
 .k-rankle .photo{display:none}
 .k-rankle .game{padding-top:24px}
 .k-rankle .title{margin-top:0}
+.k-rankle .right{margin-top:24px}   /* 24px from the name card to the first row */
 .k-rankle .title i{color:var(--surface)}
 @media (hover:hover){.k-rankle .title:hover{transform:translateY(-3px);box-shadow:0 6px 0 var(--surface-edge);filter:brightness(1.05)}}
 @media (prefers-reduced-motion:reduce){.k-rankle .title{transition:none}}
@@ -292,7 +293,9 @@ a{color:inherit}
 /* Rankle: the line under a filled category is all white; the value is the same size as the rest, just bold */
 .k-rankle .who,.k-rankle .unit{color:var(--text)}
 .k-rankle .res{gap:.28em}   /* name, value and unit read like one sentence: a normal word space, not 8px */
-.k-rankle .vals{font-size:14px;font-weight:800;letter-spacing:0;color:var(--text);text-shadow:none}
+.k-rankle .row.done .body{gap:0}   /* the info line sits tight under the category, a touch smaller and lighter */
+.k-rankle .who,.k-rankle .unit,.k-rankle .vals{font-size:13px;line-height:1.25}
+.k-rankle .vals{font-weight:700;letter-spacing:0;color:var(--text);text-shadow:none}
 .k-rankle .vals i{color:transparent}
 .k-rankle .vals i.lit{color:inherit;text-shadow:none}
 /* Rankle: the points sit in a blue box like the Play button (same colour, corners and hard edge), without hover */
@@ -300,8 +303,7 @@ a{color:inherit}
   font-size:15px;line-height:1.2;text-align:center;transition:transform .12s,box-shadow .12s,filter .12s}
 @media (hover:hover){.k-rankle .pts:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}   /* looks alive; clicking does nothing */
 @media (prefers-reduced-motion:reduce){.k-rankle .pts{transition:none}}
-.k-rankle .row.done{padding-right:9px}
-.k-rankle:not(.done) .row.done .who{display:none}   /* during play a filled row shows its value at once; the name (already on the card) joins in the results */   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
+.k-rankle .row.done{padding-right:9px}   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
 .row:disabled{cursor:default}
 .body{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .cat{font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -434,7 +436,7 @@ a{color:inherit}
   .vals{font-size:15px}
   .cat{font-size:15px}
   .hint,.who,.unit,.more{font-size:12px}
-  .k-rankle .vals{font-size:12px}
+  .k-rankle .who,.k-rankle .unit,.k-rankle .vals{font-size:12px}
   .pts{font-size:15px}
   .main{font-size:20px}
   .bar{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
@@ -534,8 +536,8 @@ a{color:inherit}
   <main class="game" id="game" hidden>
     <section class="left">
       <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
-      <div class="title" id="title" role="img"></div>
       <p class="title-sub" id="title-sub" hidden></p>
+      <div class="title" id="title" role="img"></div>
       <div class="led" id="led" hidden>
         <div><span class="led-lbl">Points</span><span class="led-num" id="led-num"></span></div>
         <div class="led-side"><span class="led-lbl">Of max</span><span class="led-num" id="led-pct"></span></div>
@@ -1345,7 +1347,7 @@ function rankleRound(){
   setCounter(true);
   const s = G.sports[G.round], [title, sub, short] = showItem(s);
   const line = [short !== title ? title : '', sub].filter(Boolean).join(', ');
-  // The extra facts (team, position, division) go on their own small line under the name card
+  // The extra facts (team, position, division) go on their own small line above the name card
   $('question').hidden = true;
   $('title-sub').textContent = line;
   $('title-sub').hidden = !line;

@@ -59,7 +59,6 @@ a{color:inherit}
 .top-right{display:flex;align-items:center;justify-content:flex-end;gap:14px}
 .logo{font-weight:800;font-stretch:75%;font-size:24px;line-height:1;margin:0;text-decoration:none;display:flex;align-items:center;min-height:44px}
 .icon{width:44px;height:44px;background:none;border:0;padding:0;cursor:pointer;position:relative;flex:none;display:block}
-.back::before{content:"";position:absolute;left:17px;top:15px;width:11px;height:11px;border-left:2px solid var(--text);border-bottom:2px solid var(--text);transform:rotate(45deg)}
 .stats-btn::before{content:"";position:absolute;left:13px;bottom:13px;width:4px;height:9px;background:var(--text);box-shadow:7px -5px 0 var(--text),14px -2px 0 var(--text)}
 .counter{display:flex;align-items:center;gap:14px;font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
 .counter i{width:1px;height:20px;background:var(--line-strong)}
@@ -76,7 +75,6 @@ a{color:inherit}
 .panel .stats span{color:var(--muted);font-size:13px}
 .page.at-home .counter,.page.at-home #stats-btn{display:none}
 .page:not(.at-home) .top .logo{display:none}
-.page.at-home .back{display:none}
 /* Menu: three bars top left; a drawer slides in from the left with the sports and the games */
 .burger::before,.burger::after{content:"";position:absolute;left:13px;width:22px;height:2.5px;border-radius:1.25px;background:var(--text)}
 .burger::before{top:14px;box-shadow:0 7px 0 var(--text)}
@@ -440,7 +438,6 @@ a{color:inherit}
   <header class="top">
     <div class="top-left">
       <button class="icon burger" id="menu-btn" type="button" aria-label="Menu" aria-controls="menu"></button>
-      <a class="icon back" id="back" href="#" aria-label="All games"></a>
       <a class="logo logo-left" href="#">Sportrankle</a>
     </div>
     <div class="top-mid">
@@ -540,10 +537,8 @@ const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !DATA[m].kinds |
 const poolsFor = (kind, sport) => POOLS.filter(m => (!DATA[m].kinds || DATA[m].kinds.includes(kind)) && (!sport || DATA[m].sport === sport))
   .sort((a, b) => (DATA[b].flagship ? 1 : 0) - (DATA[a].flagship ? 1 : 0));
 const sportsFor = kind => Object.keys(SPORTS).filter(s => poolsFor(kind, s).length);
-// Home page order: sport -> topic -> game. A topic's back arrow goes to its sport page when the sport has
-// more than one topic, else home; a game's back arrow goes to its topic page.
+// Home page order: sport -> topic -> game
 const topicsOf = s => POOLS.filter(m => DATA[m].sport === s);
-const upLink = m => topicsOf(DATA[m].sport).length > 1 ? `#s/${DATA[m].sport}` : '#';
 const keysOf = pools => ORDER.filter(k => pools.includes(k.split('-')[1]));
 const FLAG = Object.keys(DATA).find(m => DATA[m].flagship);
 const BLIND_PTS = [5, 3, 1];   // exact slot, one off, two off
@@ -1190,7 +1185,6 @@ function route(){
   if (h === 'ringer') {
     KIND = null;
     $('page').className = 'page at-home at-kind at-party';
-    $('back').href = '#';
     $('home').hidden = true; $('game').hidden = true; $('alt').hidden = true; $('party').hidden = false;
     partySetup();
     scrollTo(0, 0);
@@ -1204,7 +1198,6 @@ function route(){
   if ((msp && SPORTS[msp[1]]) || (mt && DATA[mt[1]])) {
     KIND = null;
     $('page').className = `page at-home at-kind${mt ? ' at-topic' : ''}`;
-    $('back').href = mt ? upLink(mt[1]) : '#';
     $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;
     if (mt) renderTopic(mt[1]); else renderSport(msp[1]);
     scrollTo(0, 0);
@@ -1213,7 +1206,6 @@ function route(){
   if (ms && sportsFor(ms[1]).includes(ms[2])) {
     KIND = null;
     $('page').className = 'page at-home at-kind';
-    $('back').href = `#${ms[1]}`;
     $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;
     renderHome(ms[1], ms[2]);
     scrollTo(0, 0);
@@ -1222,7 +1214,6 @@ function route(){
   if (!m || (m[2] && !poolsFor(m[1]).includes(m[2]))) {
     KIND = null;
     $('page').className = 'page at-home';
-    $('back').href = '#';
     $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;
     renderHome();
     scrollTo(0, 0);
@@ -1231,7 +1222,6 @@ function route(){
   if (!m[2]) {  // the pools of one game type
     KIND = null;
     $('page').className = 'page at-home at-kind';
-    $('back').href = '#';
     $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;
     renderHome(m[1]);
     scrollTo(0, 0);
@@ -1239,7 +1229,6 @@ function route(){
   }
   KIND = m[1]; MODE = m[2]; D = DATA[MODE]; N = D.items.length;
   $('page').className = 'page';
-  $('back').href = `#t/${MODE}`;
   $('today').hidden = true;
   $('led').hidden = true;
   $('share').hidden = true;

@@ -86,8 +86,8 @@ a{color:inherit}
 /* The drawer's X: slides in with the drawer and stops exactly where the three bars are (openMenu measures them) */
 .drawer-x{position:fixed;z-index:42;transform:translateX(calc(-1 * var(--dw)));visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
 .menu-open .drawer-x{transform:none;visibility:visible;transition:transform .22s ease}
-/* The X lines are a little longer than the bars, so the X looks as big as the three bars */
-.drawer-x::before,.drawer-x::after{left:10px;width:28px}
+/* The X fills the same box as the three bars: 24px lines cross in a ~17px square, centred where the bars are */
+.drawer-x::before,.drawer-x::after{left:12px;width:24px}
 .drawer-x::before{box-shadow:none;transform:translateY(7px) rotate(45deg)}
 .drawer-x::after{transform:translateY(-7px) rotate(-45deg)}
 /* Drawer width: 367px, the whole screen up to 639px wide */

@@ -387,7 +387,7 @@ a{color:inherit}
 .k-rankle .row.worst .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}   /* the worst pick(s): red */
 /* Rankle results: "Your board" / "Perfect board" as two chips, half the width each; the active one blue, the other grey
    with the buttons' hover */
-.k-rankle .seg{gap:8px;margin-top:24px}
+.k-rankle .seg{gap:8px;margin-top:16px}   /* as far from the score card as the two buttons are apart (10px on phones) */
 .page.k-rankle.done #board,.page.k-rankle.done .alt{margin-top:24px}   /* 24px from the switch to the list, like the facts to the rows */
 .k-rankle .segbtn{flex:1;min-height:40px;border-radius:6px;background:var(--surface);box-shadow:0 2px 0 var(--surface-edge);color:var(--text);
   font-size:15px;font-weight:700;text-decoration:none;transition:transform .12s,box-shadow .12s,filter .12s}
@@ -477,6 +477,7 @@ a{color:inherit}
   .bar{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
   .title-sub{margin-top:10px}
   .page.k-rankle.done .bar{gap:10px}
+  .k-rankle .seg{margin-top:10px}
 }
 /* Short screens: the hint line goes first, then the question shrinks */
 @media (max-height:700px){

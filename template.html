@@ -73,13 +73,12 @@ a{color:inherit}
 .panel .stats{display:flex;gap:28px;flex-wrap:wrap;margin:0 0 10px}
 .panel .stats b{display:block;font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
 .panel .stats span{color:var(--muted);font-size:13px}
-.page.at-home .counter,.page.at-home #stats-btn{display:none}
+.page.at-home .counter,#stats-btn{display:none}   /* the header shows only the language flag on the right, in games too */
 .page:not(.at-home) .top .logo{display:none}
 /* Menu: three bars top left; a drawer slides in from the left with the sports and the games */
 .burger::before,.burger::after{content:"";position:absolute;left:13px;width:22px;height:2.5px;border-radius:1.25px;background:var(--text)}
 .burger::before{top:14px;box-shadow:0 7px 0 var(--text)}
 #menu-btn{margin-left:-13px}   /* the bars (not the 44px tap area) start at the 24px side margin */
-#stats-btn{margin-right:-13px}   /* likewise on the right: the bars end at the 24px side margin */
 .burger::after{top:28px}
 /* The drawer's X: slides in with the drawer and stops exactly where the three bars are (openMenu measures them) */
 .drawer-x{position:fixed;z-index:42;transform:translateX(calc(-1 * var(--dw)));visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
@@ -1779,6 +1778,13 @@ function guessResults(){
 // ================= Shared play controls =================
 function select(i){
   if (busy || G.phase !== 'round' || G.placed[i] != null) return;
+  if (G.sel === i && KIND === 'rankle') {   // Rankle: a second tap on the chosen row un-chooses it (Reveal locks it in)
+    $(`row-${i}`).classList.remove('sel');
+    G.sel = null;
+    $('main').disabled = true;
+    announce(`${D.cats[G.cats[i]].name} unselected`);
+    return;
+  }
   if (G.sel === i) return confirmPick();
   if (G.sel != null) $(`row-${G.sel}`).classList.remove('sel');
   G.sel = i;

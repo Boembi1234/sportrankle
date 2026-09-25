@@ -58,7 +58,7 @@ Own photos go into `photos/<pool>/<item name>.jpg` (see `photos/README.txt`); th
 
 ## Online results (optional)
 
-There are no logins. When a game ends, the page records `day, game, score, max` under a random device id kept in `localStorage`, then shows how the score compares with everyone else's that day ("Better than 73 % of today's 1,204 players"). The schema and policies are in `supabase/migrations/`: the public key can only insert one row per device, game and day (game keys `rankle-`, `blind-`, `sort-`, `guess-`; a new game type needs a migration widening that pattern) and call `daily_stats()`, which returns a score histogram — individual rows are never readable from the browser.
+There are no logins. When a game ends, the page records `day, game, score, max` under a random device id kept in `localStorage`, then shows how the score compares with everyone else's that day ("You beat 73 %", "1,204 played today"). The schema and policies are in `supabase/migrations/`: the public key can only insert one row per device, game and day (game keys `rankle-`, `blind-`, `sort-`, `guess-`; a new game type needs a migration widening that pattern) and call `daily_stats()`, which returns a score histogram — individual rows are never readable from the browser.
 
 The build enables it when `supabase/anon.key` exists (the project's public "anon" key, one line). Without the file the page runs exactly the same, minus that one line on the results screen. To use your own project: `npx supabase link --project-ref <ref>`, `npx supabase db push`, then save the anon key to `supabase/anon.key` and rebuild.
 

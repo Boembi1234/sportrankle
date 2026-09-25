@@ -312,14 +312,20 @@ a{color:inherit}
 .page:is(.k-blind,.k-sort,.k-guess) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
 .page:is(.k-blind,.k-sort,.k-guess):not(.done) .question{font-size:17px;margin-top:24px}
 .page:is(.k-blind,.k-sort,.k-guess) .right{margin-top:16px}
-/* Guess the record: the answer field is one of our boxes (card colour, big white number, blue ring when typing), the unit beside it */
+/* Guess the record: each answer part is a box like the rows in the other games (faint box; the full card colour on hover and
+   while typing, no ring), the unit inside it on the right; the boxes together are as wide as everything else */
 .k-guess .guess-li{padding:0}
-.k-guess .guess{gap:12px}
-.k-guess .guess input{min-height:52px;padding:0 16px;border:0;border-radius:10px;background:var(--surface);color:var(--text);
+.k-guess .guess{gap:8px}
+.k-guess .gbox{flex:1;min-width:0;display:flex;align-items:center;gap:8px;min-height:52px;padding:0 16px;border-radius:10px;
+  background:var(--surface-faint);cursor:text;transition:background-color .15s}
+@media (hover:hover){.k-guess .gbox:hover{background:var(--surface)}}
+.k-guess .gbox:focus-within{background:var(--surface)}
+.k-guess .gbox input{flex:1;min-width:0;width:0;min-height:0;padding:0;border:0;background:none;outline:none;color:var(--text);
   font-family:var(--font);font-weight:800;font-size:24px;letter-spacing:0;text-shadow:none}
-.k-guess .guess input::placeholder{color:var(--muted);font-weight:700}
-.k-guess .guess input:focus{outline:2px solid var(--signal);outline-offset:0}
-.k-guess .guess-unit{margin-right:0;font-size:17px;font-weight:700;color:var(--muted)}
+.k-guess .gbox input::placeholder{color:var(--muted);font-weight:700}
+.k-guess .gbox input:focus,.k-guess .gbox input:focus-visible{outline:none}   /* the box turning grey shows the focus */
+.k-guess .guess-unit{flex:none;margin:0;font-size:17px;font-weight:700;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.k-guess .gbox{transition:none}}
 /* Guess the record results: the facts as rows in the card colour like the other results (label left, value right) */
 .page.k-guess .board>li.fact{min-height:48px}
 .k-guess .fact{align-items:center;padding:8px 12px;border-radius:10px;background:var(--surface)}
@@ -1831,8 +1837,9 @@ function startGuess(){
   const fields = guessFields(it), words = fields.map(f => FIELD_WORD[f] || f), inWords = fields.length > 1 ? `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}` : (UNIT_WORD[it.unit] || it.unit);
   const emo = {long: '⏱️', fast: '💨', far: '📏', heavy: '🏋️', many: '🔢'}[how];
   $('question').innerHTML = `<span class="emo">${emo}</span>How ${how}? Guess the record in ${inWords}.`;
-  $('board').innerHTML = `<li class="guess-li"><div class="guess">${fields.map((f, i) => `<input class="gf" id="gf-${i}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
-      placeholder="${fields.length > 1 ? '0' : 'e.g. 100'}" aria-label="${FIELD_WORD[f] || f}"><span class="guess-unit">${f}</span>`).join('')}</div></li>`;
+  // Each answer part is a box with its unit inside it (full width together), like the rows in the other games
+  $('board').innerHTML = `<li class="guess-li"><div class="guess">${fields.map((f, i) => `<label class="gbox"><input class="gf" id="gf-${i}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
+      placeholder="${fields.length > 1 ? '0' : '100'}" aria-label="${FIELD_WORD[f] || f}"><span class="guess-unit">${f}</span></label>`).join('')}</div></li>`;
   $('round').textContent = ''; $('csep').hidden = $('cpts').hidden = true; shown = 0; $('score').textContent = 0;
   const rec = record('guess', MODE);
   if (rec && rec.done && rec.guess > 0) { G.guess = rec.guess; guessResults(); return; }

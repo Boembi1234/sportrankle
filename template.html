@@ -691,7 +691,7 @@ const GAME_ICONS = __GAME_ICONS__;   // {game: icon} for the menu, like the spor
 const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cover?}}
 const ROUTE = __ROUTE__;   // the view a real URL opens on (e.g. "#t/nfl" on /nfl-teams), "" on the home page
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
-const POOLS = ['athletes', 'sports', 'f1', 'nhlteams', 'nhlplayers', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'footrecords', 'records'];
+const POOLS = ['athletes', 'sports', 'f1', 'nhlteams', 'nhlplayers', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'footrecords', 'hockeyrecords', 'records'];
 const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !SPORTS[DATA[m].sport].soon && (!DATA[m].kinds || DATA[m].kinds.includes(k))).map(m => `${k}-${m}`));
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
 // A sport marked "soon" is listed like the others, its page says "Coming soon": its pools are out of every list, route and the next-game cycle
@@ -1815,7 +1815,7 @@ function startGuess(){
   setPhoto(D.cover ? {img: D.cover, name: 'World records'} : null);
   titleCards(it.name, `${it.name}${it.type ? ', ' + it.type : ''}`);   // the record on the name card, its sport and type as chips
   chips([it.cat, it.type].filter(Boolean).join(' · '));
-  const how = ['s', 'min', 'days', 'weeks', 'years'].includes(it.unit) ? 'long' : it.unit === 'km/h' ? 'fast' : ['m', 'km', 'cm', 'yards'].includes(it.unit) ? 'far' : it.unit === 'kg' ? 'heavy' : 'many';
+  const how = ['s', 'min', 'days', 'weeks', 'years'].includes(it.unit) ? 'long' : ['km/h', 'mph'].includes(it.unit) ? 'fast' : ['m', 'km', 'cm', 'yards'].includes(it.unit) ? 'far' : it.unit === 'kg' ? 'heavy' : 'many';
   $('question').className = 'question';
   $('question').hidden = false;
   const fields = guessFields(it), words = fields.map(f => FIELD_WORD[f] || f), inWords = fields.length > 1 ? `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}` : (UNIT_WORD[it.unit] || it.unit);

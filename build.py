@@ -128,6 +128,9 @@ GAMES["records"] = {
 GAMES["footrecords"] = {
     "file": "Football_Records*.xlsx", "tab": "Football records", "noun": "record", "plural": "records", "word": "RECORD",
     "sport": "soccer", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/footrecords.png", "ratio": 1.5, "pad": True}}
+GAMES["hockeyrecords"] = {
+    "file": "Hockey_Records*.xlsx", "tab": "Hockey records", "noun": "record", "plural": "records", "word": "RECORD",
+    "sport": "hockey", "kinds": ["guess"], "format": "records", "cover": "covers/sport-hockey.png"}
 # Title-board names that the surname rule gets wrong
 SHORT_NAMES = {"Vinicius Junior": "Vinicius", "Vinícius Júnior": "Vinícius", "Cristiano Ronaldo": "Cristiano", "Ronaldo Nazário": "Ronaldo",
                "Son Heung-min": "Son", "Yao Ming": "Yao Ming", "Magic Johnson": "Magic", "Canelo Álvarez": "Canelo"}

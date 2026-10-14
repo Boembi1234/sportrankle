@@ -341,8 +341,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-ringer .deal-k{font-size:13px;letter-spacing:0;text-transform:none}
 .k-ringer .deal-h{font-size:28px;font-stretch:100%}
 @media (prefers-reduced-motion:reduce){.k-ringer .stepper button{transition:none}}
-/* Guesstimate: built from the games' parts like Impostor. The sport list as rows, then one question: the question large,
-   its context muted, one input box with the unit inside (like Guess the record), the calculator as a second button */
+/* Guesstimate: built from the games' parts like Impostor. The question left-aligned in the grey box (it grows with the
+   text), the calculator as a round button in its corner, one input box with the unit inside (like Guess the record) */
 .k-est .party{padding-block:24px 24px}
 .k-est .party .title{margin:0}
 .k-est .party .bar{padding-top:16px}
@@ -739,7 +739,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
     <section id="est-play" hidden>
       <div class="est-box">
         <h1 class="est-q" id="est-q"></h1>
-        <p class="est-ctx" id="est-ctx" hidden></p>
         <button class="est-calc" id="est-calc-btn" type="button" aria-label="Open the calculator" title="Calculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="5.5" width="8" height="4" rx="1" fill="currentColor"/><circle cx="9" cy="13.5" r="1.3" fill="currentColor"/><circle cx="15" cy="13.5" r="1.3" fill="currentColor"/><circle cx="9" cy="17.5" r="1.3" fill="currentColor"/><circle cx="15" cy="17.5" r="1.3" fill="currentColor"/></svg></button>
       </div>
       <div class="led est-score" id="est-score" hidden></div>
@@ -1567,7 +1566,6 @@ function estRender(){
   const q = EST.find(x => x.id === ER.id);
   $('est-empty').hidden = true; $('est-play').hidden = false;
   $('est-q').textContent = estText(q, 'question');
-  $('est-ctx').hidden = !q.context; $('est-ctx').textContent = estText(q, 'context') || '';
   $('est-note').textContent = ''; $('est-note').classList.remove('err');
   if (ER.guess != null) return estResults(q);
   $('est-score').hidden = true;

@@ -2,7 +2,7 @@
   {
     "id": "demo-hockey-pucks",
     "sportCategory": "hockey",
-    "question": "DEMO: How many pucks are used in one regular season?",
+    "question": "How many pucks are used in one regular season?",
     "context": "Demo question with made-up assumptions: 32 teams, 82 games per team, 12 pucks per game.",
     "answer": 15744,
     "unit": "pucks",
@@ -24,7 +24,7 @@
   {
     "id": "demo-hockey-ice-water",
     "sportCategory": "hockey",
-    "question": "DEMO: How many litres of water does a 60 m × 26 m ice sheet need?",
+    "question": "How many litres of water does a 60 m × 26 m ice sheet need?",
     "context": "Demo question with made-up assumptions: a plain rectangle, ice 3 cm thick, 1 m³ of ice from 1,000 litres of water.",
     "answer": 46800,
     "unit": "litres",
@@ -45,7 +45,7 @@
   {
     "id": "demo-soccer-distance",
     "sportCategory": "soccer",
-    "question": "DEMO: How many kilometres do all players on the pitch run in one match?",
+    "question": "How many kilometres do all players on the pitch run in one match?",
     "context": "Demo question with made-up assumptions: 22 players play the full 90 minutes and each runs 10.5 km.",
     "answer": 231,
     "unit": "km",

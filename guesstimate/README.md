@@ -5,7 +5,7 @@ question and leaves out (with a message) any that is incomplete. The game draws 
 (no sport to pick, no repeat until all were played); with none at all it shows a "questions on their way" page.
 
 `demo.json` holds three made-up demo questions for testing. They are only built in when the environment variable
-`GUESSTIMATE_DEMO=1` is set (the local dev server `tools/dev.py` sets it), start with "DEMO:" and never
+`GUESSTIMATE_DEMO=1` is set (the local dev server `tools/dev.py` sets it), are not marked in the game and never
 reach the live site. Don't put real questions there.
 
 ## One question
@@ -43,7 +43,7 @@ reach the live site. Don't put real questions there.
 | `id` | yes | Unique, lowercase with dashes. Used in share links (`#guesstimate/q/<id>`), so don't change it later. |
 | `sportCategory` | yes | Not shown in the game for now (it draws from all questions), kept for sorting later. A sport key from `SPORTS` in `build.py`: `mixed`, `soccer`, `hockey`, `basketball`, `football`, `baseball`, `tennis`, `motorsport`, `winter`. |
 | `question` | yes | The question as shown. |
-| `context` | no | Season, region or given assumptions, shown under the question. |
+| `context` | no | Season, region or given assumptions. Not shown in the game for now. |
 | `answer` | yes | A plain number above 0 (no units, no thousands separators): `30000`, `46.8`. |
 | `unit` | yes | Shown next to the input and the numbers: `pucks`, `litres`, `km`, `years`. |
 | `answerType` | yes | `sourced` (a documented number, needs `sources`) or `estimate` (shown as "Model estimate"). |

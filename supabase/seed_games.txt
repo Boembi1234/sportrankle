@@ -22,3 +22,6 @@ guess-footrecords	guess	100
 rankle-nhlteams	rankle	800
 blind-nhlteams	blind	40
 sort-nhlteams	sort	40
+rankle-nhlplayers	rankle	800
+blind-nhlplayers	blind	40
+sort-nhlplayers	sort	40

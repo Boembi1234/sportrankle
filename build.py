@@ -59,6 +59,8 @@ GAMES = {
             "sport": "football", "cover": {"file": "covers/nfl.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Division 2026"]},
     "nhlteams": {"file": "NHL_Teams*.xlsx", "tab": "NHL teams", "noun": "team", "plural": "teams", "word": "NHL", "english": True, "short": "last",
                  "sport": "hockey", "cover": "covers/sport-hockey.png", "sub": ["HILFSSPALTE: Division 2026/27"]},
+    "nhlplayers": {"file": "NHL_Spieler*.xlsx", "tab": "NHL players", "noun": "player", "plural": "players", "word": "NHL", "english": True, "short": "surname",
+                   "sport": "hockey", "cover": "covers/sport-hockey.png", "sub": ["HILFSSPALTE: Team (Okt. 2026)", "HILFSSPALTE: Position"]},
     "nflplayers": {"file": "NFL_Spieler*.xlsx", "tab": "NFL players", "noun": "player", "plural": "players", "word": "NFL", "english": True, "short": "surname",
                    "sport": "football", "cover": {"file": "covers/nflplayers.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Team (Sept. 2026)", "HILFSSPALTE: Position"]},
     "nflhof": {"file": "NFL_HallOfFame*.xlsx", "tab": "NFL Hall of Fame", "noun": "legend", "plural": "legends", "word": "HOF", "english": True, "short": "surname",
@@ -267,6 +269,18 @@ CATS_EN = {
     "Draft-Jahr": ("Draft year", ""),
     "Draft-Position": ("Draft position", "overall"),
     "Alter beim NFL-Debüt": ("Age at NFL debut", "years"),
+    # NHL players (the other columns share the NFL names above)
+    "Alter beim NHL-Debüt": ("Age at NHL debut", "years"),
+    "Stanley-Cup-Siege": ("Stanley Cups", "titles"),
+    "NHL-Trophäen Karriere": ("NHL awards", "awards"),
+    "Tore Karriere": ("Career goals", "goals"),
+    "Punkte Karriere": ("Career points", "points"),
+    "Strafminuten Karriere": ("Career penalty minutes", "min"),
+    "Plus/Minus Karriere": ("Career plus/minus", ""),
+    "Punkte Saison 2025/26": ("Points 2025/26", "points"),
+    "Tore Saison 2025/26": ("Goals 2025/26", "goals"),
+    "Ø Eiszeit pro Spiel 2025/26": ("Ice time per game 2025/26", "min"),
+    "Anzahl NHL-Teams Karriere": ("NHL teams played for", "teams"),
     "Playoff-Spiele Karriere": ("Playoff games", "games"),
     "Saisons im aktuellen Team": ("Seasons with current team", "seasons"),
     "Pro-Bowl-Nominierungen": ("Pro Bowl selections", ""),
@@ -346,7 +360,7 @@ DIR_EN = {"meiste": "most", "grösste": "largest", "grösster": "largest", "län
           "meister Platz unter dem Cap": "most", "wertvollste": "most valuable", "dienstältester Head Coach": "longest-serving",
           "günstigstes Bier": "cheapest", "ältester Kader": "oldest", "längste Serie": "longest", "meiste Head Coaches": "most",
           "bestbezahlter Trainer": "highest paid", "meiste NFL-Profis": "most", "grösste Uni": "largest",
-          "höchster Sieg": "biggest", "beste Differenz": "best", "schnellster": "fastest", "Grösste Uni": "largest"}
+          "höchster Sieg": "biggest", "beste Differenz": "best", "beste Bilanz": "best", "schnellster": "fastest", "Grösste Uni": "largest"}
 
 # Rankle shows each category as one title with its direction: "most" + "Playoff wins, all time" -> "Most playoff wins, all time".
 # Where that reads badly (a doubled word, a lowercased name), the full title is spelled out here, keyed by the automatic one.
@@ -400,6 +414,9 @@ TITLES = {
 # Category -> emoji shown in front of its title, keyed by the English category name (the same name may appear in several pools).
 # Names not listed here fall back to a keyword rule in cat_emoji(); the build prints the ones that end up with the generic mark.
 CAT_EMOJI = {
+    # NHL players
+    "Age at NHL debut": "🐣", "NHL awards": "🏅", "Career goals": "🥅", "Career points": "💯", "Career penalty minutes": "⛔",
+    "Career plus/minus": "➕", "Goals 2025/26": "🚨", "Ice time per game 2025/26": "⏱️", "NHL teams played for": "🔄",
     # Team sports
     "Players on the field": "👥", "Playing area": "📐", "Field length": "📏", "Game periods": "⏱️", "Referees on the field": "🦓",
     "Highest single score": "🎯", "Ball / puck / stone weight": "⚖️", "Ball size": "🏐", "Goal / hoop / net height": "🥅",
@@ -973,6 +990,8 @@ def main():
         for cat in g['cats']:
             cat['title'] = cat_title(cat)
             cat['emoji'] = cat_emoji(cat)
+            if g.get("sport") == "hockey" and cat['emoji'] == "🏈":   # shared NFL names (games, playoff games) on the ice
+                cat['emoji'] = "🔥" if cat["name"] == "Playoff games" else "🏒"
         g["url"] = f"{SITE}/{slug(g['tab'])}"
     base = (TEMPLATE.read_text(encoding="utf-8")
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))

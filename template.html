@@ -464,16 +464,22 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 @media (prefers-reduced-motion:reduce){.led-bar i{transition:none}}
 .page.done .title{display:none}
 
-/* Today's scores: a small histogram, your score bucket in the accent colour */
-.today{margin:14px 0 0;max-width:460px}
-.today-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;color:var(--muted);margin-bottom:8px}
+/* Today's scores, inside the score card: thin bars in one colour, a line with a "You" pill at your score and a dashed
+   line at the average. The pill and the average label shift by the same share as their position, so they never
+   stick out at the edges */
+.led .today{grid-column:1/-1;margin:18px 0 0}
+.today-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;color:var(--muted)}
 .today-h b{color:var(--signal);font-weight:700;font-size:15px}
-.today-bars{display:flex;align-items:flex-end;gap:3px;height:56px;border-bottom:1px solid var(--line-strong)}
-.today-bars i{flex:1;min-height:2px;height:calc(var(--v) * 100%);background:var(--card-open);border-radius:3px 3px 0 0}
-.today-bars i.me{background:var(--signal)}
-.today-axis{position:relative;display:flex;justify-content:space-between;height:18px;margin-top:4px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.today-axis span:last-child{margin-left:auto}   /* the maximum stays right when the 0 is hidden */
-.today-axis .you{position:absolute;left:var(--x);transform:translateX(-50%);color:var(--signal);font-weight:700;white-space:nowrap}
+.today-bars{position:relative;display:flex;align-items:flex-end;gap:3px;height:110px;padding-top:34px}
+.today-bars i{flex:1;min-height:3px;height:calc(var(--v) * 100%);background:color-mix(in srgb,var(--text) 22%,transparent);border-radius:3px 3px 0 0}
+.today-avg,.today-me{position:absolute;bottom:0;left:var(--x);width:0}
+.today-avg{top:34px;border-left:2px dashed color-mix(in srgb,var(--text) 70%,transparent)}
+.today-me{top:30px;border-left:2px solid var(--signal)}
+.today-me b{position:absolute;bottom:100%;left:0;margin-bottom:4px;transform:translateX(calc(var(--x) * -1));padding:3px 10px;border-radius:999px;
+  background:var(--signal);color:var(--bg);font-size:13px;font-weight:800;white-space:nowrap}
+.today-axis{position:relative;display:flex;justify-content:space-between;height:34px;margin-top:6px;font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.today-axis .avg{position:absolute;left:var(--x);transform:translateX(calc(var(--x) * -1));text-align:center;color:var(--text);line-height:1.2}
+.today-axis .avg small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .seg{display:flex;gap:20px;margin-top:12px}
 .segbtn{background:none;border:0;padding:0;min-height:40px;font:inherit;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;text-decoration:underline 2px transparent;text-underline-offset:6px}
 .segbtn[aria-pressed="true"]{color:var(--text);text-decoration-color:var(--signal)}
@@ -653,13 +659,13 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
         <div class="led-side"><span class="led-lbl">Of max</span><span class="led-num" id="led-pct"></span></div>
         <div class="led-bar" aria-hidden="true"><i id="led-fill"></i></div>
         <p class="led-note" id="led-note"></p>
+        <div class="today" id="today" hidden>
+          <div class="today-h" id="today-h"></div>
+          <div class="today-bars" id="today-bars" role="img"></div>
+          <div class="today-axis" id="today-axis" aria-hidden="true"></div>
+        </div>
       </div>
       <h1 class="question" id="question"></h1>
-      <div class="today" id="today" hidden>
-        <div class="today-h" id="today-h"></div>
-        <div class="today-bars" id="today-bars" role="img"></div>
-        <div class="today-axis" id="today-axis" aria-hidden="true"></div>
-      </div>
       <div class="seg" id="seg" role="group" aria-label="Board view">
         <button class="segbtn" type="button" id="seg-mine" aria-pressed="true">Your board</button>
         <button class="segbtn" type="button" id="seg-alt" aria-pressed="false">Perfect board</button>
@@ -1007,21 +1013,21 @@ function showStats(rows, score, max){
   const total = rows.reduce((a, r) => a + Number(r.n), 0);
   const below = rows.filter(r => r.score < score).reduce((a, r) => a + Number(r.n), 0);
   if (!total) return;
-  // Histogram in up to ten equal score buckets; a perfect score gets the last one
-  const width = Math.ceil((max + 1) / Math.min(10, max + 1)), nb = Math.ceil((max + 1) / width);
+  // Histogram in up to twenty equal score buckets; a perfect score gets the last one. Positions on the axis run
+  // over the same 0 to max + 1 span as the buckets, so the lines sit over the right bar
+  const nb = Math.min(20, max + 1), width = (max + 1) / nb, at = v => `${(v + .5) / (max + 1) * 100}%`;
   const bins = Array(nb).fill(0);
   rows.forEach(r => { bins[Math.min(nb - 1, Math.floor(r.score / width))] += Number(r.n); });
-  const mine = Math.min(nb - 1, Math.floor(score / width)), top = Math.max(...bins);
+  const top = Math.max(...bins), avg = rows.reduce((a, r) => a + r.score * Number(r.n), 0) / total;
   const pct = Math.round(100 * below / (total - 1));
   G.stat = total < 10 ? null : {pct, total};
   $('today-h').innerHTML = total < 10
     ? `<b>${total === 1 ? 'First to play today' : `${total} played today so far`}</b><span>the comparison starts at 10 players</span>`
     : `<b>You beat ${pct} %</b><span>${total.toLocaleString('en-US')} played today</span>`;
-  $('today-bars').innerHTML = bins.map((n, i) => `<i${i === mine ? ' class="me"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('');
-  $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
-  $('today-axis').innerHTML = `<span${mine === 0 ? ' hidden' : ''}>0</span>`
-    + `<span class="you" style="--x:${(mine + .5) / nb * 100}%">You · ${score}</span>`
-    + `<span${mine === nb - 1 ? ' hidden' : ''}>${max}</span>`;
+  $('today-bars').innerHTML = bins.map(n => `<i style="--v:${n / top}" title="${n}"></i>`).join('')
+    + `<span class="today-avg" style="--x:${at(avg)}"></span><span class="today-me" style="--x:${at(score)}"><b>You · ${score}</b></span>`;
+  $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, average ${Math.round(avg)}, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
+  $('today-axis').innerHTML = `<span>0</span><span class="avg" style="--x:${at(avg)}">${Math.round(avg)}<small>Average</small></span><span>${max}</span>`;
   el.hidden = false;
 }
 

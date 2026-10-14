@@ -472,6 +472,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .today-bars i{flex:1;min-height:2px;height:calc(var(--v) * 100%);background:var(--card-open);border-radius:3px 3px 0 0}
 .today-bars i.me{background:var(--signal)}
 .today-axis{position:relative;display:flex;justify-content:space-between;height:18px;margin-top:4px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.today-axis span:last-child{margin-left:auto}   /* the maximum stays right when the 0 is hidden */
 .today-axis .you{position:absolute;left:var(--x);transform:translateX(-50%);color:var(--signal);font-weight:700;white-space:nowrap}
 .seg{display:flex;gap:20px;margin-top:12px}
 .segbtn{background:none;border:0;padding:0;min-height:40px;font:inherit;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;text-decoration:underline 2px transparent;text-underline-offset:6px}
@@ -997,26 +998,31 @@ async function reportResult(score, max){
     await sb('results', {day, game, device: deviceId(), score, max}, [409]);
     const rows = await sb('rpc/daily_stats', {p_day: day, p_game: game});
     if (G.day !== day || `${KIND}-${MODE}` !== game) return;   // the player moved on meanwhile
-    const total = rows.reduce((a, r) => a + Number(r.n), 0);
-    const below = rows.filter(r => r.score < score).reduce((a, r) => a + Number(r.n), 0);
-    if (!total) return;
-    // Histogram in up to ten equal score buckets; a perfect score gets the last one
-    const width = Math.ceil((max + 1) / Math.min(10, max + 1)), nb = Math.ceil((max + 1) / width);
-    const bins = Array(nb).fill(0);
-    rows.forEach(r => { bins[Math.min(nb - 1, Math.floor(r.score / width))] += Number(r.n); });
-    const mine = Math.min(nb - 1, Math.floor(score / width)), top = Math.max(...bins);
-    const pct = Math.round(100 * below / (total - 1));
-    G.stat = total < 10 ? null : {pct, total};
-    $('today-h').innerHTML = total < 10
-      ? `<b>${total === 1 ? 'First to play today' : `${total} played today so far`}</b><span>the comparison starts at 10 players</span>`
-      : `<b>You beat ${pct} %</b><span>${total.toLocaleString('en-US')} played today</span>`;
-    $('today-bars').innerHTML = bins.map((n, i) => `<i${i === mine ? ' class="me"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('');
-    $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
-    $('today-axis').innerHTML = `<span${mine === 0 ? ' hidden' : ''}>0</span>`
-      + `<span class="you" style="--x:${(mine + .5) / nb * 100}%">You · ${score}</span>`
-      + `<span${mine === nb - 1 ? ' hidden' : ''}>${max}</span>`;
-    el.hidden = false;
+    showStats(rows, score, max);
   } catch (e) { /* offline or blocked: the game works without it */ }
+}
+// The histogram under the results from the score counts of everyone today ([{score, n}])
+function showStats(rows, score, max){
+  const el = $('today');
+  const total = rows.reduce((a, r) => a + Number(r.n), 0);
+  const below = rows.filter(r => r.score < score).reduce((a, r) => a + Number(r.n), 0);
+  if (!total) return;
+  // Histogram in up to ten equal score buckets; a perfect score gets the last one
+  const width = Math.ceil((max + 1) / Math.min(10, max + 1)), nb = Math.ceil((max + 1) / width);
+  const bins = Array(nb).fill(0);
+  rows.forEach(r => { bins[Math.min(nb - 1, Math.floor(r.score / width))] += Number(r.n); });
+  const mine = Math.min(nb - 1, Math.floor(score / width)), top = Math.max(...bins);
+  const pct = Math.round(100 * below / (total - 1));
+  G.stat = total < 10 ? null : {pct, total};
+  $('today-h').innerHTML = total < 10
+    ? `<b>${total === 1 ? 'First to play today' : `${total} played today so far`}</b><span>the comparison starts at 10 players</span>`
+    : `<b>You beat ${pct} %</b><span>${total.toLocaleString('en-US')} played today</span>`;
+  $('today-bars').innerHTML = bins.map((n, i) => `<i${i === mine ? ' class="me"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('');
+  $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
+  $('today-axis').innerHTML = `<span${mine === 0 ? ' hidden' : ''}>0</span>`
+    + `<span class="you" style="--x:${(mine + .5) / nb * 100}%">You · ${score}</span>`
+    + `<span${mine === nb - 1 ? ' hidden' : ''}>${max}</span>`;
+  el.hidden = false;
 }
 
 function mainButton(label, fn, disabled = false){

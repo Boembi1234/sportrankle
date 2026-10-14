@@ -865,7 +865,7 @@ GAME_PAGES = {
     "blind-ranking": ("Blind Ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
     "sort-it": ("Sort It", "One attribute, all eight items in view: swap them into the right order, then reveal."),
     "guess-the-record": ("Guess the Record", "One sports world record per round, from the 100 m to the most pull-ups in 24 hours. Guess the number, score by how close you are, compare with everyone."),
-    "guesstimate": ("Guesstimate", "Surprising number questions from the world of sport: think it through, use the built-in calculator and see how many times off your estimate is."),
+    "guesstimate": ("Guesstimate", "Surprising number questions from the world of sport: think it through and see how many times off your estimate is."),
     "impostor": ("Impostor", "The sports party game on one phone for 3 to 12 players: everyone gets the same secret except the impostor, who has to bluff along. Find out who it is."),
 }
 GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "guess-the-record": "#guess", "guesstimate": "#guesstimate", "impostor": "#ringer"}   # Impostor was called Ringer; its route keeps the old name

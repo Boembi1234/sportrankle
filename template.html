@@ -342,30 +342,22 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-ringer .deal-h{font-size:28px;font-stretch:100%}
 @media (prefers-reduced-motion:reduce){.k-ringer .stepper button{transition:none}}
 /* Guesstimate: built from the games' parts like Impostor. The question left-aligned in the grey box (it grows with the
-   text), the calculator as a round button in its corner, one input box with the unit inside (like Guess the record) */
+   text), under it the answer boxes of Guess the record (the unit inside on the right) */
 .k-est .party{padding-block:24px 24px}
 .k-est .party .title{margin:0}
-.k-est .party .bar{padding-top:16px}
+.k-est .party .bar{padding-top:19px}   /* 16px under the card's 3px shadow, like the boxes and the button in Guess the record */
 .k-est .board{margin-top:16px}
 .est-empty{margin-top:16px;padding:16px;border-radius:10px;background:var(--surface-faint);color:var(--muted);font-size:15px;line-height:1.45}
 .est-empty b{display:block;margin-bottom:4px;color:var(--text)}
 .est-box{position:relative;min-height:52px;padding:16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
-.party .est-q{margin:0;font-size:20px;font-weight:800;font-stretch:100%;line-height:1.3;text-align:left;text-wrap:pretty}
-.est-row{display:flex;align-items:center;gap:10px;margin-top:14px}
+.est-row{margin-top:14px}
 .est-row[hidden]{display:none}
-.est-field{flex:1;min-width:0}
-.est-calc{flex:none;display:grid;place-items:center;width:52px;height:52px;padding:0;border:0;border-radius:50%;
-  background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge);cursor:pointer;transition:transform .12s,box-shadow .12s,filter .12s}
-.est-calc svg{width:24px;height:24px}
-.est-calc[hidden]{display:none}
-@media (hover:hover){.est-calc:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--signal-edge);filter:brightness(1.08)}}
-.est-calc:active{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge)}
-@media (prefers-reduced-motion:reduce){.est-calc{transition:none}}
+.party .est-q{margin:0;font-size:20px;font-weight:800;font-stretch:100%;line-height:1.3;text-align:left;text-wrap:pretty}
 .est-ctx{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.45;text-wrap:pretty}
 /* inside the grey card the boxes take the page colour while hovered or typed in (the card colour would hide them) */
 .est-box .gbox:hover,.est-box .gbox:focus-within{background:var(--bg)}
 .est-note{min-height:1.3em;margin:0;font-size:14px;color:var(--muted);text-align:center}
-.est-note.err,.calc-msg.err{color:var(--wrong)}
+.est-note.err{color:var(--wrong)}
 .est-back{display:flex;align-items:center;justify-content:center;text-decoration:none}
 .chip.demo{background:var(--signal);box-shadow:0 2px 0 var(--signal-edge);color:var(--bg)}
 /* Results: the factor in the score card, the facts as rows, the explanation, Napkin Math to open, the sources */
@@ -400,34 +392,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .est-src{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
 .est-src a{color:var(--signal);font-weight:700}
 .est-src span{color:var(--muted);font-size:14px}
-/* The calculator: a modal over the dimmed page, the display on top (sum small, result large, right-aligned), 4 x 5 round
-   keys (digits dark, operators blue), "Use result" underneath. Fits a 320px phone in landscape too (it scrolls) */
-.calc-bg{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.6);overflow-y:auto}
-.calc-bg[hidden]{display:none}
-.calc{width:100%;max-width:360px;margin:auto;padding:16px;border-radius:14px;background:var(--surface);box-shadow:0 12px 40px rgba(0,0,0,.5)}
-.calc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.calc-head h2{margin:0;font-size:17px;font-weight:800}
-.calc-x{position:relative;width:44px;height:44px;margin:-8px -8px -8px 0;border:0;border-radius:10px;background:none;color:var(--text);cursor:pointer}
-.calc-x::before,.calc-x::after{content:"";position:absolute;left:12px;right:12px;top:21px;height:2px;border-radius:1px;background:currentColor;transform:rotate(45deg)}
-.calc-x::after{transform:rotate(-45deg)}
-@media (hover:hover){.calc-x:hover{background:var(--bg)}}
-.calc-screen{padding:12px 14px;border-radius:10px;background:var(--bg);text-align:right;overflow:hidden}
-.calc-expr{min-height:20px;font-size:15px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:rtl;unicode-bidi:plaintext}
-.calc-out{display:block;margin-top:2px;font-size:38px;font-weight:800;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
-.calc-out.long{font-size:28px}
-.calc-out.longer{font-size:21px}
-.calc-out.err{font-size:20px;color:var(--wrong)}
-.calc-keys{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-.calc-keys button{aspect-ratio:1;max-height:72px;min-height:48px;border:0;border-radius:999px;background:var(--bg);color:var(--text);font:800 24px var(--font);cursor:pointer;
-  box-shadow:0 3px 0 rgba(0,0,0,.35);transition:transform .1s,filter .1s}
-.calc-keys .ck-op{background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
-.calc-keys .ck-fn{color:var(--signal)}
-@media (hover:hover){.calc-keys button:hover{filter:brightness(1.15)}}
-.calc-keys button:active{transform:translateY(2px)}
-.calc-use{margin-top:16px}
-.calc-msg{min-height:1.3em;margin:8px 0 0;font-size:14px;color:var(--muted);text-align:center}
-@media (prefers-reduced-motion:reduce){.calc-keys button{transition:none}}
-@media (max-height:640px){.calc-keys{gap:8px}.calc-keys button{aspect-ratio:auto;height:48px}.calc-out{font-size:30px}}
 :is(.k-guess,.k-est) .guess-unit{flex:none;margin:0;font-size:17px;font-weight:700;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){:is(.k-guess,.k-est) .gbox{transition:none}}
 /* Guess the record results: the facts as rows in the card colour like the other results (label left, value right) */
@@ -739,7 +703,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
         <h1 class="est-q" id="est-q"></h1>
         <div class="est-row" id="est-row" hidden>
           <div class="est-field" id="est-field"></div>
-          <button class="est-calc" id="est-calc-btn" type="button" aria-label="Open the calculator" title="Calculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="5.5" width="8" height="4" rx="1" fill="currentColor"/><circle cx="9" cy="13.5" r="1.3" fill="currentColor"/><circle cx="15" cy="13.5" r="1.3" fill="currentColor"/><circle cx="9" cy="17.5" r="1.3" fill="currentColor"/><circle cx="15" cy="17.5" r="1.3" fill="currentColor"/></svg></button>
         </div>
       </div>
       <div class="led est-score" id="est-score" hidden></div>
@@ -752,21 +715,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
       </div>
     </section>
   </main>
-  <div class="calc-bg" id="calc" hidden>
-    <div class="calc" role="dialog" aria-modal="true" aria-labelledby="calc-h">
-      <div class="calc-head"><h2 id="calc-h">Calculator</h2><button type="button" class="calc-x" id="calc-x" aria-label="Close calculator"></button></div>
-      <div class="calc-screen"><div class="calc-expr" id="calc-expr" aria-hidden="true"></div><output class="calc-out" id="calc-out" aria-live="polite">0</output></div>
-      <div class="calc-keys" id="calc-keys">
-        <button type="button" data-k="C" class="ck-fn" aria-label="Clear">C</button><button type="button" data-k="back" class="ck-fn" aria-label="Delete last">⌫</button><button type="button" data-k="%" class="ck-op" aria-label="Percent">%</button><button type="button" data-k="÷" class="ck-op" aria-label="Divide">÷</button>
-        <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" data-k="×" class="ck-op" aria-label="Multiply">×</button>
-        <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="−" class="ck-op" aria-label="Minus">−</button>
-        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="+" class="ck-op" aria-label="Plus">+</button>
-        <button type="button" data-k="π" aria-label="Pi">π</button><button type="button" data-k="0">0</button><button type="button" data-k="." id="calc-dot" aria-label="Decimal point">.</button><button type="button" data-k="=" class="ck-op" aria-label="Equals">=</button>
-      </div>
-      <button class="main calc-use" id="calc-use" type="button">Use result</button>
-      <p class="calc-msg" id="calc-msg" aria-live="polite"></p>
-    </div>
-  </div>
   <main class="game" id="game" hidden>
     <section class="left">
       <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
@@ -1277,7 +1225,7 @@ function renderHome(kind, sport){
       <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(sportCard).join('')}</div>
       <p class="sec">The games</p>
       <div class="tiles">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
-        <a class="tile" href="#guesstimate" aria-label="Guesstimate. Surprising number questions from the world of sport, with a calculator. How many times off are you?">
+        <a class="tile" href="#guesstimate" aria-label="Guesstimate. Surprising number questions from the world of sport. How many times off are you?">
           <span class="tile-art kind-art${KIND_ART.guesstimate ? '' : ' led'}">${KIND_ART.guesstimate ? `<img src="${KIND_ART.guesstimate}" alt="">` : `<span class="tile-cards">GUESSTIMATE</span>`}</span>
           <span class="tile-body"><span class="tile-name">Guesstimate</span><span class="tile-status">${EST.length ? 'Play' : 'Soon'}</span></span>
         </a>
@@ -1497,9 +1445,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu();
 // ================= Guesstimate =================
 // One estimation question per round from guesstimate/questions.json (the demo questions only in local builds). Scored
 // by how many times off the guess is: max(guess / answer, answer / guess), 1× is perfect. The round in progress, its
-// input, the calculator and a confirmed guess are kept on the device, so a reload neither loses nor reopens it.
+// input and a confirmed guess are kept on the device, so a reload neither loses nor reopens it.
 const EST = __GUESSTIMATE__;
-const EST_MAX = 1e15;   // larger inputs are refused (and calculator results too)
+const EST_MAX = 1e15;   // larger inputs are refused
 const LOCALES = {en: 'en-US', de: 'de-CH', fr: 'fr-CH', es: 'es-ES', it: 'it-CH'};
 const loc = () => LOCALES[LANG] || 'en-US';
 const decSep = () => (1.5).toLocaleString(loc()).charAt(1);
@@ -1508,7 +1456,7 @@ const estText = (q, k) => q.i18n?.[LANG]?.[k] ?? q[k];   // optional translation
 const estNum = v => Math.abs(v) >= EST_MAX || (v !== 0 && Math.abs(v) < 1e-6)
   ? v.toExponential(4).replace('.', decSep()) : v.toLocaleString(loc(), {maximumFractionDigits: Math.abs(v) < 10 ? 4 : 2});
 const estFactor = f => `${f.toLocaleString(loc(), {minimumFractionDigits: 2, maximumFractionDigits: 2})}×`;
-let ER = null;   // the round: {sport, id, input, guess, calc: {t: tokens, done, prev}}
+let ER = null;   // the round: {id, input, guess}
 const estSave = () => store('est-round', ER);
 
 // A typed estimate: spaces, apostrophes and the other mark as thousands separators, the language's decimal mark
@@ -1546,7 +1494,6 @@ function estDur(secs, q){
   return `${m}:${Number.isInteger(sec) ? two(sec) : sec.toFixed(1).padStart(4, '0').replace('.', decSep())} min`;
 }
 const estShow = (v, q) => EST_TIME[q.unit] ? estDur(v, q) : `${estNum(v)} ${escH(estText(q, 'unit'))}`;
-const estInputText = v => v.toLocaleString(loc(), {useGrouping: false, maximumFractionDigits: 6});
 
 function estRoute(h){
   KIND = null;
@@ -1574,7 +1521,7 @@ function estNew(id, avoid){
     pick = fresh[Math.random() * fresh.length | 0];
   }
   store('est-seen', [...seen.filter(x => x !== pick), pick]);
-  const r = {id: pick, input: '', guess: null, calc: {t: [], done: false, prev: ''}};
+  const r = {id: pick, input: '', guess: null};
   ER = r; estSave();
   return r;
 }
@@ -1677,135 +1624,13 @@ $('est-share').addEventListener('click', () => {
     `${location.origin}${location.pathname}#guesstimate/q/${q.id}`].join('\n'));
 });
 
-// ---- The calculator: tokens (numbers as typed, "π", operators), evaluated with × and ÷ before + and −, no eval() ----
-const CALC_OPS = ['+', '−', '×', '÷'];
-const isOp = t => CALC_OPS.includes(t);
-const tokVal = t => t === 'π' ? Math.PI : Number(t);
-function calcEval(tokens){
-  const t = [...tokens];
-  while (t.length && isOp(t[t.length - 1])) t.pop();
-  if (!t.length) return {v: 0};
-  const nums = [], ops = [];
-  t.forEach((x, i) => (i % 2 ? ops : nums).push(x));
-  if (nums.some(x => isOp(x)) || ops.some(x => !isOp(x))) return {err: 'Invalid calculation'};
-  const vals = nums.map(tokVal);
-  if (vals.some(v => !Number.isFinite(v))) return {err: 'Invalid calculation'};
-  const sum = [vals[0]], sops = [];
-  for (let i = 0; i < ops.length; i++) {
-    const o = ops[i], v = vals[i + 1];
-    if (o === '×') sum[sum.length - 1] *= v;
-    else if (o === '÷') { if (v === 0) return {err: 'Can’t divide by 0'}; sum[sum.length - 1] /= v; }
-    else { sops.push(o); sum.push(v); }
-  }
-  let r = sum[0];
-  sops.forEach((o, i) => { r = o === '+' ? r + sum[i + 1] : r - sum[i + 1]; });
-  if (!Number.isFinite(r)) return {err: 'Result too large'};
-  return {v: Number(r.toPrecision(12))};
-}
-const calcTok = t => t === 'π' || isOp(t) ? t : t.replace('.', decSep());
-function calcKey(k){
-  const c = ER.calc, t = c.t, last = t[t.length - 1], isNum = last != null && !isOp(last);
-  $('calc-msg').textContent = ''; $('calc-msg').classList.remove('err');
-  if (c.err) { c.err = ''; if (k !== 'C' && k !== 'back') { c.t = []; return calcKey(k); } }
-  if (/^\d$/.test(k)) {
-    if (c.done) { c.t = [k]; c.done = false; c.prev = ''; }
-    else if (last === 'π') t.push('×', k);
-    else if (isNum) { if (last.replace('.', '').length < 15) t[t.length - 1] = last === '0' ? k : last + k; }
-    else t.push(k);
-  } else if (k === '.') {
-    if (c.done) { c.t = ['0.']; c.done = false; c.prev = ''; }
-    else if (last === 'π') t.push('×', '0.');
-    else if (isNum) { if (!last.includes('.')) t[t.length - 1] = last + '.'; }
-    else t.push('0.');
-  } else if (isOp(k)) {
-    c.done = false;
-    if (!t.length) return calcShow();
-    if (isOp(last)) t[t.length - 1] = k; else t.push(k);
-  } else if (k === 'π') {
-    if (c.done) { c.t = ['π']; c.done = false; c.prev = ''; }
-    else if (isNum) t.push('×', 'π'); else t.push('π');
-  } else if (k === '%') {
-    if (isNum) { t[t.length - 1] = String(Number((tokVal(last) / 100).toPrecision(12))); c.done = false; }
-  } else if (k === 'back') {
-    c.done = false;
-    if (last == null) return calcShow();
-    if (last.length > 1 && !isOp(last) && last !== 'π') t[t.length - 1] = last.slice(0, -1); else t.pop();
-  } else if (k === 'C') {
-    c.t = []; c.done = false; c.prev = '';
-  } else if (k === '=') {
-    const r = calcEval(t);
-    if (r.err) { c.err = r.err; }
-    else if (t.length) { c.prev = `${t.map(calcTok).join(' ')} =`; c.t = [String(r.v)]; c.done = true; }
-  }
-  calcShow();
-}
-function calcShow(){
-  const c = ER.calc, out = $('calc-out');
-  const r = c.err ? {err: c.err} : calcEval(c.t);
-  $('calc-expr').textContent = c.done ? c.prev : c.t.map(calcTok).join(' ');
-  const text = r.err ? r.err : estNum(r.v);
-  out.textContent = text;
-  out.className = `calc-out${r.err ? ' err' : text.length > 16 ? ' longer' : text.length > 11 ? ' long' : ''}`;
-  estSave();
-}
-let calcFrom = null;
-function calcOpen(){
-  if (!ER || ER.guess != null) return;
-  ER.calc ||= {t: [], done: false, prev: ''};
-  calcFrom = document.activeElement;
-  $('calc-dot').textContent = decSep();
-  $('calc-msg').textContent = '';
-  $('calc').hidden = false;
-  document.documentElement.style.overflow = 'hidden';
-  calcShow();
-  $('calc-x').focus();
-}
-function calcClose(){
-  if ($('calc').hidden) return;
-  $('calc').hidden = true;
-  document.documentElement.style.overflow = '';
-  (calcFrom && document.contains(calcFrom) ? calcFrom : $('est-calc-btn')).focus({preventScroll: true});
-}
-// "Use result": into the answer field (not confirmed yet); only a finite number above 0 counts as an estimate
-function calcUse(){
-  const r = ER.calc.err ? {err: ER.calc.err} : calcEval(ER.calc.t);
-  if (r.err || !(r.v > 0) || r.v > EST_MAX) {
-    $('calc-msg').textContent = r.err ? `${r.err}: fix the calculation first.` : r.v > EST_MAX ? 'That result is too large to use.' : 'Only a result above 0 can be your estimate.';
-    $('calc-msg').classList.add('err');
-    return;
-  }
-  calcClose();
-  const ins = [...document.querySelectorAll('#est-field .gf')];   // a time: the result goes into the last part (seconds or minutes)
-  if (!ins.length) return;
-  ins.forEach((x, i) => { x.value = i === ins.length - 1 ? estInputText(r.v) : ''; });
-  ER.input = ins.map(x => x.value); estSave();
-  estCheck(); ins[ins.length - 1].focus({preventScroll: true});
-}
-$('est-calc-btn').addEventListener('click', calcOpen);
-$('calc-x').addEventListener('click', calcClose);
-$('calc-use').addEventListener('click', calcUse);
-$('calc').addEventListener('click', e => { if (e.target === $('calc')) calcClose(); });   // a tap on the dimmed page closes it
-$('calc-keys').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) calcKey(b.dataset.k); });
-// Keyboard: digits, + - * / x, . or , , % , Enter or = , Backspace, Delete or c, Escape; Tab stays inside the dialog
-$('calc').addEventListener('keydown', e => {
-  if (e.key === 'Escape') { e.preventDefault(); return calcClose(); }
-  if (e.key === 'Tab') {
-    const f = [...$('calc').querySelectorAll('button')], i = f.indexOf(document.activeElement);
-    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
-    else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
-    return;
-  }
-  const map = {'*': '×', x: '×', '/': '÷', '-': '−', '+': '+', ',': '.', '.': '.', '%': '%', '=': '=', Backspace: 'back', Delete: 'C', c: 'C', p: 'π'};
-  const k = /^\d$/.test(e.key) ? e.key : e.key === 'Enter' && !document.activeElement?.closest('.calc-keys, #calc-use, #calc-x') ? '=' : map[e.key];
-  if (k) { e.preventDefault(); calcKey(k); }
-});
 
 let booted = false;
 function route(){
   closeMenu(false);
   sportNav();
   closePanels();
-  $('party').hidden = true; $('est').hidden = true; calcClose();
+  $('party').hidden = true; $('est').hidden = true;
   // A page loaded on a real URL opens its own view; from then on the hash decides
   const h = location.hash.slice(1) || (!booted && ROUTE ? ROUTE.slice(1) : '');
   booted = true;

@@ -349,19 +349,22 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-est .board{margin-top:16px}
 .est-empty{margin-top:16px;padding:16px;border-radius:10px;background:var(--surface-faint);color:var(--muted);font-size:15px;line-height:1.45}
 .est-empty b{display:block;margin-bottom:4px;color:var(--text)}
-.est-box{position:relative;min-height:52px;padding:16px 64px 16px 16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
+.est-box{position:relative;min-height:52px;padding:16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
 .party .est-q{margin:0;font-size:20px;font-weight:800;font-stretch:100%;line-height:1.3;text-align:left;text-wrap:pretty}
-.est-calc{position:absolute;right:10px;bottom:10px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;
+.est-row{display:flex;align-items:center;gap:10px;margin-top:14px}
+.est-row[hidden]{display:none}
+.est-field{flex:1;min-width:0}
+.est-calc{flex:none;display:grid;place-items:center;width:52px;height:52px;padding:0;border:0;border-radius:50%;
   background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge);cursor:pointer;transition:transform .12s,box-shadow .12s,filter .12s}
-.est-calc svg{width:22px;height:22px}
+.est-calc svg{width:24px;height:24px}
 .est-calc[hidden]{display:none}
 @media (hover:hover){.est-calc:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--signal-edge);filter:brightness(1.08)}}
 .est-calc:active{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge)}
 @media (prefers-reduced-motion:reduce){.est-calc{transition:none}}
 .est-ctx{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.45;text-wrap:pretty}
-.est-in{display:flex;align-items:center;gap:8px;min-height:60px;margin-top:16px;padding:0 16px;border-radius:10px;background:var(--surface-faint);cursor:text;transition:background-color .15s}
-@media (hover:hover){.est-in:hover{background:var(--surface)}}
-.est-in:focus-within{background:var(--surface)}
+.est-in{display:flex;align-items:center;gap:8px;min-height:56px;padding:0 16px;border-radius:10px;background:var(--bg);cursor:text;transition:background-color .15s}
+@media (hover:hover){.est-in:hover{background:var(--surface-faint)}}
+.est-in:focus-within{background:var(--surface-faint)}
 .est-in input{flex:1;min-width:0;width:0;padding:0;border:0;background:none;outline:none;color:var(--text);font:800 26px var(--font)}
 .est-in input::placeholder{color:var(--muted);font-weight:700}
 .est-unit{flex:none;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:17px;font-weight:700;color:var(--muted)}
@@ -739,7 +742,10 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
     <section id="est-play" hidden>
       <div class="est-box">
         <h1 class="est-q" id="est-q"></h1>
-        <button class="est-calc" id="est-calc-btn" type="button" aria-label="Open the calculator" title="Calculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="5.5" width="8" height="4" rx="1" fill="currentColor"/><circle cx="9" cy="13.5" r="1.3" fill="currentColor"/><circle cx="15" cy="13.5" r="1.3" fill="currentColor"/><circle cx="9" cy="17.5" r="1.3" fill="currentColor"/><circle cx="15" cy="17.5" r="1.3" fill="currentColor"/></svg></button>
+        <div class="est-row" id="est-row" hidden>
+          <div class="est-field" id="est-field"></div>
+          <button class="est-calc" id="est-calc-btn" type="button" aria-label="Open the calculator" title="Calculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="5.5" width="8" height="4" rx="1" fill="currentColor"/><circle cx="9" cy="13.5" r="1.3" fill="currentColor"/><circle cx="15" cy="13.5" r="1.3" fill="currentColor"/><circle cx="9" cy="17.5" r="1.3" fill="currentColor"/><circle cx="15" cy="17.5" r="1.3" fill="currentColor"/></svg></button>
+        </div>
       </div>
       <div class="led est-score" id="est-score" hidden></div>
       <div id="est-body"></div>
@@ -1569,7 +1575,9 @@ function estRender(){
   $('est-note').textContent = ''; $('est-note').classList.remove('err');
   if (ER.guess != null) return estResults(q);
   $('est-score').hidden = true;
-  $('est-body').innerHTML = `<label class="est-in"><input id="est-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
+  $('est-body').innerHTML = '';
+  $('est-row').hidden = false;
+  $('est-field').innerHTML = `<label class="est-in"><input id="est-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
       placeholder="Your estimate" aria-label="Your estimate in ${escH(q.unit)}" aria-describedby="est-note"><span class="est-unit">${escH(estText(q, 'unit'))}</span></label>`;
   const inp = $('est-input');
   inp.value = ER.input || '';
@@ -1577,7 +1585,7 @@ function estRender(){
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); estConfirm(); } });
   const b = $('est-main');
   b.hidden = false; b.textContent = 'Lock in my guess'; b.onclick = estConfirm;
-  $('est-calc-btn').hidden = false; $('est-share').hidden = true; $('est-back').hidden = true;
+  $('est-share').hidden = true; $('est-back').hidden = true;
   estCheck();
   if (innerWidth >= 640) setTimeout(() => inp.focus(), 50);
 }
@@ -1621,7 +1629,7 @@ function estResults(q, fresh = false){
   b.textContent = 'Play again'; b.onclick = estAgain;
   b.disabled = fresh;   // right after the guess a quick second tap must not skip the reveal
   if (fresh) setTimeout(() => { b.disabled = false; }, 700);
-  $('est-calc-btn').hidden = true; $('est-share').hidden = false; $('est-back').hidden = false;
+  $('est-row').hidden = true; $('est-field').innerHTML = ''; $('est-share').hidden = false; $('est-back').hidden = false;
   $('est-share').textContent = 'Share my score';
   announce(`${verdict}. The ${q.answerType === 'sourced' ? 'answer' : 'model estimate'} is ${estNum(a)} ${q.unit}, you were off by ${estFactor(f)}.`);
 }

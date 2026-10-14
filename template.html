@@ -467,9 +467,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 /* Today's scores, inside the score card: thin bars in one colour, a line with a "You" pill at your score and a dashed
    line at the average. The pill and the average label shift by the same share as their position, so they never
    stick out at the edges */
-.led .today{grid-column:1/-1;margin:18px 0 0}
-.today-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;color:var(--muted)}
-.today-h b{color:var(--signal);font-weight:700;font-size:15px}
+.led .today{grid-column:1/-1;margin:6px 0 0}
 .today-bars{position:relative;display:flex;align-items:flex-end;gap:3px;height:110px;padding-top:34px}
 .today-bars i{flex:1;min-height:3px;height:calc(var(--v) * 100%);background:color-mix(in srgb,var(--text) 22%,transparent);border-radius:3px 3px 0 0}
 .today-avg,.today-me{position:absolute;bottom:0;left:var(--x);width:0}
@@ -660,7 +658,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
         <div class="led-bar" aria-hidden="true"><i id="led-fill"></i></div>
         <p class="led-note" id="led-note"></p>
         <div class="today" id="today" hidden>
-          <div class="today-h" id="today-h"></div>
           <div class="today-bars" id="today-bars" role="img"></div>
           <div class="today-axis" id="today-axis" aria-hidden="true"></div>
         </div>
@@ -1021,9 +1018,6 @@ function showStats(rows, score, max){
   const top = Math.max(...bins), avg = rows.reduce((a, r) => a + r.score * Number(r.n), 0) / total;
   const pct = Math.round(100 * below / (total - 1));
   G.stat = total < 10 ? null : {pct, total};
-  $('today-h').innerHTML = total < 10
-    ? `<b>${total === 1 ? 'First to play today' : `${total} played today so far`}</b><span>the comparison starts at 10 players</span>`
-    : `<b>You beat ${pct} %</b><span>${total.toLocaleString('en-US')} played today</span>`;
   $('today-bars').innerHTML = bins.map(n => `<i style="--v:${n / top}" title="${n}"></i>`).join('')
     + `<span class="today-avg" style="--x:${at(avg)}"></span><span class="today-me" style="--x:${at(score)}"><b>You · ${score}</b></span>`;
   $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, average ${Math.round(avg)}, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);

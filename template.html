@@ -1344,10 +1344,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') for (const [
 // The page text is English for now; the choice only picks the flag until translations exist.
 let flagN = 0;   // SVG ids must be unique on the page
 const FLAGS = {
-  // US flag (the site's sports are named the American way: Soccer, Football, Hockey); the circle shows the canton and stripes
-  en: () => `<svg viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <rect width="30" height="20" fill="#fff"/><rect width="30" height="4" fill="#B22234"/><rect y="8" width="30" height="4" fill="#B22234"/>
-    <rect y="16" width="30" height="4" fill="#B22234"/><rect width="12" height="12" fill="#3C3B6E"/></svg>`,   // simplified like the others: stripes and a plain canton
+  en: () => { const n = ++flagN; return `<svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <clipPath id="uk-t${n}"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath>
+    <rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/>
+    <path d="M0,0L60,30M60,0L0,30" clip-path="url(#uk-t${n})" stroke="#C8102E" stroke-width="4"/>
+    <path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>`; },
   de: () => `<svg viewBox="0 0 5 3" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <rect width="5" height="1" fill="#000"/><rect y="1" width="5" height="1" fill="#DD0000"/><rect y="2" width="5" height="1" fill="#FFCE00"/></svg>`,
   fr: () => `<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" aria-hidden="true">

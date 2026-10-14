@@ -43,8 +43,8 @@ SPORTS = {
     "football": {"name": "Football", "cover": "covers/sport-football.png"},
     "baseball": {"name": "Baseball", "cover": "covers/sport-baseball.png", "soon": True},
     "tennis": {"name": "Tennis", "cover": "covers/sport-tennis.png", "soon": True},
-    "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},
-    "winter": {"name": "Wintersport", "cover": "covers/sport-winter.png", "soon": True},
+    "motorsport": {"name": "Motor sports", "cover": "covers/sport-motorsport.png", "soon": True},
+    "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png", "soon": True},
 }
 
 GAMES = {

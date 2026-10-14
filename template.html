@@ -695,6 +695,7 @@ const GAMES = {
   guess: {name: 'Guess the record', word: 'GUESS', blurb: 'One world record a day. How fast, how far, how many? Guess the number and see how close you got.'},
 };
 const KIND_ART = __KINDS__;
+const GAME_ICONS = __GAME_ICONS__;   // {game: icon} for the menu, like the sport icons
 const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cover?}}
 const ROUTE = __ROUTE__;   // the view a real URL opens on (e.g. "#t/nfl" on /nfl-teams), "" on the home page
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
@@ -1374,7 +1375,7 @@ function menuHTML(){
   const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => SOON(s)
     ? `<li><span class="soon-link">${SPORTS[s].icon ? `<img class="menu-ic" src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}<span class="soon-chip">Soon</span></span></li>`
     : link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
-  const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind)), link('#ringer', 'Ringer', kind === 'ringer')];
+  const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])), link('#ringer', 'Ringer', kind === 'ringer', GAME_ICONS.ringer)];
   return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
 }
 function openMenu(){

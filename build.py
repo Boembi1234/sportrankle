@@ -920,6 +920,9 @@ def main():
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
+            # menu icons of the games, from covers/icon-game-<game>.png (transparent, like the sport icons)
+            .replace("__GAME_ICONS__", json.dumps({g: icon(f"covers/icon-game-{g}.png") for g in ("rankle", "blind", "sort", "guess", "ringer")
+                                                   if (HERE / "covers" / f"icon-game-{g}.png").exists()}))
             .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None))
             .replace("__SITE__", SITE))
 

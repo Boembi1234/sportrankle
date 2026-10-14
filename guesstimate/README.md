@@ -5,7 +5,7 @@ question and leaves out (with a message) any that is incomplete. The game draws 
 (no sport to pick, no repeat until all were played); with none at all it shows a "questions on their way" page.
 
 `demo.json` holds three made-up demo questions for testing. They are only built in when the environment variable
-`GUESSTIMATE_DEMO=1` is set (the local dev server `tools/dev.py` sets it), are marked "Demo" in the game and never
+`GUESSTIMATE_DEMO=1` is set (the local dev server `tools/dev.py` sets it), start with "DEMO:" and never
 reach the live site. Don't put real questions there.
 
 ## One question

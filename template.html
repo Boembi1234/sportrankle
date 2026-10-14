@@ -1187,7 +1187,7 @@ function renderHome(kind, sport){
           <span class="meta">${next ? `Next up: <b>${nextName}</b> · ` : `<b>All played for today</b> · `}${facts}</span></div>`}
       </section>
       <p class="sec">Pick a sport</p>
-      <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length).map(sportCard).join('')}</div>
+      <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(sportCard).join('')}</div>
       <p class="sec">The games</p>
       <div class="tiles">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
         <a class="tile" href="#ringer" aria-label="Ringer. Party game on one phone, 3 to 12 players. Everyone knows the secret except the ringer. Find them.">
@@ -1313,7 +1313,7 @@ const sportHref = s => { const t = topicsOf(s); return t.length > 1 ? `#s/${s}` 
 // "More" button opens the rest in a dropdown underneath (the button is marked when the current sport is in there)
 const NAV_MAX = 5;
 function sportNav(){
-  const {sport} = here(), all = Object.keys(SPORTS).filter(s => topicsOf(s).length);
+  const {sport} = here(), all = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s));
   const link = s => SOON(s) ? `<span class="soon-link" title="Coming soon">${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}<small>soon</small></span>`
     : `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
     + `${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}</a>`;
@@ -1371,7 +1371,7 @@ setLang(LANG);
 function menuHTML(){
   const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;
-  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length).map(s => SOON(s)
+  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => SOON(s)
     ? `<li><span class="soon-link">${SPORTS[s].icon ? `<img class="menu-ic" src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}<small>Coming soon</small></span></li>`
     : link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
   const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind)), link('#ringer', 'Ringer', kind === 'ringer')];

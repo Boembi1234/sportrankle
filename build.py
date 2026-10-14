@@ -37,6 +37,7 @@ PHOTO_RATIO = 1.6   # own photos taller than this (w:h) are cropped to a centred
 SPORTS = {
     "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
     "soccer": {"name": "Football", "cover": "covers/sport-soccer.png"},
+    "hockey": {"name": "Ice hockey", "cover": "covers/sport-hockey.png", "soon": True},   # NHL teams coming
     "football": {"name": "American football", "cover": "covers/sport-football.png"},
     # "soon": the sport shows as "Coming soon" (tile, nav, menu) and its topics are not playable or crawlable yet
     "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},

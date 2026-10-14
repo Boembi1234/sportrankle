@@ -630,14 +630,14 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 
   <main class="party" id="party" hidden>
     <section id="party-setup">
-      <h1 class="title">Ringer</h1>
+      <h1 class="title">Impostor</h1>
       <div class="title-sub"><span class="chip">Party game</span><span class="chip">One phone</span><span class="chip">3–12 players</span></div>
-      <p class="question"><span class="emo">🕵️</span>Everyone knows the secret except the ringer. Find them.</p>
+      <p class="question"><span class="emo">🕵️</span>Everyone knows the secret except the impostor. Find them.</p>
       <ul class="board">
         <li class="field"><span class="row-ic" aria-hidden="true">👥</span><span class="field-l">Players</span>
           <span class="stepper"><button type="button" data-k="players" data-d="-1" aria-label="Fewer players">−</button><b id="p-players">5</b><button type="button" data-k="players" data-d="1" aria-label="More players">+</button></span></li>
-        <li class="field"><span class="row-ic" aria-hidden="true">🎭</span><span class="field-l">Ringers</span>
-          <span class="stepper"><button type="button" data-k="ringers" data-d="-1" aria-label="Fewer ringers">−</button><b id="p-ringers">1</b><button type="button" data-k="ringers" data-d="1" aria-label="More ringers">+</button></span></li>
+        <li class="field"><span class="row-ic" aria-hidden="true">🎭</span><span class="field-l">Impostors</span>
+          <span class="stepper"><button type="button" data-k="ringers" data-d="-1" aria-label="Fewer impostors">−</button><b id="p-ringers">1</b><button type="button" data-k="ringers" data-d="1" aria-label="More impostors">+</button></span></li>
       </ul>
       <p class="question"><span class="emo">📚</span>Pick a topic</p>
       <ul class="board" id="p-pools" aria-label="Topic"></ul>
@@ -929,7 +929,7 @@ function rulesHTML(){
   const blind = `<p><b>Blind ranking.</b> Every day brings one attribute and, one after another, 8 items. Put each one on a spot from 1 to 8 without knowing what comes next; a spot can't be changed. The exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}. Tied values count as correct on any of their spots.</p>`;
   const common = `<p>One attempt per game, day and device. New cards at midnight. Keyboard: 1 to 8 or the arrow keys pick a row, Enter confirms.${Object.values(DATA).some(g => g.items.some(it => it.credit)) ? ' Click a photo for its source.' : ''}</p>`;
   const sort = `<p><b>Sort it.</b> Every day brings one attribute and 8 items, all in view from the start. Drag the rows up and down until the order is right, then tap Done. Scored like Blind ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;
-  const ringer = `<p><b>Ringer.</b> A party game for ${PLAYERS_MIN} to ${PLAYERS_MAX} people on one phone. Everyone gets the same secret from the chosen pool, except the ringer, who only learns the pool. Pass the phone round, then take turns giving one-word hints about the secret. Vote on who is bluffing, then reveal. The ringer wins by staying hidden or by guessing the secret.</p>`;
+  const ringer = `<p><b>Impostor.</b> A party game for ${PLAYERS_MIN} to ${PLAYERS_MAX} people on one phone. Everyone gets the same secret from the chosen pool, except the impostor, who only learns the pool. Pass the phone round, then take turns giving one-word hints about the secret. Vote on who is bluffing, then reveal. The impostor wins by staying hidden or by guessing the secret.</p>`;
   const guess = `<p><b>Guess the record.</b> Every day one sports world record comes up, an official one or a crazy one. Type your guess in the record's unit and lock it in. The closer you are, the more points: 100 for the exact value, about 90 within 10 %, 50 for twice or half the value, 0 from four times off. Then you see the record, its holder and how everyone else did today.</p>`;
   if (!$('party').hidden) return ringer;
   return (KIND ? {rankle, blind, sort, guess}[KIND] : rankle + blind + sort + guess) + common;
@@ -1191,9 +1191,9 @@ function renderHome(kind, sport){
       <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(sportCard).join('')}</div>
       <p class="sec">The games</p>
       <div class="tiles">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
-        <a class="tile" href="#ringer" aria-label="Ringer. Party game on one phone, 3 to 12 players. Everyone knows the secret except the ringer. Find them.">
-          <span class="tile-art kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">RINGER</span>`}</span>
-          <span class="tile-body"><span class="tile-name">Ringer</span><span class="tile-status">Play</span></span>
+        <a class="tile" href="#ringer" aria-label="Impostor. Party game on one phone, 3 to 12 players. Everyone knows the secret except the impostor. Find them.">
+          <span class="tile-art kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">IMPOSTOR</span>`}</span>
+          <span class="tile-body"><span class="tile-name">Impostor</span><span class="tile-status">Play</span></span>
         </a></div>
       <p class="legal-line">© ${new Date().getFullYear()} Sportrankle · <a href="/legal">Legal notice &amp; privacy</a></p>`;
   if (!kind && FLAG) flagCount();
@@ -1271,7 +1271,7 @@ function partyRender(){
     $('pp-step').textContent = `${who(P.i)} · ${P.i + 1} of ${n}`;
     if (P.roles[P.i]) {
       card.className = 'deal ringer';
-      card.innerHTML = `<p class="deal-k">You are</p><p class="deal-h">the Ringer</p><p class="deal-t">The others share a secret from <b>${g.tab}</b>. Bluff along and don't get caught.</p>`;
+      card.innerHTML = `<p class="deal-k">You are</p><p class="deal-h">the Impostor</p><p class="deal-t">The others share a secret from <b>${g.tab}</b>. Bluff along and don't get caught.</p>`;
     } else {
       card.innerHTML = `${it.img ? `<img class="deal-img" src="${it.img}" alt="" style="object-fit:${it.fit || 'cover'};background:${it.bg || 'transparent'}">` : ''}
         <p class="deal-k">${g.tab}</p><p class="deal-h">${it.name}</p><p class="deal-t">Keep it to yourself. ${plural ? 'Some of you don\'t' : 'One of you doesn\'t'} know it.</p>`;
@@ -1288,13 +1288,13 @@ function partyRender(){
     $('pp-alt').hidden = false;
   } else if (P.phase === 'talk') {
     $('pp-step').textContent = 'Everyone has a card';
-    card.innerHTML = `<p class="deal-k">Talk</p><p class="deal-h">${who(P.first)} starts</p><p class="deal-t">Go round the table: each of you says one word or short hint about the secret — precise enough to show you know it, vague enough to give the ${plural ? 'ringers' : 'ringer'} nothing. After a round or two, vote on who is bluffing.</p>`;
-    partyButton(`Reveal the ${plural ? 'ringers' : 'ringer'}`, () => { P.phase = 'reveal'; partyRender(); });
+    card.innerHTML = `<p class="deal-k">Talk</p><p class="deal-h">${who(P.first)} starts</p><p class="deal-t">Go round the table: each of you says one word or short hint about the secret — precise enough to show you know it, vague enough to give the ${plural ? 'impostors' : 'impostor'} nothing. After a round or two, vote on who is bluffing.</p>`;
+    partyButton(`Reveal the ${plural ? 'impostors' : 'impostor'}`, () => { P.phase = 'reveal'; partyRender(); });
     note.innerHTML = '<button type="button" class="linkbtn" id="pp-setup">Start over</button>';
   } else {
     $('pp-step').textContent = 'The truth';
     card.className = 'deal ringer';
-    card.innerHTML = `<p class="deal-k">The ${plural ? 'ringers were' : 'ringer was'}</p><p class="deal-h">${list(ringers)}</p><p class="deal-t">The secret was <b>${it.name}</b>. The group wins if it named ${plural ? 'a ringer' : 'the ringer'}; ${plural ? 'the ringers win' : 'the ringer wins'} by staying hidden — or by guessing the secret now.</p>`;
+    card.innerHTML = `<p class="deal-k">The ${plural ? 'impostors were' : 'impostor was'}</p><p class="deal-h">${list(ringers)}</p><p class="deal-t">The secret was <b>${it.name}</b>. The group wins if it named ${plural ? 'an impostor' : 'the impostor'}; ${plural ? 'the impostors win' : 'the impostor wins'} by staying hidden — or by guessing the secret now.</p>`;
     partyButton('Deal again', partyDeal);
     note.innerHTML = '<button type="button" class="linkbtn" id="pp-setup">Change setup</button>';
   }
@@ -1375,7 +1375,7 @@ function menuHTML(){
   const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => SOON(s)
     ? `<li><span class="soon-link">${SPORTS[s].icon ? `<img class="menu-ic" src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}<span class="soon-chip">Soon</span></span></li>`
     : link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
-  const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])), link('#ringer', 'Ringer', kind === 'ringer', GAME_ICONS.ringer)];
+  const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])), link('#ringer', 'Impostor', kind === 'ringer', GAME_ICONS.ringer)];
   return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
 }
 function openMenu(){

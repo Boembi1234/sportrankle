@@ -833,15 +833,15 @@ ADS = {"network": "", "analytics": ""}
 OLD_HOSTS = ["https://sportrankle.netlify.app"]   # old addresses: everything there redirects to SITE
 # Sport pages that moved when a sport was renamed: old address -> new one (Oct 2026: Ice hockey -> Hockey,
 # American football -> Football, Football -> Soccer; /football itself now shows American football)
-RENAMED = {"ice-hockey": "hockey", "american-football": "football"}
+RENAMED = {"ice-hockey": "hockey", "american-football": "football", "ringer": "impostor"}   # and the game Ringer -> Impostor
 GAME_PAGES = {
     "rankle": ("Rankle", "Eight categories, eight items arriving one by one: put each one where it ranks highest among the whole pool. Each category can be used once. The perfect board is revealed at the end."),
     "blind-ranking": ("Blind ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
     "sort-it": ("Sort it", "One attribute, all eight items in view: swap them into the right order, then reveal."),
     "guess-the-record": ("Guess the record", "One sports world record a day, from the 100 m to the most pull-ups in 24 hours. Guess the number, score by how close you are, compare with everyone."),
-    "ringer": ("Ringer", "The sports party game on one phone for 3 to 12 players: everyone gets the same secret except the ringer, who has to bluff along. Find out who it is."),
+    "impostor": ("Impostor", "The sports party game on one phone for 3 to 12 players: everyone gets the same secret except the impostor, who has to bluff along. Find out who it is."),
 }
-GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "guess-the-record": "#guess", "ringer": "#ringer"}
+GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "guess-the-record": "#guess", "impostor": "#ringer"}   # Impostor was called Ringer; its route keeps the old name
 KIND_NAMES = {"rankle": "Rankle", "blind": "Blind ranking", "sort": "Sort it", "guess": "Guess the record"}
 
 
@@ -908,7 +908,7 @@ def pages(data, sports):
         out.append((slug(sp["name"]), f"{sp['name']} quizzes | Sportrankle", desc, f"#s/{sk}", intro, [(sp["name"], f"/{slug(sp['name'])}")]))
     examples = [g["tab"] for g in opened.values()]
     for gs, (name, blurb) in GAME_PAGES.items():
-        desc = f"{name}: {blurb}" + ("" if gs == "ringer" else f" Play it on {len(opened)} topics, from {examples[0]} to {examples[-1]}.")
+        desc = f"{name}: {blurb}" + ("" if gs == "impostor" else f" Play it on {len(opened)} topics, from {examples[0]} to {examples[-1]}.")
         intro = f"<h1>{esc(name)}</h1><p>{esc(desc)}</p>" + link_lists(data, sports)
         out.append((gs, f"{name} - daily sports game | Sportrankle", desc, GAME_ROUTE[gs], intro, [(name, f"/{gs}")]))
     return out

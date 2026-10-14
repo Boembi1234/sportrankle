@@ -36,9 +36,9 @@ PHOTO_RATIO = 1.6   # own photos taller than this (w:h) are cropped to a centred
 # The order of every sport list (home page, menu, game pages, site map); "All sports" always comes first
 SPORTS = {
     "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
-    "soccer": {"name": "Football", "cover": "covers/sport-soccer.png"},
-    "hockey": {"name": "Ice hockey", "cover": "covers/sport-hockey.png"},
-    "football": {"name": "American football", "cover": "covers/sport-football.png"},
+    "soccer": {"name": "Soccer", "cover": "covers/sport-soccer.png"},
+    "hockey": {"name": "Hockey", "cover": "covers/sport-hockey.png"},
+    "football": {"name": "Football", "cover": "covers/sport-football.png"},
     # "soon": the sport shows as "Coming soon" (tile, nav, menu) and its topics are not playable or crawlable yet
     "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},
     "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png", "soon": True},
@@ -831,6 +831,9 @@ OPERATOR = {"name": "Playmakerz", "people": "Daniel Keller",
 # "analytics" the analytics tool or "". Empty network = the policy says there are no ads and no optional cookies.
 ADS = {"network": "", "analytics": ""}
 OLD_HOSTS = ["https://sportrankle.netlify.app"]   # old addresses: everything there redirects to SITE
+# Sport pages that moved when a sport was renamed: old address -> new one (Oct 2026: Ice hockey -> Hockey,
+# American football -> Football, Football -> Soccer; /football itself now shows American football)
+RENAMED = {"ice-hockey": "hockey", "american-football": "football"}
 GAME_PAGES = {
     "rankle": ("Rankle", "Eight categories, eight items arriving one by one: put each one where it ranks highest among the whole pool. Each category can be used once. The perfect board is revealed at the end."),
     "blind-ranking": ("Blind ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
@@ -1018,6 +1021,9 @@ def main():
     for stale in [slug(g["tab"]) for k, g in data.items() if k not in opened] + [slug(sp["name"]) for sp in sports.values() if sp.get("soon")]:
         (DIST.parent / f"{stale}.html").unlink(missing_ok=True)
         redirects.append(f"/{stale}  /  301!")
+    for old, new in RENAMED.items():
+        (DIST.parent / f"{old}.html").unlink(missing_ok=True)
+        redirects.append(f"/{old}  /{new}  301!")
     redirects = [f"{h}/* {SITE}/:splat 301!" for h in OLD_HOSTS] + ["/index.html  /  301!"] + redirects
     (DIST.parent / "_redirects").write_text("\n".join(redirects) + "\n", encoding="utf-8")
     (DIST.parent / "_headers").write_text(

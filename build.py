@@ -42,6 +42,9 @@ SPORTS = {
     # "soon": the sport shows as "Coming soon" (tile, nav, menu) and its topics are not playable or crawlable yet
     "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},
     "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png", "soon": True},
+    "basketball": {"name": "Basketball", "cover": "covers/sport-basketball.png", "soon": True},
+    "baseball": {"name": "Baseball", "cover": "covers/sport-baseball.png", "soon": True},
+    "tennis": {"name": "Tennis", "cover": "covers/sport-tennis.png", "soon": True},
 }
 
 GAMES = {

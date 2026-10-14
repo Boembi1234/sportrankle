@@ -682,9 +682,9 @@ const DATA = __DATA__;
 const PICK = 8;
 const GAMES = {
   rankle: {name: 'Rankle', word: 'RANKLE', blurb: 'Eight categories, eight arrivals. Put each one where it ranks highest.'},
-  blind: {name: 'Blind ranking', word: 'BLIND', blurb: 'One attribute, eight arrivals. Rank them 1 to 8 without knowing what comes next.'},
-  sort: {name: 'Sort it', word: 'SORT', blurb: 'One attribute, all eight in view. Swap them into the right order, then reveal.'},
-  guess: {name: 'Guess the record', word: 'GUESS', blurb: 'One world record a day. How fast, how far, how many? Guess the number and see how close you got.'},
+  blind: {name: 'Blind Ranking', word: 'BLIND', blurb: 'One attribute, eight arrivals. Rank them 1 to 8 without knowing what comes next.'},
+  sort: {name: 'Sort It', word: 'SORT', blurb: 'One attribute, all eight in view. Swap them into the right order, then reveal.'},
+  guess: {name: 'Guess the Record', word: 'GUESS', blurb: 'One world record per round. How fast, how far, how many? Guess the number and see how close you got.'},
 };
 const KIND_ART = __KINDS__;
 const GAME_ICONS = __GAME_ICONS__;   // {game: icon} for the menu, like the sport icons
@@ -902,11 +902,11 @@ function setCounter(showPts){
 function rulesHTML(){
   const n = KIND ? N : null;
   const rankle = `<p><b>Rankle.</b> Each game brings 8 categories and, one after another, 8 items. Put each one in the category where it ranks highest among all ${n || 'items in the pool'}. Each category can be used once. Rank 1 earns 100 points, the last place 0, with equal steps between: nine different values mean steps of 12.5 points, and tied items share their points. No value earns 0. At the end you see the perfect board.</p>`;
-  const blind = `<p><b>Blind ranking.</b> Each game brings one attribute and, one after another, 8 items. Put each one on a spot from 1 to 8 without knowing what comes next; a spot can't be changed. The exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}. Tied values count as correct on any of their spots.</p>`;
+  const blind = `<p><b>Blind Ranking.</b> Each game brings one attribute and, one after another, 8 items. Put each one on a spot from 1 to 8 without knowing what comes next; a spot can't be changed. The exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}. Tied values count as correct on any of their spots.</p>`;
   const common = `<p>Play as often as you like, every game deals new cards. Keyboard: 1 to 8 or the arrow keys pick a row, Enter confirms.${Object.values(DATA).some(g => g.items.some(it => it.credit)) ? ' Click a photo for its source.' : ''}</p>`;
-  const sort = `<p><b>Sort it.</b> Each game brings one attribute and 8 items, all in view from the start. Drag the rows up and down until the order is right, then tap Done. Scored like Blind ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;
+  const sort = `<p><b>Sort It.</b> Each game brings one attribute and 8 items, all in view from the start. Drag the rows up and down until the order is right, then tap Done. Scored like Blind Ranking: the exact spot earns ${BLIND_PTS[0]} points, one off ${BLIND_PTS[1]}, two off ${BLIND_PTS[2]}.</p>`;
   const ringer = `<p><b>Impostor.</b> A party game for ${PLAYERS_MIN} to ${PLAYERS_MAX} people on one phone. Everyone gets the same secret from the chosen pool, except the impostor, who only learns the pool. Pass the phone round, then take turns giving one-word hints about the secret. Vote on who is bluffing, then reveal. The impostor wins by staying hidden or by guessing the secret.</p>`;
-  const guess = `<p><b>Guess the record.</b> Each game one sports world record comes up, an official one or a crazy one. Type your guess in the record's unit and lock it in. The closer you are, the more points: 100 for the exact value, about 90 within 10 %, 50 for twice or half the value, 0 from four times off. Then you see the record, its holder and how everyone else did today.</p>`;
+  const guess = `<p><b>Guess the Record.</b> Each game one sports world record comes up, an official one or a crazy one. Type your guess in the record's unit and lock it in. The closer you are, the more points: 100 for the exact value, about 90 within 10 %, 50 for twice or half the value, 0 from four times off. Then you see the record, its holder and how everyone else did today.</p>`;
   if (!$('party').hidden) return ringer;
   return (KIND ? {rankle, blind, sort, guess}[KIND] : rankle + blind + sort + guess) + common;
 }

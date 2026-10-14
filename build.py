@@ -35,7 +35,7 @@ PHOTO_RATIO = 1.6   # own photos taller than this (w:h) are cropped to a centred
 # The home page goes game -> sport -> pool. Every pool names its "sport" (a key of SPORTS below).
 # The order of every sport list (home page, menu, game pages, site map); "All sports" always comes first
 SPORTS = {
-    "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
+    "mixed": {"name": "All Sports", "cover": "covers/sport-mixed.png"},
     "soccer": {"name": "Soccer", "cover": "covers/sport-soccer.png"},
     "hockey": {"name": "Hockey", "cover": "covers/sport-hockey.png"},
     # "soon": the sport shows like the others, its page says "Coming soon"; its topics are not playable or crawlable yet
@@ -43,8 +43,8 @@ SPORTS = {
     "football": {"name": "Football", "cover": "covers/sport-football.png"},
     "baseball": {"name": "Baseball", "cover": "covers/sport-baseball.png", "soon": True},
     "tennis": {"name": "Tennis", "cover": "covers/sport-tennis.png", "soon": True},
-    "motorsport": {"name": "Motor sports", "cover": "covers/sport-motorsport.png", "soon": True},
-    "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png", "soon": True},
+    "motorsport": {"name": "Motorsports", "cover": "covers/sport-motorsport.png", "soon": True},
+    "winter": {"name": "Winter Sports", "cover": "covers/sport-winter.png", "soon": True},
 }
 
 GAMES = {
@@ -856,13 +856,13 @@ OLD_HOSTS = ["https://sportrankle.netlify.app"]   # old addresses: everything th
 RENAMED = {"ice-hockey": "hockey", "american-football": "football", "ringer": "impostor"}   # and the game Ringer -> Impostor
 GAME_PAGES = {
     "rankle": ("Rankle", "Eight categories, eight items arriving one by one: put each one where it ranks highest among the whole pool. Each category can be used once. The perfect board is revealed at the end."),
-    "blind-ranking": ("Blind ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
-    "sort-it": ("Sort it", "One attribute, all eight items in view: swap them into the right order, then reveal."),
-    "guess-the-record": ("Guess the record", "One sports world record a day, from the 100 m to the most pull-ups in 24 hours. Guess the number, score by how close you are, compare with everyone."),
+    "blind-ranking": ("Blind Ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
+    "sort-it": ("Sort It", "One attribute, all eight items in view: swap them into the right order, then reveal."),
+    "guess-the-record": ("Guess the Record", "One sports world record per round, from the 100 m to the most pull-ups in 24 hours. Guess the number, score by how close you are, compare with everyone."),
     "impostor": ("Impostor", "The sports party game on one phone for 3 to 12 players: everyone gets the same secret except the impostor, who has to bluff along. Find out who it is."),
 }
 GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "guess-the-record": "#guess", "impostor": "#ringer"}   # Impostor was called Ringer; its route keeps the old name
-KIND_NAMES = {"rankle": "Rankle", "blind": "Blind ranking", "sort": "Sort it", "guess": "Guess the record"}
+KIND_NAMES = {"rankle": "Rankle", "blind": "Blind Ranking", "sort": "Sort It", "guess": "Guess the Record"}
 
 
 def slug(text):
@@ -904,12 +904,12 @@ def pages(data, sports):
         games = ", ".join(KIND_NAMES[k] for k in g["kinds"])
         if g["cats"]:
             desc = (f"{g['tab']} quiz: rank {len(g['items'])} {g['plural']} by {len(g['cats'])} real categories such as {cats(g)}. "
-                    f"Play {games}, new cards every day, one attempt each, compare your score with everyone else's.")
+                    f"Play {games}, new cards every round, play as often as you like, compare your score with everyone else's.")
             intro = (f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Categories</h2><ul>"
                      + "".join(f"<li>{c['emoji']} {esc(c['name'])} (rank 1 = {esc(c['dir'])})</li>" for c in g["cats"]) + "</ul>")
         else:
             areas = sorted({it["cat"] for it in g["items"]})
-            desc = (f"{g['tab']} quiz: {len(g['items'])} sports world records, one a day. Guess how fast, how far or how many, "
+            desc = (f"{g['tab']} quiz: {len(g['items'])} sports world records, a new one every round. Guess how fast, how far or how many, "
                     f"score by how close you are, compare with everyone. {', '.join(areas[:6])} and more.")
             intro = f"<h1>{esc(g['tab'])} quiz</h1><p>{esc(desc)}</p><h2>Areas</h2><ul>" + "".join(f"<li>{esc(a)}</li>" for a in areas) + "</ul>"
         siblings = [(topic_slug[o], og["tab"]) for o, og in opened.items() if og["sport"] == g["sport"] and o != k]
@@ -922,7 +922,7 @@ def pages(data, sports):
         if not topics:
             continue
         names = ", ".join(t["tab"] for t in topics)
-        desc = f"{sp['name']} quizzes: {names}. Daily ranking puzzles on real stats, up to three games per topic, one attempt a day."
+        desc = f"{sp['name']} quizzes: {names}. Ranking puzzles on real stats, up to three games per topic, play as often as you like."
         intro = f"<h1>{esc(sp['name'])} quizzes</h1><p>{esc(desc)}</p><ul>" + "".join(
             f'<li><a href="/{topic_slug[k]}">{esc(g["tab"])}</a></li>' for k, g in opened.items() if g["sport"] == sk) + "</ul>" + games_line()
         out.append((slug(sp["name"]), f"{sp['name']} quizzes | Sportrankle", desc, f"#s/{sk}", intro, [(sp["name"], f"/{slug(sp['name'])}")]))
@@ -930,7 +930,7 @@ def pages(data, sports):
     for gs, (name, blurb) in GAME_PAGES.items():
         desc = f"{name}: {blurb}" + ("" if gs == "impostor" else f" Play it on {len(opened)} topics, from {examples[0]} to {examples[-1]}.")
         intro = f"<h1>{esc(name)}</h1><p>{esc(desc)}</p>" + link_lists(data, sports)
-        out.append((gs, f"{name} - daily sports game | Sportrankle", desc, GAME_ROUTE[gs], intro, [(name, f"/{gs}")]))
+        out.append((gs, f"{name} - sports game | Sportrankle", desc, GAME_ROUTE[gs], intro, [(name, f"/{gs}")]))
     return out
 
 
@@ -1009,10 +1009,10 @@ def main():
                 .replace("__LDJSON__", ld_json(title, desc, url, crumbs)))
 
     opened = open_topics(data, sports)
-    home_title = "Sportrankle - daily NFL, Champions League & records quiz"
-    home_desc = (f"Free daily sports quiz games on real stats: {', '.join(g['tab'] for g in list(opened.values())[:5])} and more. "
-                 "Rank them, sort them, guess the record. New puzzles every day, one attempt each, compare your score with everyone.")
-    home = page(home_title, home_desc, SITE + "/", "", "<h1>Daily sports ranking puzzles</h1><p>" + esc(home_desc) + "</p>" + link_lists(data, sports))
+    home_title = "Sportrankle - NFL, NHL, Champions League & records quiz"
+    home_desc = (f"Free sports quiz games on real stats: {', '.join(g['tab'] for g in list(opened.values())[:5])} and more. "
+                 "Rank them, sort them, guess the record. New cards every round, play as often as you like, compare your score with everyone.")
+    home = page(home_title, home_desc, SITE + "/", "", "<h1>Sports ranking puzzles</h1><p>" + esc(home_desc) + "</p>" + link_lists(data, sports))
     OUT.write_text(home, encoding="utf-8")
     DIST.parent.mkdir(exist_ok=True)
     head = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'

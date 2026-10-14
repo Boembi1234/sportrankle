@@ -6,6 +6,8 @@ import base64
 import hashlib
 import io
 import json
+import math
+import os
 import re
 import shutil
 import time
@@ -862,9 +864,10 @@ GAME_PAGES = {
     "blind-ranking": ("Blind Ranking", "One attribute, eight items arriving one by one: place each on spot 1 to 8 without knowing what comes next. Spots are final."),
     "sort-it": ("Sort It", "One attribute, all eight items in view: swap them into the right order, then reveal."),
     "guess-the-record": ("Guess the Record", "One sports world record per round, from the 100 m to the most pull-ups in 24 hours. Guess the number, score by how close you are, compare with everyone."),
+    "guesstimate": ("Guesstimate", "Surprising number questions from the world of sport: think it through, use the built-in calculator and see how many times off your estimate is."),
     "impostor": ("Impostor", "The sports party game on one phone for 3 to 12 players: everyone gets the same secret except the impostor, who has to bluff along. Find out who it is."),
 }
-GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "guess-the-record": "#guess", "impostor": "#ringer"}   # Impostor was called Ringer; its route keeps the old name
+GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "guess-the-record": "#guess", "guesstimate": "#guesstimate", "impostor": "#ringer"}   # Impostor was called Ringer; its route keeps the old name
 KIND_NAMES = {"rankle": "Rankle", "blind": "Blind Ranking", "sort": "Sort It", "guess": "Guess the Record"}
 
 
@@ -931,7 +934,7 @@ def pages(data, sports):
         out.append((slug(sp["name"]), f"{sp['name']} quizzes | Sportrankle", desc, f"#s/{sk}", intro, [(sp["name"], f"/{slug(sp['name'])}")]))
     examples = [g["tab"] for g in opened.values()]
     for gs, (name, blurb) in GAME_PAGES.items():
-        desc = f"{name}: {blurb}" + ("" if gs == "impostor" else f" Play it on {len(opened)} topics, from {examples[0]} to {examples[-1]}.")
+        desc = f"{name}: {blurb}" + ("" if gs in ("impostor", "guesstimate") else f" Play it on {len(opened)} topics, from {examples[0]} to {examples[-1]}.")
         intro = f"<h1>{esc(name)}</h1><p>{esc(desc)}</p>" + link_lists(data, sports)
         out.append((gs, f"{name} - sports game | Sportrankle", desc, GAME_ROUTE[gs], intro, [(name, f"/{gs}")]))
     return out
@@ -968,6 +971,48 @@ def social_images():
         icon.resize((px, px), Image.LANCZOS).save(DIST.parent / name, "PNG", optimize=True)
 
 
+# Guesstimate: estimation questions from guesstimate/questions.json (see guesstimate/README.md for the format).
+# guesstimate/demo.json holds a few clearly marked demo questions; they are only built in when GUESSTIMATE_DEMO=1
+# (the local dev server sets it), so they never reach the live site.
+EST_REQUIRED = ("id", "sportCategory", "question", "answer", "unit", "answerType", "explanation", "napkinMath")
+
+
+def load_guesstimate():
+    files = [("questions.json", False)] + ([("demo.json", True)] if os.environ.get("GUESSTIMATE_DEMO") == "1" else [])
+    out, seen = [], set()
+    pos = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and v > 0
+    for name, demo in files:
+        path = HERE / "guesstimate" / name
+        if not path.exists():
+            continue
+        try:
+            rows = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as e:
+            raise SystemExit(f"guesstimate/{name}: not valid JSON ({e})")
+        for i, q in enumerate(rows):
+            where = f"guesstimate/{name} #{i + 1} ({q.get('id', 'no id')})"
+            nm = q.get("napkinMath") or {}
+            problems = [f"'{k}' missing" for k in EST_REQUIRED if q.get(k) in (None, "", [])]
+            if q.get("id") in seen: problems.append("id used twice")
+            if q.get("sportCategory") not in SPORTS: problems.append(f"unknown sportCategory '{q.get('sportCategory')}'")
+            if not pos(q.get("answer")): problems.append("answer must be a positive number")
+            if q.get("answerType") not in ("sourced", "estimate"): problems.append("answerType must be 'sourced' or 'estimate'")
+            if not nm.get("introduction") or not nm.get("steps"): problems.append("napkinMath needs introduction and steps")
+            if any(not st.get("label") for st in nm.get("steps") or []): problems.append("every napkinMath step needs a label")
+            if not pos(nm.get("estimatedAnswer")): problems.append("napkinMath.estimatedAnswer must be a positive number")
+            if any(not (s.get("title") and s.get("url")) for s in q.get("sources") or []): problems.append("every source needs title and url")
+            if problems:
+                print(f"  {where} left out: {'; '.join(problems)}")
+                continue
+            if q["answerType"] == "sourced" and not q.get("sources"):
+                print(f"  {where}: answerType 'sourced' but no sources listed")
+            if not 3 <= len(nm["steps"]) <= 5:
+                print(f"  {where}: napkinMath has {len(nm['steps'])} steps (3 to 5 read best)")
+            seen.add(q["id"])
+            out.append({**q, **({"demo": True} if demo else {})})
+    return out
+
+
 def main():
     loaders = {"wide": load_wide, "records": load_records}
     data = {key: loaders.get(cfg.get("format"), load_game)(key, cfg) for key, cfg in GAMES.items()}
@@ -1000,8 +1045,9 @@ def main():
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
+            .replace("__GUESSTIMATE__", json.dumps(load_guesstimate(), ensure_ascii=False))
             # menu icons of the games, from covers/icon-game-<game>.png (transparent, like the sport icons)
-            .replace("__GAME_ICONS__", json.dumps({g: icon(f"covers/icon-game-{g}.png") for g in ("rankle", "blind", "sort", "guess", "ringer")
+            .replace("__GAME_ICONS__", json.dumps({g: icon(f"covers/icon-game-{g}.png") for g in ("rankle", "blind", "sort", "guess", "guesstimate", "ringer")
                                                    if (HERE / "covers" / f"icon-game-{g}.png").exists()}))
             .replace("__SUPABASE__", json.dumps(SUPABASE if SUPABASE["key"] else None))
             .replace("__SITE__", SITE))

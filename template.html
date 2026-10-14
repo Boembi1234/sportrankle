@@ -303,7 +303,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-sort .row{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .k-sort .board>li.dragging .row{cursor:grabbing;box-shadow:0 8px 20px rgba(0,0,0,.5)}
 @media (prefers-reduced-motion:reduce){.k-sort .board>li{transition:none}}
-.page:is(.k-blind,.k-sort,.k-guess,.k-ringer) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
+.page:is(.k-blind,.k-sort,.k-guess,.k-ringer,.k-est) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
 .page:is(.k-blind,.k-sort,.k-guess):not(.done) .question{font-size:17px;margin-top:24px}
 .page:is(.k-blind,.k-sort,.k-guess) .right{margin-top:16px}
 /* Guess the record: each answer part is a box like the rows in the other games (faint box; the full card colour on hover and
@@ -341,6 +341,87 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-ringer .deal-k{font-size:13px;letter-spacing:0;text-transform:none}
 .k-ringer .deal-h{font-size:28px;font-stretch:100%}
 @media (prefers-reduced-motion:reduce){.k-ringer .stepper button{transition:none}}
+/* Guesstimate: built from the games' parts like Impostor. The sport list as rows, then one question: the question large,
+   its context muted, one input box with the unit inside (like Guess the record), the calculator as a second button */
+.k-est .party{padding-block:24px 24px}
+.k-est .party .title{margin:0}
+.k-est .party .bar{padding-top:16px}
+.k-est .board{margin-top:16px}
+.est-empty{margin-top:16px;padding:16px;border-radius:10px;background:var(--surface-faint);color:var(--muted);font-size:15px;line-height:1.45}
+.est-empty b{display:block;margin-bottom:4px;color:var(--text)}
+.est-q{margin:24px 0 0;font-size:24px;font-weight:800;line-height:1.25;text-wrap:balance}
+.est-ctx{margin:10px 0 0;color:var(--muted);font-size:15px;line-height:1.45;text-wrap:pretty}
+.est-in{display:flex;align-items:center;gap:8px;min-height:60px;margin-top:20px;padding:0 16px;border-radius:10px;background:var(--surface-faint);cursor:text;transition:background-color .15s}
+@media (hover:hover){.est-in:hover{background:var(--surface)}}
+.est-in:focus-within{background:var(--surface)}
+.est-in input{flex:1;min-width:0;width:0;padding:0;border:0;background:none;outline:none;color:var(--text);font:800 26px var(--font)}
+.est-in input::placeholder{color:var(--muted);font-weight:700}
+.est-unit{flex:none;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:17px;font-weight:700;color:var(--muted)}
+.est-note{min-height:1.3em;margin:0;font-size:14px;color:var(--muted);text-align:center}
+.est-note.err,.calc-msg.err{color:var(--wrong)}
+.est-back{display:flex;align-items:center;justify-content:center;text-decoration:none}
+.chip.demo{background:var(--signal);box-shadow:0 2px 0 var(--signal-edge);color:var(--bg)}
+/* Results: the factor in the score card, the facts as rows, the explanation, Napkin Math to open, the sources */
+.k-est .led.est-score{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px}
+.k-est .led.est-score[hidden]{display:none}
+.est-fac{font-size:40px;font-weight:900;line-height:1;color:var(--signal);font-variant-numeric:tabular-nums}
+.est-fac small{display:block;margin-top:6px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.est-verdict{flex:none;padding:8px 14px;border-radius:6px;font-size:15px;font-weight:800}
+.est-verdict.hi,.est-verdict.lo{background:var(--bg);color:var(--text)}
+.est-verdict.ok{background:var(--correct);color:var(--bg)}
+.k-est .fact{align-items:center;min-height:48px;padding:8px 12px;border-radius:10px;background:var(--surface)}
+.k-est .fact-k{font-size:15px;font-weight:700;color:var(--muted)}
+.k-est .fact-v{font-size:15px;font-weight:700;color:var(--text)}
+.est-tag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
+.est-h{margin:24px 0 8px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.est-text{margin:0;font-size:16px;line-height:1.5;text-wrap:pretty}
+.est-napkin{margin-top:16px;border-radius:10px;background:var(--surface-faint)}
+.est-napkin summary{display:flex;align-items:center;gap:10px;min-height:52px;padding:0 16px;font-size:17px;font-weight:800;cursor:pointer;list-style:none}
+.est-napkin summary::-webkit-details-marker{display:none}
+.est-napkin summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid;border-bottom:2px solid;transform:translateY(-2px) rotate(45deg)}
+.est-napkin[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+.est-napkin-body{padding:0 16px 16px}
+.est-napkin-body>p{margin:0 0 12px;color:var(--muted);font-size:15px;line-height:1.45}
+.est-steps{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none;counter-reset:st}
+.est-steps li{display:grid;grid-template-columns:28px 1fr auto;gap:2px 10px;align-items:baseline;padding:10px 12px;border-radius:8px;background:var(--surface);counter-increment:st}
+.est-steps li::before{content:counter(st);grid-column:1;grid-row:1 / span 2;color:var(--signal);font-weight:800}
+.est-steps b{grid-column:2;grid-row:1;font-size:15px}
+.est-steps .est-res{grid-column:3;grid-row:1 / span 2;align-self:center;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.est-steps .sub{grid-column:2;grid-row:2;font-size:14px;color:var(--muted)}
+.est-napkin-end{display:flex;justify-content:space-between;gap:12px;margin-top:10px;padding:10px 12px;border-top:1px solid var(--line);font-weight:800}
+.est-napkin-end span{color:var(--muted);font-weight:700}
+.est-src{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.est-src a{color:var(--signal);font-weight:700}
+.est-src span{color:var(--muted);font-size:14px}
+@media (prefers-reduced-motion:reduce){.est-in{transition:none}}
+/* The calculator: a modal over the dimmed page, the display on top (sum small, result large, right-aligned), 4 x 5 round
+   keys (digits dark, operators blue), "Use result" underneath. Fits a 320px phone in landscape too (it scrolls) */
+.calc-bg{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.6);overflow-y:auto}
+.calc-bg[hidden]{display:none}
+.calc{width:100%;max-width:360px;margin:auto;padding:16px;border-radius:14px;background:var(--surface);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.calc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.calc-head h2{margin:0;font-size:17px;font-weight:800}
+.calc-x{position:relative;width:44px;height:44px;margin:-8px -8px -8px 0;border:0;border-radius:10px;background:none;color:var(--text);cursor:pointer}
+.calc-x::before,.calc-x::after{content:"";position:absolute;left:12px;right:12px;top:21px;height:2px;border-radius:1px;background:currentColor;transform:rotate(45deg)}
+.calc-x::after{transform:rotate(-45deg)}
+@media (hover:hover){.calc-x:hover{background:var(--bg)}}
+.calc-screen{padding:12px 14px;border-radius:10px;background:var(--bg);text-align:right;overflow:hidden}
+.calc-expr{min-height:20px;font-size:15px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:rtl;unicode-bidi:plaintext}
+.calc-out{display:block;margin-top:2px;font-size:38px;font-weight:800;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.calc-out.long{font-size:28px}
+.calc-out.longer{font-size:21px}
+.calc-out.err{font-size:20px;color:var(--wrong)}
+.calc-keys{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.calc-keys button{aspect-ratio:1;max-height:72px;min-height:48px;border:0;border-radius:999px;background:var(--bg);color:var(--text);font:800 24px var(--font);cursor:pointer;
+  box-shadow:0 3px 0 rgba(0,0,0,.35);transition:transform .1s,filter .1s}
+.calc-keys .ck-op{background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge)}
+.calc-keys .ck-fn{color:var(--signal)}
+@media (hover:hover){.calc-keys button:hover{filter:brightness(1.15)}}
+.calc-keys button:active{transform:translateY(2px)}
+.calc-use{margin-top:16px}
+.calc-msg{min-height:1.3em;margin:8px 0 0;font-size:14px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:reduce){.calc-keys button{transition:none}}
+@media (max-height:640px){.calc-keys{gap:8px}.calc-keys button{aspect-ratio:auto;height:48px}.calc-out{font-size:30px}}
 .k-guess .guess-unit{flex:none;margin:0;font-size:17px;font-weight:700;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.k-guess .gbox{transition:none}}
 /* Guess the record results: the facts as rows in the card colour like the other results (label left, value right) */
@@ -641,6 +722,44 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
     </section>
   </main>
 
+  <main class="party est" id="est" hidden>
+    <section id="est-pick">
+      <h1 class="title">Guesstimate</h1>
+      <div class="title-sub"><span class="chip">One question</span><span class="chip">Calculator</span><span class="chip">No time limit</span></div>
+      <p class="question"><span class="emo">🧮</span>Surprising numbers from the world of sport. Think it through, then guess.</p>
+      <div id="est-sports"></div>
+    </section>
+    <section id="est-play" hidden>
+      <h1 class="title">Guesstimate</h1>
+      <div class="title-sub" id="est-chips"></div>
+      <div class="led est-score" id="est-score" hidden></div>
+      <h2 class="est-q" id="est-q"></h2>
+      <p class="est-ctx" id="est-ctx" hidden></p>
+      <div id="est-body"></div>
+      <div class="bar">
+        <button class="main" id="est-main" type="button"></button>
+        <button class="share" id="est-calc-btn" type="button">🧮 Calculator</button>
+        <button class="share" id="est-share" type="button" hidden>Share my score</button>
+        <a class="share est-back" id="est-back" href="#guesstimate" hidden>Back to the games</a>
+        <p class="est-note" id="est-note" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+  <div class="calc-bg" id="calc" hidden>
+    <div class="calc" role="dialog" aria-modal="true" aria-labelledby="calc-h">
+      <div class="calc-head"><h2 id="calc-h">Calculator</h2><button type="button" class="calc-x" id="calc-x" aria-label="Close calculator"></button></div>
+      <div class="calc-screen"><div class="calc-expr" id="calc-expr" aria-hidden="true"></div><output class="calc-out" id="calc-out" aria-live="polite">0</output></div>
+      <div class="calc-keys" id="calc-keys">
+        <button type="button" data-k="C" class="ck-fn" aria-label="Clear">C</button><button type="button" data-k="back" class="ck-fn" aria-label="Delete last">⌫</button><button type="button" data-k="%" class="ck-op" aria-label="Percent">%</button><button type="button" data-k="÷" class="ck-op" aria-label="Divide">÷</button>
+        <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" data-k="×" class="ck-op" aria-label="Multiply">×</button>
+        <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="−" class="ck-op" aria-label="Minus">−</button>
+        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="+" class="ck-op" aria-label="Plus">+</button>
+        <button type="button" data-k="π" aria-label="Pi">π</button><button type="button" data-k="0">0</button><button type="button" data-k="." id="calc-dot" aria-label="Decimal point">.</button><button type="button" data-k="=" class="ck-op" aria-label="Equals">=</button>
+      </div>
+      <button class="main calc-use" id="calc-use" type="button">Use result</button>
+      <p class="calc-msg" id="calc-msg" aria-live="polite"></p>
+    </div>
+  </div>
   <main class="game" id="game" hidden>
     <section class="left">
       <a class="photo" id="photo" target="_blank" rel="noopener"><img id="photo-img" alt="" hidden><span class="ph" id="photo-ph">No photo</span></a>
@@ -950,8 +1069,7 @@ function shareText(){
   lines.push(D.url || location.origin);
   return lines.filter(Boolean).join('\n');
 }
-async function share(){
-  const b = $('share'), text = shareText();
+async function share(b = $('share'), text = shareText()){
   try {
     if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) { await navigator.share({text}); return; }
     await navigator.clipboard.writeText(text);
@@ -959,7 +1077,7 @@ async function share(){
     setTimeout(() => { b.textContent = 'Share my score'; b.classList.remove('copied'); }, 2500);
   } catch (e) { /* the share sheet was closed or the clipboard is blocked */ }
 }
-$('share').addEventListener('click', share);
+$('share').addEventListener('click', () => share());
 
 function saveHistory(score, max){
   const h = load(`${KIND}-history-${MODE}`) || {};
@@ -1152,6 +1270,10 @@ function renderHome(kind, sport){
       <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(sportCard).join('')}</div>
       <p class="sec">The games</p>
       <div class="tiles">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
+        <a class="tile" href="#guesstimate" aria-label="Guesstimate. Surprising number questions from the world of sport, with a calculator. How many times off are you?">
+          <span class="tile-art kind-art${KIND_ART.guesstimate ? '' : ' led'}">${KIND_ART.guesstimate ? `<img src="${KIND_ART.guesstimate}" alt="">` : `<span class="tile-cards">GUESSTIMATE</span>`}</span>
+          <span class="tile-body"><span class="tile-name">Guesstimate</span><span class="tile-status">${EST.length ? 'Play' : 'Soon'}</span></span>
+        </a>
         <a class="tile" href="#ringer" aria-label="Impostor. Party game on one phone, 3 to 12 players. Everyone knows the secret except the impostor. Find them.">
           <span class="tile-art kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">IMPOSTOR</span>`}</span>
           <span class="tile-body"><span class="tile-name">Impostor</span><span class="tile-status">Play</span></span>
@@ -1266,7 +1388,7 @@ $('party-play').addEventListener('click', e => { if (e.target.id === 'pp-setup')
 // ---- Menu: a drawer from the left with every sport and every game ----
 // Where you are: the sport of the open sport, topic or game page, and the game type being played
 function here(){
-  const h = (location.hash || ROUTE || '').slice(1), [, kind, rest] = h.match(/^(rankle|blind|sort|guess|ringer)?(?:[-/]?)(.*)$/);
+  const h = (location.hash || ROUTE || '').slice(1), [, kind, rest] = h.match(/^(rankle|blind|sort|guesstimate|guess|ringer)?(?:[-/]?)(.*)$/);
   const topic = rest.replace(/^[st]\//, '');
   return {kind, sport: SPORTS[topic] ? topic : DATA[topic]?.sport};
 }
@@ -1333,7 +1455,8 @@ function menuHTML(){
   const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;
   const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
-  const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])), link('#ringer', 'Impostor', kind === 'ringer', GAME_ICONS.ringer)];
+  const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])), link('#guesstimate', 'Guesstimate', kind === 'guesstimate', GAME_ICONS.guesstimate),
+    link('#ringer', 'Impostor', kind === 'ringer', GAME_ICONS.ringer)];
   return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
 }
 function openMenu(){
@@ -1364,15 +1487,305 @@ $('menu').addEventListener('click', e => { if (e.target.closest('a')) closeMenu(
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
 // ---- Routing ----
+// ================= Guesstimate =================
+// One estimation question per round from guesstimate/questions.json (the demo questions only in local builds). Scored
+// by how many times off the guess is: max(guess / answer, answer / guess), 1× is perfect. The round in progress, its
+// input, the calculator and a confirmed guess are kept on the device, so a reload neither loses nor reopens it.
+const EST = __GUESSTIMATE__;
+const EST_MAX = 1e15;   // larger inputs are refused (and calculator results too)
+const LOCALES = {en: 'en-US', de: 'de-CH', fr: 'fr-CH', es: 'es-ES', it: 'it-CH'};
+const loc = () => LOCALES[LANG] || 'en-US';
+const decSep = () => (1.5).toLocaleString(loc()).charAt(1);
+const escH = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
+const estText = (q, k) => q.i18n?.[LANG]?.[k] ?? q[k];   // optional translations per question: {"i18n": {"de": {"question": ...}}}
+const estNum = v => Math.abs(v) >= EST_MAX || (v !== 0 && Math.abs(v) < 1e-6)
+  ? v.toExponential(4).replace('.', decSep()) : v.toLocaleString(loc(), {maximumFractionDigits: Math.abs(v) < 10 ? 4 : 2});
+const estFactor = f => `${f.toLocaleString(loc(), {minimumFractionDigits: 2, maximumFractionDigits: 2})}×`;
+const estSports = () => Object.keys(SPORTS).filter(s => EST.some(q => q.sportCategory === s));
+let ER = null;   // the round: {sport, id, input, guess, calc: {t: tokens, done, prev}}
+const estSave = () => store('est-round', ER);
+
+// A typed estimate: spaces, apostrophes and the other mark as thousands separators, the language's decimal mark
+function parseEst(text){
+  let t = String(text).trim().replace(/[\s'’  _]/g, '');
+  if (!t) return {err: ''};
+  if (t.startsWith('-')) return {err: 'Only positive numbers count.'};
+  for (const m of ['.', ',']) if (t.split(m).length > 2) t = t.split(m).join('');   // 1.000.000 or 1,000,000
+  if (t.includes('.') && t.includes(',')) {   // both: the last one is the decimal mark
+    const i = Math.max(t.lastIndexOf('.'), t.lastIndexOf(','));
+    t = t.slice(0, i).replace(/[.,]/g, '') + '.' + t.slice(i + 1);
+  } else {
+    const other = decSep() === '.' ? ',' : '.';
+    t = t.includes(other) && /^\d{1,3}[.,]\d{3}$/.test(t) ? t.replace(other, '') : t.replace(/[.,]/, '.');
+  }
+  if (!/^(\d+\.?\d*|\.\d+)$/.test(t)) return {err: 'That is not a number.'};
+  const v = Number(t);
+  if (!Number.isFinite(v)) return {err: 'That is not a number.'};
+  if (v <= 0) return {err: 'Your estimate has to be more than 0.'};
+  if (v > EST_MAX) return {err: 'That number is too large.'};
+  return {v};
+}
+const estInputText = v => v.toLocaleString(loc(), {useGrouping: false, maximumFractionDigits: 6});
+
+function estRoute(h){
+  KIND = null;
+  $('page').className = 'page at-home at-kind at-party v2 k-est';
+  $('home').hidden = true; $('game').hidden = true; $('alt').hidden = true; $('est').hidden = false;
+  const mq = h.match(/^guesstimate\/q\/([\w-]+)$/), ms = h.match(/^guesstimate\/([a-z]+)$/);
+  const q = mq && EST.find(x => x.id === mq[1]);
+  if (q) estPlay(q.sportCategory, q.id);
+  else if (ms && estSports().includes(ms[1])) estPlay(ms[1]);
+  else estPick();
+  scrollTo(0, 0);
+}
+// The start: the sports that have questions as rows (the topics in Impostor), or a note while there are none
+function estPick(){
+  $('est-pick').hidden = false; $('est-play').hidden = true;
+  const sp = estSports(), count = s => EST.filter(q => q.sportCategory === s).length;
+  $('est-sports').innerHTML = sp.length
+    ? `<p class="question"><span class="emo">📚</span>Pick a sport</p><ul class="board" aria-label="Sport">${sp.map(s => `<li><button type="button" class="row" data-sport="${s}">`
+      + `${SPORTS[s].icon ? `<img class="row-ic" src="${SPORTS[s].icon}" alt="">` : ''}<span class="body"><span class="cat">${SPORTS[s].name}</span></span>`
+      + `<span class="est-unit">${count(s)} question${count(s) === 1 ? '' : 's'}</span></button></li>`).join('')}</ul>`
+    : '<div class="est-empty"><b>The first questions are on their way.</b>Guesstimate opens as soon as they are in. Until then, try one of the other games.</div>'
+      + '<div class="bar"><a class="share est-back" href="#">Back to the games</a></div>';
+}
+$('est-sports').addEventListener('click', e => { const b = e.target.closest('[data-sport]'); if (b) location.hash = `guesstimate/${b.dataset.sport}`; });
+
+// The round of a sport: the stored one if it belongs there (or is the linked question), otherwise a new one
+function estPlay(sport, id){
+  const r = load('est-round'), ok = r && EST.some(q => q.id === r.id && q.sportCategory === sport);
+  ER = ok && (!id || r.id === id) ? r : estNew(sport, id);
+  estRender();
+}
+// A new round: a question not played lately in this sport, never the one just played if there is another
+function estNew(sport, id, avoid){
+  const pool = EST.filter(q => q.sportCategory === sport).map(q => q.id);
+  let seen = (load(`est-seen-${sport}`) || []).filter(x => pool.includes(x)), pick = id;
+  if (!pick) {
+    let fresh = pool.filter(x => !seen.includes(x) && x !== avoid);
+    if (!fresh.length) { seen = []; fresh = pool.filter(x => x !== avoid); }
+    if (!fresh.length) fresh = pool;
+    pick = fresh[Math.random() * fresh.length | 0];
+  }
+  store(`est-seen-${sport}`, [...seen.filter(x => x !== pick), pick]);
+  const r = {sport, id: pick, input: '', guess: null, calc: {t: [], done: false, prev: ''}};
+  ER = r; estSave();
+  return r;
+}
+function estRender(){
+  const q = EST.find(x => x.id === ER.id);
+  $('est-pick').hidden = true; $('est-play').hidden = false;
+  $('est-chips').innerHTML = [q.demo ? '<span class="chip demo">Demo</span>' : '', `<span class="chip">${escH(SPORTS[q.sportCategory].name)}</span>`,
+    q.referencePeriod ? `<span class="chip">${escH(estText(q, 'referencePeriod'))}</span>` : '',
+    q.difficulty ? `<span class="chip">${escH(q.difficulty[0].toUpperCase() + q.difficulty.slice(1))}</span>` : ''].join('');
+  $('est-q').textContent = estText(q, 'question');
+  $('est-ctx').hidden = !q.context; $('est-ctx').textContent = estText(q, 'context') || '';
+  $('est-note').textContent = ''; $('est-note').classList.remove('err');
+  if (ER.guess != null) return estResults(q);
+  $('est-score').hidden = true;
+  $('est-body').innerHTML = `<label class="est-in"><input id="est-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
+      placeholder="Your estimate" aria-label="Your estimate in ${escH(q.unit)}" aria-describedby="est-note"><span class="est-unit">${escH(estText(q, 'unit'))}</span></label>`;
+  const inp = $('est-input');
+  inp.value = ER.input || '';
+  inp.addEventListener('input', () => { ER.input = inp.value; estSave(); estCheck(); });
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); estConfirm(); } });
+  const b = $('est-main');
+  b.hidden = false; b.textContent = 'Lock in my guess'; b.onclick = estConfirm;
+  $('est-calc-btn').hidden = false; $('est-share').hidden = true; $('est-back').hidden = true;
+  estCheck();
+  if (innerWidth >= 640) setTimeout(() => inp.focus(), 50);
+}
+// The button only works with a valid number; a wrong one says why under it
+function estCheck(){
+  const r = parseEst($('est-input').value);
+  $('est-main').disabled = r.v == null;
+  $('est-note').textContent = r.err || '';
+  $('est-note').classList.toggle('err', !!r.err);
+  return r.v;
+}
+function estConfirm(){
+  if (!ER || ER.guess != null || !$('est-input')) return;   // one guess: a second tap or Enter does nothing
+  const v = estCheck();
+  if (v == null) return;
+  $('est-main').disabled = true;
+  ER.guess = v; estSave();
+  estResults(EST.find(x => x.id === ER.id), true);
+  scrollTo(0, 0);
+}
+function estResults(q, fresh = false){
+  const a = q.answer, g = ER.guess, f = Math.max(g / a, a / g), unit = escH(estText(q, 'unit'));
+  const [cls, verdict] = g === a ? ['ok', 'Spot on'] : g > a ? ['hi', 'Too high'] : ['lo', 'Too low'];
+  const sc = $('est-score');
+  sc.hidden = false;
+  sc.innerHTML = `<div class="est-fac">${estFactor(f)}<small>${g === a ? 'perfect' : 'off by'}</small></div><span class="est-verdict ${cls}">${verdict}</span>`;
+  const nm = q.napkinMath, srcs = (q.sources || []).filter(s => /^https?:\/\//.test(s.url));
+  const facts = [['Your guess', `${estNum(g)} ${unit}`],
+    [q.answerType === 'sourced' ? 'Answer' : 'Answer<span class="est-tag">Model estimate</span>', `${estNum(a)} ${unit}`],
+    q.referencePeriod ? ['Refers to', escH(estText(q, 'referencePeriod'))] : null].filter(Boolean);
+  $('est-body').innerHTML = `<ul class="board">${facts.map(([k, v]) => `<li class="fact"><span class="fact-k">${k}</span><span class="fact-v">${v}</span></li>`).join('')}</ul>
+    <p class="est-h">Explanation</p><p class="est-text">${escH(estText(q, 'explanation'))}</p>
+    <details class="est-napkin"><summary>📝 Napkin Math</summary><div class="est-napkin-body"><p>${escH(estText(nm, 'introduction'))}</p>
+      <ol class="est-steps">${nm.steps.map(st => `<li><b>${escH(st.label)}</b>${st.result ? `<span class="est-res">${escH(st.result)}</span>` : ''}`
+        + `${st.assumption || st.calculation ? `<span class="sub">${[st.assumption, st.calculation].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ol>
+      <div class="est-napkin-end"><span>Rough estimate</span>≈ ${estNum(nm.estimatedAnswer)} ${unit}</div>
+      <p class="est-ctx">A quick path to the right order of magnitude. The ${q.answerType === 'sourced' ? 'answer' : 'model estimate'} above is the number that counts.</p></div></details>
+    ${srcs.length ? `<p class="est-h">Source${srcs.length > 1 ? 's' : ''}</p><ul class="est-src">${srcs.map(s => `<li><a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>`
+      + `${s.publisher || s.date ? ` <span>${[s.publisher, s.date].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ul>` : ''}`;
+  const b = $('est-main');
+  b.textContent = 'Play again'; b.onclick = estAgain;
+  b.disabled = fresh;   // right after the guess a quick second tap must not skip the reveal
+  if (fresh) setTimeout(() => { b.disabled = false; }, 700);
+  $('est-calc-btn').hidden = true; $('est-share').hidden = false; $('est-back').hidden = false;
+  $('est-share').textContent = 'Share my score';
+  announce(`${verdict}. The ${q.answerType === 'sourced' ? 'answer' : 'model estimate'} is ${estNum(a)} ${q.unit}, you were off by ${estFactor(f)}.`);
+}
+function estAgain(){
+  const pool = EST.filter(q => q.sportCategory === ER.sport);
+  estNew(ER.sport, null, ER.id);
+  if (location.hash !== `#guesstimate/${ER.sport}`) history.replaceState(null, '', `#guesstimate/${ER.sport}`);
+  estRender();
+  if (pool.length === 1) { $('est-note').textContent = 'This is the only question in this sport so far, so here it is again.'; }
+  scrollTo(0, 0);
+}
+// Share: the game, the factor and a link to the same question, never the answer, the guess or the working
+$('est-share').addEventListener('click', () => {
+  const q = EST.find(x => x.id === ER.id), f = Math.max(ER.guess / q.answer, q.answer / ER.guess);
+  const mark = f <= 1.25 ? '\u{1F3AF}' : f <= 2 ? '\u{1F7E9}' : f <= 5 ? '\u{1F7E8}' : '\u{1F7E5}';
+  share($('est-share'), [`Sport Minigames – Guesstimate · ${SPORTS[q.sportCategory].name}`, `Off by ${estFactor(f)} ${mark}`,
+    `${location.origin}${location.pathname}#guesstimate/q/${q.id}`].join('\n'));
+});
+
+// ---- The calculator: tokens (numbers as typed, "π", operators), evaluated with × and ÷ before + and −, no eval() ----
+const CALC_OPS = ['+', '−', '×', '÷'];
+const isOp = t => CALC_OPS.includes(t);
+const tokVal = t => t === 'π' ? Math.PI : Number(t);
+function calcEval(tokens){
+  const t = [...tokens];
+  while (t.length && isOp(t[t.length - 1])) t.pop();
+  if (!t.length) return {v: 0};
+  const nums = [], ops = [];
+  t.forEach((x, i) => (i % 2 ? ops : nums).push(x));
+  if (nums.some(x => isOp(x)) || ops.some(x => !isOp(x))) return {err: 'Invalid calculation'};
+  const vals = nums.map(tokVal);
+  if (vals.some(v => !Number.isFinite(v))) return {err: 'Invalid calculation'};
+  const sum = [vals[0]], sops = [];
+  for (let i = 0; i < ops.length; i++) {
+    const o = ops[i], v = vals[i + 1];
+    if (o === '×') sum[sum.length - 1] *= v;
+    else if (o === '÷') { if (v === 0) return {err: 'Can’t divide by 0'}; sum[sum.length - 1] /= v; }
+    else { sops.push(o); sum.push(v); }
+  }
+  let r = sum[0];
+  sops.forEach((o, i) => { r = o === '+' ? r + sum[i + 1] : r - sum[i + 1]; });
+  if (!Number.isFinite(r)) return {err: 'Result too large'};
+  return {v: Number(r.toPrecision(12))};
+}
+const calcTok = t => t === 'π' || isOp(t) ? t : t.replace('.', decSep());
+function calcKey(k){
+  const c = ER.calc, t = c.t, last = t[t.length - 1], isNum = last != null && !isOp(last);
+  $('calc-msg').textContent = ''; $('calc-msg').classList.remove('err');
+  if (c.err) { c.err = ''; if (k !== 'C' && k !== 'back') { c.t = []; return calcKey(k); } }
+  if (/^\d$/.test(k)) {
+    if (c.done) { c.t = [k]; c.done = false; c.prev = ''; }
+    else if (last === 'π') t.push('×', k);
+    else if (isNum) { if (last.replace('.', '').length < 15) t[t.length - 1] = last === '0' ? k : last + k; }
+    else t.push(k);
+  } else if (k === '.') {
+    if (c.done) { c.t = ['0.']; c.done = false; c.prev = ''; }
+    else if (last === 'π') t.push('×', '0.');
+    else if (isNum) { if (!last.includes('.')) t[t.length - 1] = last + '.'; }
+    else t.push('0.');
+  } else if (isOp(k)) {
+    c.done = false;
+    if (!t.length) return calcShow();
+    if (isOp(last)) t[t.length - 1] = k; else t.push(k);
+  } else if (k === 'π') {
+    if (c.done) { c.t = ['π']; c.done = false; c.prev = ''; }
+    else if (isNum) t.push('×', 'π'); else t.push('π');
+  } else if (k === '%') {
+    if (isNum) { t[t.length - 1] = String(Number((tokVal(last) / 100).toPrecision(12))); c.done = false; }
+  } else if (k === 'back') {
+    c.done = false;
+    if (last == null) return calcShow();
+    if (last.length > 1 && !isOp(last) && last !== 'π') t[t.length - 1] = last.slice(0, -1); else t.pop();
+  } else if (k === 'C') {
+    c.t = []; c.done = false; c.prev = '';
+  } else if (k === '=') {
+    const r = calcEval(t);
+    if (r.err) { c.err = r.err; }
+    else if (t.length) { c.prev = `${t.map(calcTok).join(' ')} =`; c.t = [String(r.v)]; c.done = true; }
+  }
+  calcShow();
+}
+function calcShow(){
+  const c = ER.calc, out = $('calc-out');
+  const r = c.err ? {err: c.err} : calcEval(c.t);
+  $('calc-expr').textContent = c.done ? c.prev : c.t.map(calcTok).join(' ');
+  const text = r.err ? r.err : estNum(r.v);
+  out.textContent = text;
+  out.className = `calc-out${r.err ? ' err' : text.length > 16 ? ' longer' : text.length > 11 ? ' long' : ''}`;
+  estSave();
+}
+let calcFrom = null;
+function calcOpen(){
+  if (!ER || ER.guess != null) return;
+  ER.calc ||= {t: [], done: false, prev: ''};
+  calcFrom = document.activeElement;
+  $('calc-dot').textContent = decSep();
+  $('calc-msg').textContent = '';
+  $('calc').hidden = false;
+  document.documentElement.style.overflow = 'hidden';
+  calcShow();
+  $('calc-x').focus();
+}
+function calcClose(){
+  if ($('calc').hidden) return;
+  $('calc').hidden = true;
+  document.documentElement.style.overflow = '';
+  (calcFrom && document.contains(calcFrom) ? calcFrom : $('est-calc-btn')).focus({preventScroll: true});
+}
+// "Use result": into the answer field (not confirmed yet); only a finite number above 0 counts as an estimate
+function calcUse(){
+  const r = ER.calc.err ? {err: ER.calc.err} : calcEval(ER.calc.t);
+  if (r.err || !(r.v > 0) || r.v > EST_MAX) {
+    $('calc-msg').textContent = r.err ? `${r.err}: fix the calculation first.` : r.v > EST_MAX ? 'That result is too large to use.' : 'Only a result above 0 can be your estimate.';
+    $('calc-msg').classList.add('err');
+    return;
+  }
+  ER.input = estInputText(r.v); estSave();
+  calcClose();
+  const inp = $('est-input');
+  if (inp) { inp.value = ER.input; estCheck(); inp.focus({preventScroll: true}); }
+}
+$('est-calc-btn').addEventListener('click', calcOpen);
+$('calc-x').addEventListener('click', calcClose);
+$('calc-use').addEventListener('click', calcUse);
+$('calc').addEventListener('click', e => { if (e.target === $('calc')) calcClose(); });   // a tap on the dimmed page closes it
+$('calc-keys').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) calcKey(b.dataset.k); });
+// Keyboard: digits, + - * / x, . or , , % , Enter or = , Backspace, Delete or c, Escape; Tab stays inside the dialog
+$('calc').addEventListener('keydown', e => {
+  if (e.key === 'Escape') { e.preventDefault(); return calcClose(); }
+  if (e.key === 'Tab') {
+    const f = [...$('calc').querySelectorAll('button')], i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    return;
+  }
+  const map = {'*': '×', x: '×', '/': '÷', '-': '−', '+': '+', ',': '.', '.': '.', '%': '%', '=': '=', Backspace: 'back', Delete: 'C', c: 'C', p: 'π'};
+  const k = /^\d$/.test(e.key) ? e.key : e.key === 'Enter' && !document.activeElement?.closest('.calc-keys, #calc-use, #calc-x') ? '=' : map[e.key];
+  if (k) { e.preventDefault(); calcKey(k); }
+});
+
 let booted = false;
 function route(){
   closeMenu(false);
   sportNav();
   closePanels();
-  $('party').hidden = true;
+  $('party').hidden = true; $('est').hidden = true; calcClose();
   // A page loaded on a real URL opens its own view; from then on the hash decides
   const h = location.hash.slice(1) || (!booted && ROUTE ? ROUTE.slice(1) : '');
   booted = true;
+  if (h === 'guesstimate' || h.startsWith('guesstimate/')) return estRoute(h);
   if (h === 'ringer') {
     KIND = null;
     $('page').className = 'page at-home at-kind at-party v2 k-ringer';   // the games' design

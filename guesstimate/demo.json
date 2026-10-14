@@ -1,0 +1,66 @@
+[
+  {
+    "id": "demo-hockey-pucks",
+    "sportCategory": "hockey",
+    "question": "DEMO: How many pucks are used in one regular season?",
+    "context": "Demo question with made-up assumptions: 32 teams, 82 games per team, 12 pucks per game.",
+    "answer": 15744,
+    "unit": "pucks",
+    "answerType": "estimate",
+    "referencePeriod": "Demo season",
+    "explanation": "Every game has two teams, so the league plays 32 × 82 / 2 games. Each of them uses 12 pucks under the demo assumptions.",
+    "napkinMath": {
+      "introduction": "Start with the number of games, then multiply by the pucks per game.",
+      "steps": [
+        {"label": "Team games", "assumption": "32 teams, 82 games each", "calculation": "32 × 82", "result": "2,624"},
+        {"label": "Actual games", "assumption": "two teams per game", "calculation": "2,624 ÷ 2", "result": "1,312"},
+        {"label": "Pucks", "assumption": "12 pucks per game", "calculation": "1,312 × 12", "result": "15,744"}
+      ],
+      "estimatedAnswer": 15744
+    },
+    "sources": [],
+    "difficulty": "easy"
+  },
+  {
+    "id": "demo-hockey-ice-water",
+    "sportCategory": "hockey",
+    "question": "DEMO: How many litres of water does a 60 m × 26 m ice sheet need?",
+    "context": "Demo question with made-up assumptions: a plain rectangle, ice 3 cm thick, 1 m³ of ice from 1,000 litres of water.",
+    "answer": 46800,
+    "unit": "litres",
+    "answerType": "estimate",
+    "explanation": "The ice is a flat box: area times thickness gives its volume, and every cubic metre needs 1,000 litres under the demo assumptions.",
+    "napkinMath": {
+      "introduction": "Work out the area first, then the volume, then convert to litres.",
+      "steps": [
+        {"label": "Area", "calculation": "60 m × 26 m", "result": "1,560 m²"},
+        {"label": "Volume", "assumption": "3 cm = 0.03 m thick", "calculation": "1,560 × 0.03", "result": "46.8 m³"},
+        {"label": "Water", "assumption": "1,000 litres per m³", "calculation": "46.8 × 1,000", "result": "46,800 litres"}
+      ],
+      "estimatedAnswer": 46800
+    },
+    "sources": [],
+    "difficulty": "medium"
+  },
+  {
+    "id": "demo-soccer-distance",
+    "sportCategory": "soccer",
+    "question": "DEMO: How many kilometres do all players on the pitch run in one match?",
+    "context": "Demo question with made-up assumptions: 22 players play the full 90 minutes and each runs 10.5 km.",
+    "answer": 231,
+    "unit": "km",
+    "answerType": "estimate",
+    "explanation": "With no substitutions, the total is simply players times distance per player.",
+    "napkinMath": {
+      "introduction": "Count the players, then multiply by the distance each one covers.",
+      "steps": [
+        {"label": "Players", "assumption": "11 per team, 2 teams", "calculation": "11 × 2", "result": "22"},
+        {"label": "Distance", "assumption": "10.5 km each", "calculation": "22 × 10.5", "result": "231 km"},
+        {"label": "Rounded", "calculation": "22 × 10", "result": "about 220 km"}
+      ],
+      "estimatedAnswer": 220
+    },
+    "sources": [],
+    "difficulty": "easy"
+  }
+]

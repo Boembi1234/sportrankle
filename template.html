@@ -76,8 +76,7 @@ a{color:inherit}
 .panel .stats{display:flex;gap:28px;flex-wrap:wrap;margin:0 0 10px}
 .panel .stats b{display:block;font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
 .panel .stats span{color:var(--muted);font-size:13px}
-.page.at-home .counter,#stats-btn{display:none}   /* the header shows only the language flag on the right, in games too */
-.page:not(.at-home) .top .logo{display:none}
+.counter,#stats-btn{display:none}   /* one header everywhere, games included: menu, logo (back to the start), language */
 /* Menu: three bars top left; a drawer slides in from the left with the sports and the games */
 .burger::before,.burger::after{content:"";position:absolute;left:13px;width:22px;height:2.5px;border-radius:1.25px;background:var(--text)}
 .burger::before{top:14px;box-shadow:0 7px 0 var(--text)}
@@ -592,8 +591,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 @media (prefers-reduced-motion:reduce){.sportnav a,.nav-more-btn{transition:none}}
 @media (min-width:1280px){
   #menu-btn,.drawer,.drawer-bg,.drawer-x,.top-mid .logo{display:none}
-  .top-left .logo-left,.page:not(.at-home) .top .logo-left{display:flex}
-  .page.at-home .sportnav{display:flex;gap:4px}
+  .top-left .logo-left{display:flex}
+  .sportnav{display:flex;gap:4px}   /* the sports in the middle on every page */
 }
 </style>
 

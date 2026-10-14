@@ -19,3 +19,6 @@ sort-college	sort	40
 sort-cl	sort	40
 guess-records	guess	100
 guess-footrecords	guess	100
+rankle-nhlteams	rankle	800
+blind-nhlteams	blind	40
+sort-nhlteams	sort	40

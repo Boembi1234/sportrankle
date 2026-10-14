@@ -699,7 +699,7 @@ const GAME_ICONS = __GAME_ICONS__;   // {game: icon} for the menu, like the spor
 const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cover?}}
 const ROUTE = __ROUTE__;   // the view a real URL opens on (e.g. "#t/nfl" on /nfl-teams), "" on the home page
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
-const POOLS = ['athletes', 'sports', 'f1', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'footrecords', 'records'];
+const POOLS = ['athletes', 'sports', 'f1', 'nhlteams', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'footrecords', 'records'];
 const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !SPORTS[DATA[m].sport].soon && (!DATA[m].kinds || DATA[m].kinds.includes(k))).map(m => `${k}-${m}`));
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
 // A sport marked "soon" is shown but not playable yet: its pools are out of every list, route and the next-game cycle

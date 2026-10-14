@@ -37,7 +37,7 @@ PHOTO_RATIO = 1.6   # own photos taller than this (w:h) are cropped to a centred
 SPORTS = {
     "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
     "soccer": {"name": "Football", "cover": "covers/sport-soccer.png"},
-    "hockey": {"name": "Ice hockey", "cover": "covers/sport-hockey.png", "soon": True},   # NHL teams coming
+    "hockey": {"name": "Ice hockey", "cover": "covers/sport-hockey.png"},
     "football": {"name": "American football", "cover": "covers/sport-football.png"},
     # "soon": the sport shows as "Coming soon" (tile, nav, menu) and its topics are not playable or crawlable yet
     "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},
@@ -54,6 +54,8 @@ GAMES = {
     # "sub" names helper columns whose values go in brackets after the name (shown under the title board).
     "nfl": {"file": "NFL_Teams*.xlsx", "tab": "NFL teams", "noun": "team", "plural": "teams", "word": "NFL", "english": True, "short": "last",
             "sport": "football", "cover": {"file": "covers/nfl.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Division 2026"]},
+    "nhlteams": {"file": "NHL_Teams*.xlsx", "tab": "NHL teams", "noun": "team", "plural": "teams", "word": "NHL", "english": True, "short": "last",
+                 "sport": "hockey", "cover": "covers/sport-hockey.png", "sub": ["HILFSSPALTE: Division 2026/27"]},
     "nflplayers": {"file": "NFL_Spieler*.xlsx", "tab": "NFL players", "noun": "player", "plural": "players", "word": "NFL", "english": True, "short": "surname",
                    "sport": "football", "cover": {"file": "covers/nflplayers.png", "width": 0.75, "cy": 0.5}, "sub": ["HILFSSPALTE: Team (Sept. 2026)", "HILFSSPALTE: Position"]},
     "nflhof": {"file": "NFL_HallOfFame*.xlsx", "tab": "NFL Hall of Fame", "noun": "legend", "plural": "legends", "word": "HOF", "english": True, "short": "surname",
@@ -236,6 +238,25 @@ CATS_EN = {
     "Sacks Defense 2025": ("Defensive sacks 2025", "sacks"),
     "Erstrunden-Picks seit 1990": ("First-round picks since 1990", "picks"),
     "Pro-Bowler gedraftet seit 1990": ("Pro Bowlers drafted since 1990", "players"),
+    # NHL teams
+    "Franchise gegründet": ("Franchise founded", ""), "Jahre ohne Stanley Cup": ("Years without a Stanley Cup", "years"),
+    "Stanley-Cup-Siege all-time": ("Stanley Cups", "titles"), "Stanley-Cup-Final-Teilnahmen all-time": ("Stanley Cup Final appearances", ""),
+    "Playoff-Teilnahmen all-time": ("Playoff appearances, all time", "seasons"),
+    "Jahre seit letztem Playoff-Serien-Sieg": ("Years since last playoff series win", "years"),
+    "Punktequote Regular Season all-time": ("Regular-season points rate", ""), "Retired Numbers": ("Retired numbers", "numbers"),
+    "Hart-Trophy-Gewinner all-time": ("Hart Trophy winners", "awards"), "Arena eröffnet": ("Arena opened", ""),
+    "Arena-Kapazität": ("Arena capacity", "seats"), "Arena-Baukosten": ("Arena construction cost", "M USD"),
+    "Zuschauerschnitt Heimspiele 2025/26": ("Average home crowd 2025/26", ""), "Bierpreis in der Arena 2025/26": ("Arena beer price 2025/26", "USD"),
+    "Besitzer seit": ("Owner since", ""), "Cap Space Saison 2026/27": ("Cap space 2026/27", "M USD"),
+    "Durchschnittsalter Kader 2026/27": ("Average roster age 2026/27", "years"), "Erstrunden-Picks seit 2000": ("First-round picks since 2000", "picks"),
+    "Punkte Regular Season 2025/26": ("Points 2025/26", "pts"), "Tore Regular Season 2025/26": ("Goals scored 2025/26", "goals"),
+    "Gegentore Regular Season 2025/26": ("Goals against 2025/26", "goals"), "Powerplay-Quote 2025/26": ("Power-play percentage 2025/26", ""),
+    "Penalty-Killing-Quote 2025/26": ("Penalty-kill percentage 2025/26", ""), "Strafminuten 2025/26": ("Penalty minutes 2025/26", "min"),
+    "Shutouts 2025/26": ("Shutouts 2025/26", ""), "Heim-Punktequote seit 2005/06": ("Home points rate since 2005/06", ""),
+    "Auswärts-Punktequote seit 2005/06": ("Away points rate since 2005/06", ""), "Verlängerungsspiele seit 2005/06": ("Overtime games since 2005/06", "games"),
+    "Grösster Sieg seit 2000": ("Biggest win since 2000", "goals"), "Tordifferenz seit 2005/06": ("Goal differential since 2005/06", "goals"),
+    "Outdoor-Spiele all-time": ("Outdoor games", "games"), "Olympia-Spieler 2026 im Kader": ("Players at the 2026 Olympics", "players"),
+    "Tore des besten Torschützen 2025/26": ("Top scorer's goals 2025/26", "goals"),
     # NFL players and Hall of Fame
     "Geburtsdatum": ("Date of birth", ""),
     "Grösse": ("Height", "cm"),
@@ -353,6 +374,15 @@ TITLES = {
     "Largest students": "Most students", "Northernmost latitude": "Northernmost", "Longest track length": "Longest track",
     "Longest field length": "Longest field", "Highest goal / hoop / net height": "Highest goal / hoop / net",
     "Most first-team All-Pro": "Most first-team All-Pro picks",
+    # NHL teams
+    "Oldest franchise founded": "Oldest franchise", "Longest years without a Stanley Cup": "Longest wait for a Stanley Cup",
+    "Most stanley Cups": "Most Stanley Cups", "Most stanley Cup Final appearances": "Most Stanley Cup Final appearances",
+    "Longest years since last playoff series win": "Longest wait for a playoff series win", "Most hart Trophy winners": "Most Hart Trophy winners",
+    "Oldest arena opened": "Oldest arena", "Most expensive arena construction cost": "Most expensive arena",
+    "Most average home crowd 2025/26": "Biggest average home crowd 2025/26", "Cheapest arena beer price 2025/26": "Cheapest arena beer 2025/26",
+    "Earliest owner since": "Longest-serving owner", "Oldest average roster age 2026/27": "Oldest roster 2026/27",
+    "Biggest biggest win since 2000": "Biggest win since 2000", "Most top scorer's goals 2025/26": "Most goals by the top scorer 2025/26",
+    "Most no. 1 overall picks, all time": "Most No. 1 overall picks, all time",
     # NFL teams v5, NFL players v4, Hall of Fame v3, College football v3
     "Longest longest regular-season win streak": "Longest regular-season win streak", "Biggest biggest win since 1999": "Biggest win since 1999",
     "Fastest fastest 40-yard dash by an alumnus": "Fastest 40-yard dash by an alumnus", "Longest-serving head coach in charge since": "Longest-serving head coach",
@@ -387,6 +417,16 @@ CAT_EMOJI = {
     "Away win rate since 1999": "🚌", "Overtime games since 1999": "⏰", "Biggest win since 1999": "💥",
     "Prime-time games since 1999": "🌙", "Point differential since 1999": "➕", "Defensive sacks 2025": "🛡️",
     "First-round picks since 1990": "🎟️", "Pro Bowlers drafted since 1990": "⭐",
+    # NHL teams
+    "Franchise founded": "🗓️", "Years without a Stanley Cup": "⏳", "Stanley Cups": "🏆", "Stanley Cup Final appearances": "🥈",
+    "Playoff appearances, all time": "🎯", "Years since last playoff series win": "⏳", "Regular-season points rate": "📊",
+    "Retired numbers": "👕", "Hart Trophy winners": "🏅", "Arena opened": "🏟️", "Arena capacity": "🏟️", "Arena construction cost": "🏗️",
+    "Average home crowd 2025/26": "👥", "Arena beer price 2025/26": "🍺", "Owner since": "👔", "Cap space 2026/27": "💵",
+    "Average roster age 2026/27": "🎂", "First-round picks since 2000": "🎟️", "Points 2025/26": "📈", "Goals scored 2025/26": "🏒",
+    "Goals against 2025/26": "🥅", "Power-play percentage 2025/26": "⚡", "Penalty-kill percentage 2025/26": "🛡️",
+    "Penalty minutes 2025/26": "⛔", "Shutouts 2025/26": "🧤", "Home points rate since 2005/06": "🏠", "Away points rate since 2005/06": "🚌",
+    "Overtime games since 2005/06": "⏰", "Biggest win since 2000": "💥", "Goal differential since 2005/06": "➕", "Outdoor games": "❄️",
+    "Players at the 2026 Olympics": "🥇", "Top scorer's goals 2025/26": "🚨",
     # NFL players and Hall of Fame
     "Date of birth": "🎂", "Height": "📏", "Weight": "⚖️", "Draft year": "🗓️", "Draft position": "🎟️", "Age at NFL debut": "🐣",
     "Playoff games": "🏈", "Seasons with current team": "🤝", "Pro Bowl selections": "⭐", "First-team All-Pro": "🌟",
@@ -621,7 +661,9 @@ def load_game(key, cfg):
     path = next(HERE.glob(cfg["file"]))
     ensure_calculated(path)
     wb = openpyxl.load_workbook(path, data_only=True)
-    values_ws, _, cats_ws = wb.worksheets[:3]
+    # the values and categories sheets by name when they have the usual names, else the first and third sheet
+    values_ws = wb["Daten"] if "Daten" in wb.sheetnames else wb.worksheets[0]
+    cats_ws = wb["Kategorien"] if "Kategorien" in wb.sheetnames else wb.worksheets[2]
 
     cats = []
     for row in cats_ws.iter_rows(min_row=2, values_only=True):
@@ -652,9 +694,19 @@ def load_game(key, cfg):
                 except Exception as e:  # a broken link should not stop the build
                     print(f"  No image for {row[0]}: {e}")
 
+    # A category filled for fewer than half the items is left out: drawn into a game it would score 0 for nearly everyone
+    names = list(values)
+    keep = [i for i in range(n_cat) if sum(isinstance(values[n][i], (int, float, datetime)) for n in names) * 2 >= len(names)]
+    for i in range(n_cat):
+        if i not in keep:
+            print(f"  Category '{cats[i]['name']}' is mostly empty, left out")
+    cats = [cats[i] for i in keep]
+    for n in names:
+        values[n] = [values[n][i] for i in keep]
+    n_cat = len(cats)
+
     # Ranks are computed from the values (the formula sheet may be saved without
     # cached results). Tied values share a rank, empty cells get none.
-    names = list(values)
     ranks = {n: [None] * n_cat for n in names}
     for i, cat in enumerate(cats):
         low_first = cat["dir"] in LOW_FIRST

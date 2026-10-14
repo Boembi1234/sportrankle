@@ -740,7 +740,7 @@ function chips(sub){
 // Rankle rows: the category emoji as the icon in front, in its own 24px column like the icons in the menu
 const rowIcon = c => D.cats[c].emoji ? `<span class="row-ic" aria-hidden="true">${D.cats[c].emoji}</span>` : '';
 
-// Endless games: each play has its own random seed, the device keeps the open play across reloads.
+// Endless games: every start deals new random cards; leaving a game drops it.
 const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 function today(){ return dayKey(new Date()); }
 // Days in a row with at least one finished game (today counts once something is finished)
@@ -753,38 +753,19 @@ function streakDays(){
   while (days.has(dayKey(d))) { n++; d.setDate(d.getDate() - 1); }
   return n;
 }
-function seeded(str){
-  let h = 1779033703 ^ str.length;
-  for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; }
-  return () => { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; };
-}
 function draw(pool, k, rnd){ const a = [...pool]; for (let i = a.length - 1; i > 0; i--) { const j = rnd() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, k); }
 const range = n => [...Array(n).keys()];
 function load(key){ try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
 function store(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
-function newPlay(kind, m){ const s = Math.random().toString(36).slice(2); store(`${kind}-play-${m}`, s); return s; }
-const playSeed = (kind, m) => load(`${kind}-play-${m}`) || newPlay(kind, m);
-// The open play of a game; a finished one is put away, so the next visit deals new cards
-function record(kind, m){
-  const r = load(`${kind}-game-${m}`);
-  if (!r || r.seed !== playSeed(kind, m)) return null;
-  if (kind === 'sort' || kind === 'guess' ? r.done : Object.keys(r.placed).length >= PICK) { newPlay(kind, m); return null; }
-  return r;
-}
-// Sort it keeps the current arrangement and a done flag, the other games the placed items
-const save = () => store(`${KIND}-game-${MODE}`, KIND === 'sort' ? {seed: G.seed, order: G.order, done: G.phase === 'done'}
-  : KIND === 'guess' ? {seed: G.seed, guess: G.guess, done: G.phase === 'done'} : {seed: G.seed, placed: G.placed});
-const progress = (kind, m) => { const r = record(kind, m); return !r || kind === 'sort' || kind === 'guess' ? 0 : Object.keys(r.placed).length; };
-
-// The draw of the current play
+// A fresh random draw for each game
 function rankleDraw(m){
-  const g = DATA[m], rnd = seeded(`${playSeed('rankle', m)}|${m}`);
+  const g = DATA[m], rnd = Math.random;
   return {cats: draw(range(g.cats.length), PICK, rnd), items: draw(range(g.items.length), PICK, rnd)};
 }
 // Blind ranking and Sort it: one attribute, eight items with eight different values, so no two ever tie.
 // The items are grouped by value, eight groups are drawn, then one item of each group.
 function blindDraw(m, kind = 'blind'){
-  const g = DATA[m], rnd = seeded(`${playSeed(kind, m)}|${kind}|${m}`);
+  const g = DATA[m], rnd = Math.random;
   const groups = c => { const by = new Map(); g.items.forEach((it, i) => { const v = it.values[c]; if (v != null) by.set(v, [...(by.get(v) || []), i]); }); return [...by.values()]; };
   const usable = range(g.cats.length).filter(c => groups(c).length >= PICK);
   const cat = usable[rnd() * usable.length | 0];
@@ -1052,7 +1033,7 @@ function mainButton(label, fn, disabled = false){
   b.onclick = fn;
 }
 function finishFooter(){
-  mainButton('Play again', () => { newPlay(KIND, MODE); route(); });
+  mainButton('Play again', route);
   $('share').hidden = false;
   $('note').innerHTML = `<a href="#t/${MODE}">${D.tab}</a> · <a href="#">Home</a>`;
 }
@@ -1060,7 +1041,7 @@ function finishFooter(){
 // ---- Home ----
 // A tile with a picture, a name and a Play / Continue status
 function statusOf(keys){
-  return `<span class="tile-status">${keys.some(k => progress(...k.split('-')) > 0) ? 'Continue' : 'Play'}</span>`;
+  return '<span class="tile-status">Play</span>';
 }
 function bigTile(href, label, img, name, keys){
   return `<a class="tile" href="${href}" aria-label="${label}">
@@ -1095,7 +1076,7 @@ function renderSport(s){
 // Topic page: the games on it side by side, with their status, and a button to the first one
 function renderTopic(m){
   const g = DATA[m], kinds = Object.keys(GAMES).filter(k => poolsFor(k).includes(m));
-  const next = kinds.map(k => `${k}-${m}`).find(k => progress(...k.split('-'))) || `${kinds[0]}-${m}`;
+  const next = `${kinds[0]}-${m}`;
   const rows = kinds.map(k => `<li><a class="grow" href="#${k}-${m}" aria-label="${GAMES[k].name}, ${g.tab}">
       <span class="grow-name">${GAMES[k].name}</span>${statusOf([`${k}-${m}`])}<span class="grow-blurb">${GAMES[k].blurb}</span></a></li>`).join('');
   $('home').innerHTML = `<h1>${g.tab}</h1>
@@ -1103,7 +1084,7 @@ function renderTopic(m){
     <div class="topic">
       <div class="topic-art">${g.cover ? `<img src="${g.cover}" alt="">` : ''}</div>
       <div><ul class="games">${rows}</ul>
-        <a class="btn" href="#${next}">${progress(...next.split('-')) ? 'Continue' : 'Play'} ${GAMES[next.split('-')[0]].name}</a></div>
+        <a class="btn" href="#${next}">Play ${GAMES[next.split('-')[0]].name}</a></div>
     </div>`;
 }
 
@@ -1118,9 +1099,9 @@ function renderHome(kind, sport){
     </a>`;
   };
   const tile = (kind, m) => {
-    const g = DATA[m], n = progress(kind, m);
+    const g = DATA[m];
     const img = g.cover || (g.cats.length ? g.items[(kind === 'rankle' ? rankleDraw(m) : blindDraw(m, kind)).items[0]].img : '');
-    const status = `<span class="tile-status">${n ? `Continue ${n}/${PICK}` : 'Play'}</span>`;
+    const status = statusOf([]);
     return `<a class="tile" href="#${kind}-${m}" aria-label="${GAMES[kind].name}, ${g.tab}">
       <span class="tile-art">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>
       <span class="tile-body"><span class="tile-name">${g.tab}</span>${status}</span>
@@ -1136,23 +1117,22 @@ function renderHome(kind, sport){
       <span class="tile-body"><span class="tile-name">${g.name}</span>${status}</span>
     </a>`;
   };
-  // Facts line: the game to continue, the streak
-  const next = ORDER.find(k => progress(...k.split('-'))) || ORDER[0];
+  // Facts line: the first game, the streak
+  const next = ORDER[0];
   const nextName = next && `${GAMES[next.split('-')[0]].name} · ${DATA[next.split('-')[1]].tab}`;
   const streak = streakDays();
   const facts = [`<b>${ORDER.length}</b> games, endless rounds`, streak > 1 ? `<b>${streak}-day</b> streak` : ''].filter(Boolean).join(' · ');
   // The flagship: Rankle on the big pool, the one card everyone plays first
   const flagship = () => {
-    const g = DATA[FLAG], n = progress('rankle', FLAG), h = load(`rankle-history-${FLAG}`) || {};
+    const g = DATA[FLAG], h = load(`rankle-history-${FLAG}`) || {};
     const best = Math.max(0, ...Object.values(h).map(([a, b]) => Math.round(100 * a / b)));
-    const label = n ? `Continue · ${n}/${PICK}` : 'Play Rankle';
     return `<section class="flag">
       <a class="flag-art${g.cover ? '' : ' led'}" href="#rankle-${FLAG}" aria-label="Rankle, ${g.tab}"${g.cover_bg ? ` style="background:${g.cover_bg}"` : ''}>${g.cover ? `<img src="${g.cover}" alt="" fetchpriority="high"${g.cover_bg ? ' style="object-fit:contain"' : ''}>` : `<span class="tile-cards">${g.word}</span>`}</a>
       <div class="flag-body">
         <p class="eyebrow">Rankle · the flagship game</p>
         <h2 class="flag-name">${g.tab}</h2>
         <p class="flag-blurb">Eight of the world's biggest athletes, eight categories, one board. New cards every game, play as often as you like.</p>
-        <a class="btn" href="#rankle-${FLAG}">${label}</a>
+        <a class="btn" href="#rankle-${FLAG}">Play Rankle</a>
         <p class="meta">${best ? `Your best: ${best} %` : 'Eight rounds, about two minutes'}<span id="flag-n"></span></p>
       </div>
     </section>`;
@@ -1165,7 +1145,7 @@ function renderHome(kind, sport){
         <p class="eyebrow">Sports puzzles</p>
         <h1>How much of a sports freak are you?</h1>
         ${FLAG ? flagship() : `<p class="lead">Four games, ${pools.length} pools, new cards every round. Play as long as you like — find out where you stand.</p>
-        <div class="cta"><a class="btn" href="#${next}">${progress(...next.split('-')) ? 'Continue' : 'Play now'}</a>
+        <div class="cta"><a class="btn" href="#${next}">Play now</a>
           <span class="meta">Next up: <b>${nextName}</b> · ${facts}</span></div>`}
       </section>
       <p class="sec">Pick a sport</p>
@@ -1456,8 +1436,8 @@ addEventListener('hashchange', route);
 
 // ================= Rankle =================
 function startRankle(){
-  const rec = record('rankle', MODE), {cats, items} = rankleDraw(MODE);
-  G = {day: today(), seed: playSeed('rankle', MODE), cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  const {cats, items} = rankleDraw(MODE);
+  G = {day: today(), cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
   $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${catTitle(c)}, open">
       <span class="c-rank"></span>
@@ -1469,13 +1449,8 @@ function startRankle(){
     $(`row-${i}`).querySelector('.c-rank').append(card('rank', true));
     $(`row-${i}`).addEventListener('click', () => select(i));
   });
-  instant = true;
-  if (rec) for (const [slot, s] of Object.entries(rec.placed)) {
-    G.placed[slot] = s; G.score += pts(s, G.cats[slot]); G.round++; rankleFill(+slot);
-  }
-  shown = G.score; $('score').textContent = G.score;
-  if (G.round >= PICK) rankleResults(); else rankleRound();
-  instant = false;
+  shown = 0; $('score').textContent = 0;
+  rankleRound();
 }
 
 function rankleFill(i){
@@ -1614,8 +1589,8 @@ $('seg-alt').addEventListener('click', () => segView(true));
 
 // ================= Blind ranking =================
 function startBlind(){
-  const rec = record('blind', MODE), {cat, items} = blindDraw(MODE);
-  G = {day: today(), seed: playSeed('blind', MODE), cat, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  const {cat, items} = blindDraw(MODE);
+  G = {day: today(), cat, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
   $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}" aria-label="Spot ${i + 1}, open">
       <span class="c-rank"></span><span class="row-no">${i + 1}</span>
@@ -1629,11 +1604,8 @@ function startBlind(){
     $(`row-${i}`).querySelector('.c-rank').append(c);
     $(`row-${i}`).addEventListener('click', () => select(i));
   });
-  instant = true;
-  if (rec) for (const [slot, s] of Object.entries(rec.placed)) { G.placed[slot] = s; G.round++; blindFill(+slot); }
   shown = 0; $('score').textContent = 0;
-  if (G.round >= PICK) blindResults(); else blindRound();
-  instant = false;
+  blindRound();
 }
 
 function blindFill(i){
@@ -1719,10 +1691,9 @@ function blindResults(){
 // ================= Sort it =================
 // All eight items are on the board from the start; two taps swap two rows. Results reuse Blind ranking.
 function startSort(){
-  const rec = record('sort', MODE), {cat, items} = blindDraw(MODE, 'sort');
-  G = {day: today(), seed: playSeed('sort', MODE), cat, sports: items, order: [...items], placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  const {cat, items} = blindDraw(MODE, 'sort');
+  G = {day: today(), cat, sports: items, order: [...items], placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
-  if (rec && rec.order && rec.order.length === PICK && rec.order.every(s => items.includes(s))) G.order = rec.order;
   $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}">
       <span class="c-rank"></span><span class="row-no">${i + 1}</span>
       <span class="body"><span class="cat"></span>
@@ -1791,7 +1762,6 @@ function sortDrag(e, i){
       const [s] = G.order.splice(i, 1);
       G.order.splice(to, 0, s);
       sortRows();
-      save();
       announce(`${D.items[s].name} moved to spot ${to + 1}`);
     }
     requestAnimationFrame(() => requestAnimationFrame(() => lis.forEach(l => l.classList.remove('snap'))));
@@ -1815,7 +1785,6 @@ function sortSelect(i){
     $(`row-${j}`).classList.remove('sel');
     G.sel = null;
     sortRows();
-    save();
     announce(`Swapped: ${D.items[G.order[i]].name} now on spot ${i + 1}, ${D.items[G.order[j]].name} on spot ${j + 1}`);
   }
 }
@@ -1825,7 +1794,6 @@ function sortReveal(restored = false){
   G.order.forEach((s, k) => { G.placed[k] = s; });
   G.round = PICK;
   G.phase = 'done';
-  save();
   range(PICK).forEach(i => { $(`row-${i}`).disabled = true; $(`row-${i}`).querySelector('.hint')?.remove(); });
   blindResults();
 }
@@ -1844,8 +1812,8 @@ const FIELD_WORD = {h: 'hours', min: 'minutes', s: 'seconds'};
 // The record as shown: the sheet's display text plus its unit when the text is bare (5:08 is minutes, not seconds)
 const recDisplay = it => /[a-z]/i.test(it.display) ? it.display : `${it.display} ${isTime(it) ? 'min' : it.unit}`;
 function startGuess(){
-  const rec = record('guess', MODE), rnd = seeded(`${playSeed('guess', MODE)}|guess|${MODE}`), it = D.items[Math.floor(rnd() * D.items.length)];
-  G = {day: today(), seed: playSeed('guess', MODE), item: it, guess: null, round: 0, score: 0, sel: null, placed: {}, sports: [], phase: 'round'};
+  const it = D.items[Math.floor(Math.random() * D.items.length)];
+  G = {day: today(), item: it, guess: null, round: 0, score: 0, sel: null, placed: {}, sports: [], phase: 'round'};
   prevTitle = '';
   setPhoto(D.cover ? {img: D.cover, name: 'World records'} : null);
   titleCards(it.name, `${it.name}${it.type ? ', ' + it.type : ''}`);   // the record on the name card, its sport and type as chips
@@ -1896,7 +1864,6 @@ function guessConfirm(){
   const v = readGuess(G.item);
   if (v == null) return;
   G.guess = v; G.phase = 'done';
-  save();
   guessResults();
 }
 function guessResults(){
@@ -1947,7 +1914,6 @@ async function confirmPick(){
   busy = true;
   const i = G.sel, s = G.sports[G.round];
   G.placed[i] = s; G.round++; G.sel = null;
-  save();
   $('main').disabled = true;
   if (KIND === 'rankle') {
     const c = G.cats[i];

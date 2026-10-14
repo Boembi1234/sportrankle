@@ -349,9 +349,17 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-est .board{margin-top:16px}
 .est-empty{margin-top:16px;padding:16px;border-radius:10px;background:var(--surface-faint);color:var(--muted);font-size:15px;line-height:1.45}
 .est-empty b{display:block;margin-bottom:4px;color:var(--text)}
-.est-q{margin:24px 0 0;font-size:24px;font-weight:800;line-height:1.25;text-wrap:balance}
-.est-ctx{margin:10px 0 0;color:var(--muted);font-size:15px;line-height:1.45;text-wrap:pretty}
-.est-in{display:flex;align-items:center;gap:8px;min-height:60px;margin-top:20px;padding:0 16px;border-radius:10px;background:var(--surface-faint);cursor:text;transition:background-color .15s}
+.est-box{position:relative;min-height:52px;padding:16px 64px 16px 16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
+.party .est-q{margin:0;font-size:20px;font-weight:800;font-stretch:100%;line-height:1.3;text-align:left;text-wrap:pretty}
+.est-calc{position:absolute;right:10px;bottom:10px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;
+  background:var(--signal);color:var(--bg);box-shadow:0 3px 0 var(--signal-edge);cursor:pointer;transition:transform .12s,box-shadow .12s,filter .12s}
+.est-calc svg{width:22px;height:22px}
+.est-calc[hidden]{display:none}
+@media (hover:hover){.est-calc:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--signal-edge);filter:brightness(1.08)}}
+.est-calc:active{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge)}
+@media (prefers-reduced-motion:reduce){.est-calc{transition:none}}
+.est-ctx{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.45;text-wrap:pretty}
+.est-in{display:flex;align-items:center;gap:8px;min-height:60px;margin-top:16px;padding:0 16px;border-radius:10px;background:var(--surface-faint);cursor:text;transition:background-color .15s}
 @media (hover:hover){.est-in:hover{background:var(--surface)}}
 .est-in:focus-within{background:var(--surface)}
 .est-in input{flex:1;min-width:0;width:0;padding:0;border:0;background:none;outline:none;color:var(--text);font:800 26px var(--font)}
@@ -723,24 +731,23 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
   </main>
 
   <main class="party est" id="est" hidden>
-    <section id="est-pick">
+    <section id="est-empty" hidden>
       <h1 class="title">Guesstimate</h1>
-      <div class="title-sub"><span class="chip">One question</span><span class="chip">Calculator</span><span class="chip">No time limit</span></div>
-      <p class="question"><span class="emo">🧮</span>Surprising numbers from the world of sport. Think it through, then guess.</p>
-      <div id="est-sports"></div>
+      <div class="est-empty"><b>The first questions are on their way.</b>Guesstimate opens as soon as they are in. Until then, try one of the other games.</div>
+      <div class="bar"><a class="share est-back" href="#">Back to the games</a></div>
     </section>
     <section id="est-play" hidden>
-      <h1 class="title">Guesstimate</h1>
-      <div class="title-sub" id="est-chips"></div>
+      <div class="est-box">
+        <h1 class="est-q" id="est-q"></h1>
+        <p class="est-ctx" id="est-ctx" hidden></p>
+        <button class="est-calc" id="est-calc-btn" type="button" aria-label="Open the calculator" title="Calculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="5.5" width="8" height="4" rx="1" fill="currentColor"/><circle cx="9" cy="13.5" r="1.3" fill="currentColor"/><circle cx="15" cy="13.5" r="1.3" fill="currentColor"/><circle cx="9" cy="17.5" r="1.3" fill="currentColor"/><circle cx="15" cy="17.5" r="1.3" fill="currentColor"/></svg></button>
+      </div>
       <div class="led est-score" id="est-score" hidden></div>
-      <h2 class="est-q" id="est-q"></h2>
-      <p class="est-ctx" id="est-ctx" hidden></p>
       <div id="est-body"></div>
       <div class="bar">
         <button class="main" id="est-main" type="button"></button>
-        <button class="share" id="est-calc-btn" type="button">🧮 Calculator</button>
         <button class="share" id="est-share" type="button" hidden>Share my score</button>
-        <a class="share est-back" id="est-back" href="#guesstimate" hidden>Back to the games</a>
+        <a class="share est-back" id="est-back" href="#" hidden>Back to the games</a>
         <p class="est-note" id="est-note" aria-live="polite"></p>
       </div>
     </section>
@@ -1501,7 +1508,6 @@ const estText = (q, k) => q.i18n?.[LANG]?.[k] ?? q[k];   // optional translation
 const estNum = v => Math.abs(v) >= EST_MAX || (v !== 0 && Math.abs(v) < 1e-6)
   ? v.toExponential(4).replace('.', decSep()) : v.toLocaleString(loc(), {maximumFractionDigits: Math.abs(v) < 10 ? 4 : 2});
 const estFactor = f => `${f.toLocaleString(loc(), {minimumFractionDigits: 2, maximumFractionDigits: 2})}×`;
-const estSports = () => Object.keys(SPORTS).filter(s => EST.some(q => q.sportCategory === s));
 let ER = null;   // the round: {sport, id, input, guess, calc: {t: tokens, done, prev}}
 const estSave = () => store('est-round', ER);
 
@@ -1531,53 +1537,35 @@ function estRoute(h){
   KIND = null;
   $('page').className = 'page at-home at-kind at-party v2 k-est';
   $('home').hidden = true; $('game').hidden = true; $('alt').hidden = true; $('est').hidden = false;
-  const mq = h.match(/^guesstimate\/q\/([\w-]+)$/), ms = h.match(/^guesstimate\/([a-z]+)$/);
-  const q = mq && EST.find(x => x.id === mq[1]);
-  if (q) estPlay(q.sportCategory, q.id);
-  else if (ms && estSports().includes(ms[1])) estPlay(ms[1]);
-  else estPick();
+  const mq = h.match(/^guesstimate\/q\/([\w-]+)$/), q = mq && EST.find(x => x.id === mq[1]);
+  if (!EST.length) { $('est-empty').hidden = false; $('est-play').hidden = true; }
+  else estPlay(q && q.id);
   scrollTo(0, 0);
 }
-// The start: the sports that have questions as rows (the topics in Impostor), or a note while there are none
-function estPick(){
-  $('est-pick').hidden = false; $('est-play').hidden = true;
-  const sp = estSports(), count = s => EST.filter(q => q.sportCategory === s).length;
-  $('est-sports').innerHTML = sp.length
-    ? `<p class="question"><span class="emo">📚</span>Pick a sport</p><ul class="board" aria-label="Sport">${sp.map(s => `<li><button type="button" class="row" data-sport="${s}">`
-      + `${SPORTS[s].icon ? `<img class="row-ic" src="${SPORTS[s].icon}" alt="">` : ''}<span class="body"><span class="cat">${SPORTS[s].name}</span></span>`
-      + `<span class="est-unit">${count(s)} question${count(s) === 1 ? '' : 's'}</span></button></li>`).join('')}</ul>`
-    : '<div class="est-empty"><b>The first questions are on their way.</b>Guesstimate opens as soon as they are in. Until then, try one of the other games.</div>'
-      + '<div class="bar"><a class="share est-back" href="#">Back to the games</a></div>';
-}
-$('est-sports').addEventListener('click', e => { const b = e.target.closest('[data-sport]'); if (b) location.hash = `guesstimate/${b.dataset.sport}`; });
-
-// The round of a sport: the stored one if it belongs there (or is the linked question), otherwise a new one
-function estPlay(sport, id){
-  const r = load('est-round'), ok = r && EST.some(q => q.id === r.id && q.sportCategory === sport);
-  ER = ok && (!id || r.id === id) ? r : estNew(sport, id);
+// The round: the stored one (or the linked question), otherwise a new one; any sport, no picking
+function estPlay(id){
+  const r = load('est-round'), ok = r && EST.some(q => q.id === r.id);
+  ER = ok && (!id || r.id === id) ? r : estNew(id);
   estRender();
 }
-// A new round: a question not played lately in this sport, never the one just played if there is another
-function estNew(sport, id, avoid){
-  const pool = EST.filter(q => q.sportCategory === sport).map(q => q.id);
-  let seen = (load(`est-seen-${sport}`) || []).filter(x => pool.includes(x)), pick = id;
+// A new round: a question not played lately, never the one just played if there is another
+function estNew(id, avoid){
+  const pool = EST.map(q => q.id);
+  let seen = (load('est-seen') || []).filter(x => pool.includes(x)), pick = id;
   if (!pick) {
     let fresh = pool.filter(x => !seen.includes(x) && x !== avoid);
     if (!fresh.length) { seen = []; fresh = pool.filter(x => x !== avoid); }
     if (!fresh.length) fresh = pool;
     pick = fresh[Math.random() * fresh.length | 0];
   }
-  store(`est-seen-${sport}`, [...seen.filter(x => x !== pick), pick]);
-  const r = {sport, id: pick, input: '', guess: null, calc: {t: [], done: false, prev: ''}};
+  store('est-seen', [...seen.filter(x => x !== pick), pick]);
+  const r = {id: pick, input: '', guess: null, calc: {t: [], done: false, prev: ''}};
   ER = r; estSave();
   return r;
 }
 function estRender(){
   const q = EST.find(x => x.id === ER.id);
-  $('est-pick').hidden = true; $('est-play').hidden = false;
-  $('est-chips').innerHTML = [q.demo ? '<span class="chip demo">Demo</span>' : '', `<span class="chip">${escH(SPORTS[q.sportCategory].name)}</span>`,
-    q.referencePeriod ? `<span class="chip">${escH(estText(q, 'referencePeriod'))}</span>` : '',
-    q.difficulty ? `<span class="chip">${escH(q.difficulty[0].toUpperCase() + q.difficulty.slice(1))}</span>` : ''].join('');
+  $('est-empty').hidden = true; $('est-play').hidden = false;
   $('est-q').textContent = estText(q, 'question');
   $('est-ctx').hidden = !q.context; $('est-ctx').textContent = estText(q, 'context') || '';
   $('est-note').textContent = ''; $('est-note').classList.remove('err');
@@ -1640,18 +1628,17 @@ function estResults(q, fresh = false){
   announce(`${verdict}. The ${q.answerType === 'sourced' ? 'answer' : 'model estimate'} is ${estNum(a)} ${q.unit}, you were off by ${estFactor(f)}.`);
 }
 function estAgain(){
-  const pool = EST.filter(q => q.sportCategory === ER.sport);
-  estNew(ER.sport, null, ER.id);
-  if (location.hash !== `#guesstimate/${ER.sport}`) history.replaceState(null, '', `#guesstimate/${ER.sport}`);
+  estNew(null, ER.id);
+  if (location.hash !== '#guesstimate') history.replaceState(null, '', '#guesstimate');
   estRender();
-  if (pool.length === 1) { $('est-note').textContent = 'This is the only question in this sport so far, so here it is again.'; }
+  if (EST.length === 1) { $('est-note').textContent = 'This is the only question so far, so here it is again.'; }
   scrollTo(0, 0);
 }
 // Share: the game, the factor and a link to the same question, never the answer, the guess or the working
 $('est-share').addEventListener('click', () => {
   const q = EST.find(x => x.id === ER.id), f = Math.max(ER.guess / q.answer, q.answer / ER.guess);
   const mark = f <= 1.25 ? '\u{1F3AF}' : f <= 2 ? '\u{1F7E9}' : f <= 5 ? '\u{1F7E8}' : '\u{1F7E5}';
-  share($('est-share'), [`Sport Minigames – Guesstimate · ${SPORTS[q.sportCategory].name}`, `Off by ${estFactor(f)} ${mark}`,
+  share($('est-share'), ['Sport Minigames – Guesstimate', `Off by ${estFactor(f)} ${mark}`,
     `${location.origin}${location.pathname}#guesstimate/q/${q.id}`].join('\n'));
 });
 

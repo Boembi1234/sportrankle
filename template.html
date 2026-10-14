@@ -104,7 +104,7 @@ a{color:inherit}
 /* Each entry: no dividers, an arrow on the right in the text colour. Under the pointer a rounded box in the card colour
    appears behind it; the current entry has the same box and blue text */
 .drawer ul{display:flex;flex-direction:column;gap:6px}
-.drawer li a,.drawer li .soon-link{display:flex;align-items:center;min-height:48px;margin-inline:-12px;padding-inline:12px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;
+.drawer li a{display:flex;align-items:center;min-height:48px;margin-inline:-12px;padding-inline:12px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;
   transition:background-color .15s,color .15s}
 .drawer li a::after{content:"";flex:none;margin-left:auto;margin-right:4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;
   transform:rotate(45deg)}
@@ -209,15 +209,9 @@ a{color:inherit}
 .tile-name{font-weight:800;font-size:20px}
 .tile-status{flex:none;white-space:nowrap;font-weight:800;font-size:15px;border-radius:6px;padding:8px 14px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge)}
 .tile-status.done{background:none;box-shadow:none;padding-inline:0;color:var(--muted);font-weight:600}
-.tile.soon{cursor:default}
-.tile.soon .tile-art img{filter:grayscale(.35) brightness(.7)}
-.tile.soon .tile-name{color:var(--muted)}
 /* "Soon": one short dark chip everywhere (tile, header, menu), in place of the Play button or the arrow */
-.soon-chip{flex:none;padding:4px 8px;border-radius:6px;background:var(--bg);color:var(--muted);font-size:12px;font-weight:700;line-height:1.2;white-space:nowrap}
-.tile.soon .soon-chip{padding:8px 14px;font-size:15px;font-weight:800}   /* on the tile: the size of the Play button */
-.soon-link{color:var(--muted);cursor:default}
-.soon-link .soon-chip{margin-left:4px;background:var(--surface)}
-.drawer .soon-link .soon-chip{margin-left:auto}
+.soon-chip{display:inline-block;padding:6px 12px;border-radius:6px;background:var(--surface);color:var(--signal);font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.soon-page p{margin:14px 0 20px;color:var(--muted);font-size:16px;line-height:1.5}
 .legal-line{margin:44px 0 8px;text-align:center;color:var(--muted);font-size:13px}
 .legal-line a{color:var(--muted)}
 /* Play button on a tile: rises on its hard edge like a key under the pointer, sinks when pressed */
@@ -513,7 +507,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
   .home h1{font-size:34px}
   .home .lead{font-size:15px}
   .btn{width:100%}
-  .topic{grid-template-columns:1fr;gap:16px;margin-top:18px}
+  .topic{grid-template-columns:minmax(0,1fr);gap:16px;margin-top:18px}
   .grow{padding:12px 14px}
   .grow-name{font-size:18px}
   .flag{grid-template-columns:1fr;margin-top:18px}
@@ -561,7 +555,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 }
 /* Wide screens: no menu button; the logo goes left and the sports sit in the middle of the header (not during a game) */
 .logo-left,.sportnav{display:none}
-.sportnav a,.sportnav .soon-link{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:15px;white-space:nowrap;text-decoration:none;
+.sportnav a{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:15px;white-space:nowrap;text-decoration:none;
   transition:background-color .15s}
 .sportnav img{flex:none;width:20px;height:20px;object-fit:contain}
 .nav-more{position:relative}
@@ -700,7 +694,7 @@ const SB = __SUPABASE__;   // {url, key} or null: results go online only with a 
 const POOLS = ['athletes', 'sports', 'f1', 'nhlteams', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'footrecords', 'records'];
 const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !SPORTS[DATA[m].sport].soon && (!DATA[m].kinds || DATA[m].kinds.includes(k))).map(m => `${k}-${m}`));
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
-// A sport marked "soon" is shown but not playable yet: its pools are out of every list, route and the next-game cycle
+// A sport marked "soon" is listed like the others, its page says "Coming soon": its pools are out of every list, route and the next-game cycle
 const SOON = s => !!SPORTS[s].soon, open = m => !SOON(DATA[m].sport);
 const poolsFor = (kind, sport) => POOLS.filter(m => open(m) && (!DATA[m].kinds || DATA[m].kinds.includes(kind)) && (!sport || DATA[m].sport === sport))
   .sort((a, b) => (DATA[b].flagship ? 1 : 0) - (DATA[a].flagship ? 1 : 0));
@@ -1051,12 +1045,7 @@ function bigTile(href, label, img, name, keys){
 }
 const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
 // Sport tile over all games: to the sport page, or straight to the topic when the sport has only one
-const sportCard = s => { const t = topicsOf(s); return SOON(s) ? soonTile(s) : bigTile(t.length > 1 ? `#s/${s}` : `#t/${t[0]}`, SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(t)); };
-// A sport that is not open yet: the same tile, greyed, a sign across the picture, nothing to click
-const soonTile = s => `<div class="tile soon" aria-disabled="true" aria-label="${SPORTS[s].name}, coming soon">
-    <span class="tile-art">${sportImg(s) ? `<img src="${sportImg(s)}" alt="" loading="lazy" decoding="async">` : ''}</span>
-    <span class="tile-body"><span class="tile-name">${SPORTS[s].name}</span><span class="soon-chip">Soon</span></span>
-  </div>`;
+const sportCard = s => bigTile(sportHref(s), SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(topicsOf(s)));
 // Guess the record sits in front of the sports: one tile straight into today's record for each pool that only has that game
 const guessCards = () => {
   const ps = poolsFor('guess');
@@ -1069,6 +1058,17 @@ const topicCard = m => bigTile(`#t/${m}`, `${DATA[m].tab}, ${SPORTS[DATA[m].spor
 
 // Sport page: its topics
 function renderSport(s){
+  if (SOON(s)) {
+    const img = sportImg(s);
+    $('home').innerHTML = `<h1>${SPORTS[s].name}</h1>
+      <div class="topic soon-page">
+        <div class="topic-art">${img ? `<img src="${img}" alt="">` : ''}</div>
+        <div><span class="soon-chip">Coming soon</span>
+          <p>We're building the ${SPORTS[s].name.toLowerCase()} topics for every game. Until then, try another sport.</p>
+          <a class="btn" href="#">Pick another sport</a></div>
+      </div>`;
+    return;
+  }
   $('home').innerHTML = `<h1>${SPORTS[s].name}</h1>
     <p class="today">Pick a topic. ${topicsOf(s).map(m => `${DATA[m].tab}: ${DATA[m].kinds.length === 1 ? 'one game' : `${DATA[m].kinds.length} games`}`).join(' · ')}.</p>
     <div class="tiles">${topicsOf(s).map(topicCard).join('')}</div>`;
@@ -1270,14 +1270,13 @@ function here(){
   const topic = rest.replace(/^[st]\//, '');
   return {kind, sport: SPORTS[topic] ? topic : DATA[topic]?.sport};
 }
-const sportHref = s => { const t = topicsOf(s); return t.length > 1 ? `#s/${s}` : `#t/${t[0]}`; };
+const sportHref = s => { const t = topicsOf(s); return t.length === 1 && !SOON(s) ? `#t/${t[0]}` : `#s/${s}`; };
 // Wide screens: the sports as links in the middle of the header. Up to 5 fit; with more, the first 4 show and a
 // "More" button opens the rest in a dropdown underneath (the button is marked when the current sport is in there)
 const NAV_MAX = 5;
 function sportNav(){
   const {sport} = here(), all = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s));
-  const link = s => SOON(s) ? `<span class="soon-link" title="Coming soon">${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}<span class="soon-chip">Soon</span></span>`
-    : `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
+  const link = s => `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
     + `${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}</a>`;
   const shown = all.length > NAV_MAX ? all.slice(0, NAV_MAX - 1) : all, rest = all.slice(shown.length);
   $('sportnav').innerHTML = shown.map(link).join('') + (rest.length ? `<div class="nav-more">
@@ -1333,9 +1332,7 @@ setLang(LANG);
 function menuHTML(){
   const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;
-  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => SOON(s)
-    ? `<li><span class="soon-link">${SPORTS[s].icon ? `<img class="menu-ic" src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}<span class="soon-chip">Soon</span></span></li>`
-    : link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
+  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
   const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])), link('#ringer', 'Impostor', kind === 'ringer', GAME_ICONS.ringer)];
   return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
 }
@@ -1389,7 +1386,7 @@ function route(){
   const ms = h.match(/^(rankle|blind|sort|guess)\/([a-z]+)$/);   // one game, the pools of one sport
   const msp = h.match(/^s\/([a-z]+)$/), mt = h.match(/^t\/([a-z0-9]+)$/);   // a sport page, a topic page
   busy = false;
-  if ((msp && SPORTS[msp[1]] && !SOON(msp[1])) || (mt && DATA[mt[1]] && open(mt[1]))) {
+  if ((msp && SPORTS[msp[1]]) || (mt && DATA[mt[1]] && open(mt[1]))) {
     KIND = null;
     $('page').className = `page at-home at-kind${mt ? ' at-topic' : ''}`;
     $('home').hidden = false; $('game').hidden = true; $('alt').hidden = true;

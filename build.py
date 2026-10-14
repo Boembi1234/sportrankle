@@ -38,13 +38,13 @@ SPORTS = {
     "mixed": {"name": "All sports", "cover": "covers/sport-mixed.png"},
     "soccer": {"name": "Soccer", "cover": "covers/sport-soccer.png"},
     "hockey": {"name": "Hockey", "cover": "covers/sport-hockey.png"},
-    "football": {"name": "Football", "cover": "covers/sport-football.png"},
-    # "soon": the sport shows as "Coming soon" (tile, nav, menu) and its topics are not playable or crawlable yet
-    "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},
-    "winter": {"name": "Winter sports", "cover": "covers/sport-winter.png", "soon": True},
+    # "soon": the sport shows like the others, its page says "Coming soon"; its topics are not playable or crawlable yet
     "basketball": {"name": "Basketball", "cover": "covers/sport-basketball.png", "soon": True},
+    "football": {"name": "Football", "cover": "covers/sport-football.png"},
     "baseball": {"name": "Baseball", "cover": "covers/sport-baseball.png", "soon": True},
     "tennis": {"name": "Tennis", "cover": "covers/sport-tennis.png", "soon": True},
+    "motorsport": {"name": "Motorsport", "cover": "covers/sport-motorsport.png", "soon": True},
+    "winter": {"name": "Wintersport", "cover": "covers/sport-winter.png", "soon": True},
 }
 
 GAMES = {

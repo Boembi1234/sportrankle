@@ -12,9 +12,24 @@
     "napkinMath": {
       "introduction": "Start with the number of games, then multiply by the pucks per game.",
       "steps": [
-        {"label": "Team games", "assumption": "32 teams, 82 games each", "calculation": "32 × 82", "result": "2,624"},
-        {"label": "Actual games", "assumption": "two teams per game", "calculation": "2,624 ÷ 2", "result": "1,312"},
-        {"label": "Pucks", "assumption": "12 pucks per game", "calculation": "1,312 × 12", "result": "15,744"}
+        {
+          "label": "Team games",
+          "assumption": "32 teams, 82 games each",
+          "calculation": "32 × 82",
+          "result": "2,624"
+        },
+        {
+          "label": "Actual games",
+          "assumption": "two teams per game",
+          "calculation": "2,624 ÷ 2",
+          "result": "1,312"
+        },
+        {
+          "label": "Pucks",
+          "assumption": "12 pucks per game",
+          "calculation": "1,312 × 12",
+          "result": "15,744"
+        }
       ],
       "estimatedAnswer": 15744
     },
@@ -33,9 +48,23 @@
     "napkinMath": {
       "introduction": "Work out the area first, then the volume, then convert to litres.",
       "steps": [
-        {"label": "Area", "calculation": "60 m × 26 m", "result": "1,560 m²"},
-        {"label": "Volume", "assumption": "3 cm = 0.03 m thick", "calculation": "1,560 × 0.03", "result": "46.8 m³"},
-        {"label": "Water", "assumption": "1,000 litres per m³", "calculation": "46.8 × 1,000", "result": "46,800 litres"}
+        {
+          "label": "Area",
+          "calculation": "60 m × 26 m",
+          "result": "1,560 m²"
+        },
+        {
+          "label": "Volume",
+          "assumption": "3 cm = 0.03 m thick",
+          "calculation": "1,560 × 0.03",
+          "result": "46.8 m³"
+        },
+        {
+          "label": "Water",
+          "assumption": "1,000 litres per m³",
+          "calculation": "46.8 × 1,000",
+          "result": "46,800 litres"
+        }
       ],
       "estimatedAnswer": 46800
     },
@@ -54,11 +83,57 @@
     "napkinMath": {
       "introduction": "Count the players, then multiply by the distance each one covers.",
       "steps": [
-        {"label": "Players", "assumption": "11 per team, 2 teams", "calculation": "11 × 2", "result": "22"},
-        {"label": "Distance", "assumption": "10.5 km each", "calculation": "22 × 10.5", "result": "231 km"},
-        {"label": "Rounded", "calculation": "22 × 10", "result": "about 220 km"}
+        {
+          "label": "Players",
+          "assumption": "11 per team, 2 teams",
+          "calculation": "11 × 2",
+          "result": "22"
+        },
+        {
+          "label": "Distance",
+          "assumption": "10.5 km each",
+          "calculation": "22 × 10.5",
+          "result": "231 km"
+        },
+        {
+          "label": "Rounded",
+          "calculation": "22 × 10",
+          "result": "about 220 km"
+        }
       ],
       "estimatedAnswer": 220
+    },
+    "sources": [],
+    "difficulty": "easy"
+  },
+  {
+    "id": "demo-hockey-game-length",
+    "sportCategory": "hockey",
+    "question": "How long does a hockey game last from the first faceoff to the final horn, with three 20-minute periods, two 17-minute intermissions and 25 minutes of stoppages?",
+    "answer": 7140,
+    "unit": "h:min",
+    "answerType": "estimate",
+    "explanation": "Playing time, intermissions and stoppages simply add up: 60 + 34 + 25 minutes.",
+    "napkinMath": {
+      "introduction": "Add the three parts of the evening.",
+      "steps": [
+        {
+          "label": "Periods",
+          "calculation": "3 × 20 min",
+          "result": "60 min"
+        },
+        {
+          "label": "Intermissions",
+          "calculation": "2 × 17 min",
+          "result": "34 min"
+        },
+        {
+          "label": "Total",
+          "calculation": "60 + 34 + 25",
+          "result": "119 min"
+        }
+      ],
+      "estimatedAnswer": 7140
     },
     "sources": [],
     "difficulty": "easy"

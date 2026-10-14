@@ -45,7 +45,7 @@ reach the live site. Don't put real questions there.
 | `question` | yes | The question as shown. |
 | `context` | no | Season, region or given assumptions. Not shown in the game for now. |
 | `answer` | yes | A plain number above 0 (no units, no thousands separators): `30000`, `46.8`. |
-| `unit` | yes | Shown next to the input and the numbers: `pucks`, `litres`, `km`, `years`. |
+| `unit` | yes | Shown inside the input box and after the numbers: `pucks`, `litres`, `km`, `years`. For a time use `min:s`, `h:min` or `h:min:s`: the game shows one box per part (like Guess the Record) and `answer` / `estimatedAnswer` are then given in **seconds** (e.g. 1 h 59 min = `7140`). |
 | `answerType` | yes | `sourced` (a documented number, needs `sources`) or `estimate` (shown as "Model estimate"). |
 | `referencePeriod` | no | E.g. `2024/25 season` or `2025`. |
 | `explanation` | yes | Short text after the guess. |

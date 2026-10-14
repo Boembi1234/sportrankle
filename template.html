@@ -309,15 +309,15 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 /* Guess the record: each answer part is a box like the rows in the other games (faint box; the full card colour on hover and
    while typing, no ring), the unit inside it on the right; the boxes together are as wide as everything else */
 .k-guess .guess-li{padding:0}
-.k-guess .guess{gap:8px}
-.k-guess .gbox{flex:1;min-width:0;display:flex;align-items:center;gap:8px;min-height:52px;padding:0 16px;border-radius:10px;
+:is(.k-guess,.k-est) .guess{gap:8px}
+:is(.k-guess,.k-est) .gbox{flex:1;min-width:0;display:flex;align-items:center;gap:8px;min-height:52px;padding:0 16px;border-radius:10px;
   background:var(--surface-faint);cursor:text;transition:background-color .15s}
-@media (hover:hover){.k-guess .gbox:hover{background:var(--surface)}}
-.k-guess .gbox:focus-within{background:var(--surface)}
-.k-guess .gbox input{flex:1;min-width:0;width:0;min-height:0;padding:0;border:0;background:none;outline:none;color:var(--text);
+@media (hover:hover){:is(.k-guess,.k-est) .gbox:hover{background:var(--surface)}}
+:is(.k-guess,.k-est) .gbox:focus-within{background:var(--surface)}
+:is(.k-guess,.k-est) .gbox input{flex:1;min-width:0;width:0;min-height:0;padding:0;border:0;background:none;outline:none;color:var(--text);
   font-family:var(--font);font-weight:800;font-size:24px;letter-spacing:0;text-shadow:none}
-.k-guess .gbox input::placeholder{color:var(--muted);font-weight:700}
-.k-guess .gbox input:focus,.k-guess .gbox input:focus-visible{outline:none}   /* the box turning grey shows the focus */
+:is(.k-guess,.k-est) .gbox input::placeholder{color:var(--muted);font-weight:700}
+:is(.k-guess,.k-est) .gbox input:focus,:is(.k-guess,.k-est) .gbox input:focus-visible{outline:none}   /* the box turning grey shows the focus */
 /* Ringer: built from the games' parts. Setup: name card, chips, heading, the counts as rows with small keys, the topics as rows.
    Cards: whose turn on the name card, the card underneath, the button like Reveal */
 .k-ringer .party{padding-block:24px 24px}
@@ -362,12 +362,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .est-calc:active{transform:translateY(1px);box-shadow:0 1px 0 var(--signal-edge)}
 @media (prefers-reduced-motion:reduce){.est-calc{transition:none}}
 .est-ctx{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.45;text-wrap:pretty}
-.est-in{display:flex;align-items:center;gap:8px;min-height:56px;padding:0 16px;border-radius:10px;background:var(--bg);cursor:text;transition:background-color .15s}
-@media (hover:hover){.est-in:hover{background:var(--surface-faint)}}
-.est-in:focus-within{background:var(--surface-faint)}
-.est-in input{flex:1;min-width:0;width:0;padding:0;border:0;background:none;outline:none;color:var(--text);font:800 26px var(--font)}
-.est-in input::placeholder{color:var(--muted);font-weight:700}
-.est-unit{flex:none;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:17px;font-weight:700;color:var(--muted)}
+/* inside the grey card the boxes take the page colour while hovered or typed in (the card colour would hide them) */
+.est-box .gbox:hover,.est-box .gbox:focus-within{background:var(--bg)}
 .est-note{min-height:1.3em;margin:0;font-size:14px;color:var(--muted);text-align:center}
 .est-note.err,.calc-msg.err{color:var(--wrong)}
 .est-back{display:flex;align-items:center;justify-content:center;text-decoration:none}
@@ -404,7 +400,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .est-src{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
 .est-src a{color:var(--signal);font-weight:700}
 .est-src span{color:var(--muted);font-size:14px}
-@media (prefers-reduced-motion:reduce){.est-in{transition:none}}
 /* The calculator: a modal over the dimmed page, the display on top (sum small, result large, right-aligned), 4 x 5 round
    keys (digits dark, operators blue), "Use result" underneath. Fits a 320px phone in landscape too (it scrolls) */
 .calc-bg{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.6);overflow-y:auto}
@@ -433,8 +428,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .calc-msg{min-height:1.3em;margin:8px 0 0;font-size:14px;color:var(--muted);text-align:center}
 @media (prefers-reduced-motion:reduce){.calc-keys button{transition:none}}
 @media (max-height:640px){.calc-keys{gap:8px}.calc-keys button{aspect-ratio:auto;height:48px}.calc-out{font-size:30px}}
-.k-guess .guess-unit{flex:none;margin:0;font-size:17px;font-weight:700;color:var(--muted)}
-@media (prefers-reduced-motion:reduce){.k-guess .gbox{transition:none}}
+:is(.k-guess,.k-est) .guess-unit{flex:none;margin:0;font-size:17px;font-weight:700;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){:is(.k-guess,.k-est) .gbox{transition:none}}
 /* Guess the record results: the facts as rows in the card colour like the other results (label left, value right) */
 .page.k-guess .board>li.fact{min-height:48px}
 .k-guess .fact{align-items:center;padding:8px 12px;border-radius:10px;background:var(--surface)}
@@ -1536,6 +1531,21 @@ function parseEst(text){
   if (v > EST_MAX) return {err: 'That number is too large.'};
   return {v};
 }
+// Time answers: the unit "min:s", "h:min" or "h:min:s" gives one box per part (answer and guesses in seconds)
+const EST_TIME = {'min:s': ['min', 's'], 'h:min': ['h', 'min'], 'h:min:s': ['h', 'min', 's']}, EST_SECS = {h: 3600, min: 60, s: 1};
+const estFields = q => EST_TIME[q.unit] || [estText(q, 'unit')];
+function estDur(secs, q){
+  const f = EST_TIME[q.unit], two = v => String(v).padStart(2, '0');
+  if (f[0] === 'h') {
+    const h = Math.floor(secs / 3600), rest = secs - h * 3600;
+    if (f.length === 2) { const m = Math.round(rest / 60); return m === 60 ? `${h + 1} h 00 min` : `${h} h ${two(m)} min`; }
+    const m = Math.floor(rest / 60), sec = Math.round(rest - m * 60);
+    return `${h}:${two(m)}:${two(sec)} h`;
+  }
+  const m = Math.floor(secs / 60), sec = secs - m * 60;
+  return `${m}:${Number.isInteger(sec) ? two(sec) : sec.toFixed(1).padStart(4, '0').replace('.', decSep())} min`;
+}
+const estShow = (v, q) => EST_TIME[q.unit] ? estDur(v, q) : `${estNum(v)} ${escH(estText(q, 'unit'))}`;
 const estInputText = v => v.toLocaleString(loc(), {useGrouping: false, maximumFractionDigits: 6});
 
 function estRoute(h){
@@ -1577,12 +1587,18 @@ function estRender(){
   $('est-score').hidden = true;
   $('est-body').innerHTML = '';
   $('est-row').hidden = false;
-  $('est-field').innerHTML = `<label class="est-in"><input id="est-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
-      placeholder="Your estimate" aria-label="Your estimate in ${escH(q.unit)}" aria-describedby="est-note"><span class="est-unit">${escH(estText(q, 'unit'))}</span></label>`;
-  const inp = $('est-input');
-  inp.value = ER.input || '';
-  inp.addEventListener('input', () => { ER.input = inp.value; estSave(); estCheck(); });
-  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); estConfirm(); } });
+  // The boxes of Guess the record: the unit inside on the right, 100 as the example (0 in each part of a time)
+  const fields = estFields(q), words = {h: 'hours', min: 'minutes', s: 'seconds'};
+  $('est-field').innerHTML = `<div class="guess">${fields.map((f, i) => `<label class="gbox"><input class="gf" id="est-in-${i}" type="text" inputmode="decimal"
+      autocomplete="off" spellcheck="false" placeholder="${fields.length > 1 ? '0' : '100'}" aria-label="Your estimate${fields.length > 1 ? `, ${words[f]}` : ` in ${escH(f)}`}"
+      aria-describedby="est-note"><span class="guess-unit">${escH(f)}</span></label>`).join('')}</div>`;
+  const ins = [...document.querySelectorAll('#est-field .gf')], saved = [].concat(ER.input ?? []);
+  ins.forEach((inp, i) => {
+    inp.value = saved[i] || '';
+    inp.addEventListener('input', () => { ER.input = ins.map(x => x.value); estSave(); estCheck(); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); estConfirm(); } });
+  });
+  const inp = ins[0];
   const b = $('est-main');
   b.hidden = false; b.textContent = 'Lock in my guess'; b.onclick = estConfirm;
   $('est-share').hidden = true; $('est-back').hidden = true;
@@ -1591,14 +1607,27 @@ function estRender(){
 }
 // The button only works with a valid number; a wrong one says why under it
 function estCheck(){
-  const r = parseEst($('est-input').value);
+  const r = estRead();
   $('est-main').disabled = r.v == null;
   $('est-note').textContent = r.err || '';
   $('est-note').classList.toggle('err', !!r.err);
   return r.v;
 }
+// The boxes as one number: a plain value, or a time in seconds (empty parts count as 0)
+function estRead(){
+  const q = EST.find(x => x.id === ER.id), ins = [...document.querySelectorAll('#est-field .gf')], f = EST_TIME[q.unit];
+  if (!f) return parseEst(ins[0].value);
+  if (ins.every(x => !x.value.trim())) return {err: ''};
+  let total = 0;
+  for (let i = 0; i < ins.length; i++) {
+    const t = ins[i].value.trim(), r = !t || /^0*[.,]?0*$/.test(t) ? {v: 0} : parseEst(t);
+    if (r.v == null) return r;
+    total += r.v * EST_SECS[f[i]];
+  }
+  return total <= 0 ? {err: 'Your estimate has to be more than 0.'} : total > EST_MAX ? {err: 'That number is too large.'} : {v: total};
+}
 function estConfirm(){
-  if (!ER || ER.guess != null || !$('est-input')) return;   // one guess: a second tap or Enter does nothing
+  if (!ER || ER.guess != null || !$('est-in-0')) return;   // one guess: a second tap or Enter does nothing
   const v = estCheck();
   if (v == null) return;
   $('est-main').disabled = true;
@@ -1607,21 +1636,21 @@ function estConfirm(){
   scrollTo(0, 0);
 }
 function estResults(q, fresh = false){
-  const a = q.answer, g = ER.guess, f = Math.max(g / a, a / g), unit = escH(estText(q, 'unit'));
+  const a = q.answer, g = ER.guess, f = Math.max(g / a, a / g);
   const [cls, verdict] = g === a ? ['ok', 'Spot on'] : g > a ? ['hi', 'Too high'] : ['lo', 'Too low'];
   const sc = $('est-score');
   sc.hidden = false;
   sc.innerHTML = `<div class="est-fac">${estFactor(f)}<small>${g === a ? 'perfect' : 'off by'}</small></div><span class="est-verdict ${cls}">${verdict}</span>`;
   const nm = q.napkinMath, srcs = (q.sources || []).filter(s => /^https?:\/\//.test(s.url));
-  const facts = [['Your guess', `${estNum(g)} ${unit}`],
-    [q.answerType === 'sourced' ? 'Answer' : 'Answer<span class="est-tag">Model estimate</span>', `${estNum(a)} ${unit}`],
+  const facts = [['Your guess', estShow(g, q)],
+    [q.answerType === 'sourced' ? 'Answer' : 'Answer<span class="est-tag">Model estimate</span>', estShow(a, q)],
     q.referencePeriod ? ['Refers to', escH(estText(q, 'referencePeriod'))] : null].filter(Boolean);
   $('est-body').innerHTML = `<ul class="board">${facts.map(([k, v]) => `<li class="fact"><span class="fact-k">${k}</span><span class="fact-v">${v}</span></li>`).join('')}</ul>
     <p class="est-h">Explanation</p><p class="est-text">${escH(estText(q, 'explanation'))}</p>
     <details class="est-napkin"><summary>📝 Napkin Math</summary><div class="est-napkin-body"><p>${escH(estText(nm, 'introduction'))}</p>
       <ol class="est-steps">${nm.steps.map(st => `<li><b>${escH(st.label)}</b>${st.result ? `<span class="est-res">${escH(st.result)}</span>` : ''}`
         + `${st.assumption || st.calculation ? `<span class="sub">${[st.assumption, st.calculation].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ol>
-      <div class="est-napkin-end"><span>Rough estimate</span>≈ ${estNum(nm.estimatedAnswer)} ${unit}</div>
+      <div class="est-napkin-end"><span>Rough estimate</span>≈ ${estShow(nm.estimatedAnswer, q)}</div>
       <p class="est-ctx">A quick path to the right order of magnitude. The ${q.answerType === 'sourced' ? 'answer' : 'model estimate'} above is the number that counts.</p></div></details>
     ${srcs.length ? `<p class="est-h">Source${srcs.length > 1 ? 's' : ''}</p><ul class="est-src">${srcs.map(s => `<li><a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>`
       + `${s.publisher || s.date ? ` <span>${[s.publisher, s.date].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ul>` : ''}`;
@@ -1631,7 +1660,7 @@ function estResults(q, fresh = false){
   if (fresh) setTimeout(() => { b.disabled = false; }, 700);
   $('est-row').hidden = true; $('est-field').innerHTML = ''; $('est-share').hidden = false; $('est-back').hidden = false;
   $('est-share').textContent = 'Share my score';
-  announce(`${verdict}. The ${q.answerType === 'sourced' ? 'answer' : 'model estimate'} is ${estNum(a)} ${q.unit}, you were off by ${estFactor(f)}.`);
+  announce(`${verdict}. The ${q.answerType === 'sourced' ? 'answer' : 'model estimate'} is ${estShow(a, q)}, you were off by ${estFactor(f)}.`);
 }
 function estAgain(){
   estNew(null, ER.id);
@@ -1745,10 +1774,12 @@ function calcUse(){
     $('calc-msg').classList.add('err');
     return;
   }
-  ER.input = estInputText(r.v); estSave();
   calcClose();
-  const inp = $('est-input');
-  if (inp) { inp.value = ER.input; estCheck(); inp.focus({preventScroll: true}); }
+  const ins = [...document.querySelectorAll('#est-field .gf')];   // a time: the result goes into the last part (seconds or minutes)
+  if (!ins.length) return;
+  ins.forEach((x, i) => { x.value = i === ins.length - 1 ? estInputText(r.v) : ''; });
+  ER.input = ins.map(x => x.value); estSave();
+  estCheck(); ins[ins.length - 1].focus({preventScroll: true});
 }
 $('est-calc-btn').addEventListener('click', calcOpen);
 $('calc-x').addEventListener('click', calcClose);

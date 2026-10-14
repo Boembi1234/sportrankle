@@ -148,6 +148,7 @@ SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "s
 # Home page pictures per game type; a dict entry overrides the crop (see cover())
 KIND_COVERS = {"rankle": "covers/rankle.png", "blind": "covers/blind.png", "sort": "covers/sort.png",
                "guess": {"file": "covers/records.png", "pad": True},
+               "guesstimate": "covers/guesstimate.png",
                "ringer": {"file": "covers/ringer.png", "width": 1.0, "cy": 0.45}}
 
 NAMES_EN = {

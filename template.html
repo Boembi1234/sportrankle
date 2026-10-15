@@ -45,14 +45,15 @@ a{color:inherit}
 /* The play screen is exactly one viewport tall; home and results may scroll.
    Game screens are one column at reading width; the home uses the full width for its tiles. */
 .page{margin:0 auto;display:flex;flex-direction:column;height:100vh;height:100dvh}
-/* The header spans the window (24px side margin); the content is centred and at most 1032px wide, with at least that
-   24px to the window edge; the play screens are narrower still */
+/* The header's row and the content are centred and at most 1032px wide, with at least 24px to the window edge; the
+   play screens are narrower still */
 .page>main{width:100%;max-width:760px;margin-inline:auto}
 .page.at-home>main{max-width:1032px}
 .page.done,.page.at-home{height:auto;min-height:100dvh}
 
 /* Header */
-.top{position:sticky;top:0;z-index:30;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:64px}
+/* Logo and language line up with the content (at most 1032px wide); background and divider still span the window */
+.top{position:sticky;top:0;z-index:30;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:64px;width:100%;max-width:1032px;margin-inline:auto}
 /* The header's background and divider run the full width of the window, past the page's side margins */
 .top::before,.top::after{content:"";position:absolute;left:0;right:0;clip-path:inset(0 -100vmax)}
 .top::before{z-index:-1;top:0;bottom:0;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg)}

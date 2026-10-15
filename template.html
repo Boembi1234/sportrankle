@@ -362,9 +362,9 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .v2 .segbtn.est-tool{min-height:40px;background:var(--surface-faint);box-shadow:0 2px 0 rgba(0,0,0,.45)}
 @media (hover:hover){.v2 .segbtn.est-tool:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 4px 0 rgba(0,0,0,.45);filter:brightness(1.15)}}
 .v2 .segbtn.est-tool:not(:disabled):active{transform:translateY(1px);box-shadow:0 1px 0 rgba(0,0,0,.45);filter:none}
-.v2 .segbtn.est-tool.est-hint-btn{background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge)}   /* Hint first and blue */
-@media (hover:hover){.v2 .segbtn.est-tool.est-hint-btn:not(:disabled):hover{box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}
-.v2 .segbtn.est-tool.est-hint-btn:not(:disabled):active{box-shadow:0 1px 0 var(--signal-edge)}
+.v2 .segbtn.est-tool.est-calc-btn{background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge)}   /* Calculator first and blue */
+@media (hover:hover){.v2 .segbtn.est-tool.est-calc-btn:not(:disabled):hover{box-shadow:0 4px 0 var(--signal-edge);filter:brightness(1.08)}}
+.v2 .segbtn.est-tool.est-calc-btn:not(:disabled):active{box-shadow:0 1px 0 var(--signal-edge)}
 .v2 .segbtn.est-tool:disabled{background:var(--surface-faint);color:var(--muted);box-shadow:none;cursor:default}
 .est-nap-rows.est-hints{margin-top:12px}
 .est-hints[hidden]{display:none}
@@ -755,8 +755,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
         <div class="est-row" id="est-row" hidden>
           <div class="est-field" id="est-field"></div>
           <div class="est-tools">
-            <button class="segbtn est-tool est-hint-btn" type="button" id="est-hint-btn">Hint</button>
-            <button class="segbtn est-tool" type="button" id="est-calc-btn">Calculator</button>
+            <button class="segbtn est-tool est-calc-btn" type="button" id="est-calc-btn">Calculator</button>
+            <button class="segbtn est-tool" type="button" id="est-hint-btn">Hint</button>
           </div>
           <ul class="est-nap-rows est-calc-box est-hints" id="est-hints" hidden></ul>
         </div>
@@ -1636,7 +1636,7 @@ function estHints(q){
   const rows = estHintRows(q), n = Math.min(ER.hints || 0, rows.length), b = $('est-hint-btn');
   $('est-hints').hidden = !n;
   $('est-hints').innerHTML = rows.slice(0, n).map(([k, v]) => `<li><span>${escH(k)}</span>${v ? `<span class="est-badge off">${escH(v)}</span>` : ''}</li>`).join('');
-  b.textContent = n >= rows.length ? 'No more hints' : n ? 'Next hint' : 'Hint';
+  b.textContent = `Hint (${rows.length - n})`;   // how many are left, down to 0
   b.disabled = n >= rows.length;
 }
 $('est-hint-btn').addEventListener('click', () => {
@@ -1799,11 +1799,13 @@ function calcKey(k){
 }
 function calcShow(){
   const c = ER.calc, out = $('calc-out');
-  const r = c.err ? {err: c.err} : calcEval(c.t);
+  // Like a pocket calculator: the big line shows the number being typed (after an operator still the last one), the
+  // result only after "="; the sum so far stays small above it
   $('calc-expr').textContent = c.done ? c.prev : c.t.map(calcTok).join(' ');
-  const text = r.err ? r.err : estNum(r.v);
+  const nums = c.t.filter(t => !isOp(t)), cur = nums[nums.length - 1];
+  const text = c.err ? c.err : cur == null ? '0' : c.done ? estNum(tokVal(cur)) : calcTok(cur);
   out.textContent = text;
-  out.className = `calc-out${r.err ? ' err' : text.length > 16 ? ' longer' : text.length > 11 ? ' long' : ''}`;
+  out.className = `calc-out${c.err ? ' err' : text.length > 16 ? ' longer' : text.length > 11 ? ' long' : ''}`;
   estSave();
 }
 let calcFrom = null;

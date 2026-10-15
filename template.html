@@ -1634,8 +1634,8 @@ function estResults(q, fresh = false){
   $('est-nap').hidden = true;
   $('est-nap').innerHTML = `
       ${nm.calc ? `<ul class="est-nap-rows est-calc-box">${nm.calc.rows.map((r, i) => `<li><span>${escH(r.label)}</span>`
-        + `<span class="est-badge off">${i === 0 ? '' : `<span class="op">${r.op}</span> `}${estNum(r.v)}</span></li>`).join('')}<li class="end"><span>Rough estimate</span><span class="est-badge ok">≈ ${estShow(nm.calc.result, q)}</span></li></ul>`
-      : `<ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.estimatedAnswer, q)}</span></li></ul>`}`;
+        + `<span class="est-badge off">${i === 0 ? '' : `<span class="op">${r.op}</span> `}${estNum(r.v)}</span></li>`).join('')}<li class="end"><span>Rough estimate</span><span class="est-badge ok">≈ ${estBare(nm.calc.result, q)}</span></li></ul>`
+      : `<ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estBare(nm.estimatedAnswer, q)}</span></li></ul>`}`;
   $('est-qbox').hidden = true;   // the question is not repeated in the results
   const b = $('est-main');
   b.textContent = 'Play again'; b.onclick = estAgain;

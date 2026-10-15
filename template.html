@@ -388,11 +388,9 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 /* the calculation as a box of its own: the start value, then one operation per row (× 90, ÷ 60), the result at the bottom */
 .est-calc-box{padding:4px 12px;border-radius:10px;background:var(--surface-faint);font-family:var(--font);font-size:13px}   /* small like the chart's labels, on the darker field of the rows above */
 .est-calc-box li{align-items:center;min-height:0;padding:6px 0;border-top-color:var(--line)}
-.est-calc-box li>span:first-child{font-weight:700;color:var(--muted)}
-.est-calc-box .est-badge{padding:3px 7px;font-size:13px;white-space:nowrap}   /* the numbers in small dark boxes, the result green */
-.est-calc-box .op{color:var(--signal);margin-right:2px}
-.est-calc-box li.end{border-top:1px solid var(--line-strong);font-size:13px}
-.est-calc-box li.end>span:first-child{font-weight:800;color:var(--text)}
+.est-calc-box li>span:first-child{font-weight:700;color:var(--muted)}   /* every label alike, Rough estimate too */
+.est-calc-box .est-badge{padding:0;background:none;box-shadow:none;color:var(--text);font-size:13px;white-space:nowrap}   /* the numbers plain white */
+.est-nap-rows.est-calc-box li.end{border-top:2px solid var(--line-strong);font-size:13px;font-weight:700}
 .est-nap-rows .v{flex:none;max-width:45%;text-align:right;font-weight:700}
 .est-nap-rows li.first .v{color:var(--signal)}
 .est-nap-rows li.end{font-weight:800;font-size:15px}

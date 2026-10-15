@@ -374,15 +374,17 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .est-badge.ok{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}
 .k-est .fact-v{font-size:15px;font-weight:700;color:var(--text)}
 .est-tag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
-.k-est .est-score:not([hidden])~#est-body{margin-top:16px}   /* the two rows 16px under the score card (10px on phones) */
+.k-est .est-rows{grid-column:1 / -1;margin:0 0 16px}   /* your guess and the answer at the top of the score card, above Off by */
+.k-est .est-rows .fact{background:var(--surface-faint)}
+.k-est .est-score:not([hidden])~#est-body{margin-top:16px}
 /* Napkin Math: one button like the Your board / Perfect board keys, opening the card under it */
-.est-nap-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:16px;padding:0 16px;border:0;cursor:pointer;font-family:var(--font)}
+.est-nap-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:0;padding:0 16px;border:0;cursor:pointer;font-family:var(--font)}
 .est-nap-btn::after{content:"";width:7px;height:7px;border-right:2px solid;border-bottom:2px solid;transform:translateY(-2px) rotate(45deg)}
 .est-nap-btn[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
 @media (hover:hover){.v2 .est-nap-btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--surface-edge);filter:brightness(1.08)}}
 .v2 .est-nap-btn:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge);filter:none}
 .est-nap{margin-top:16px}
-@media (max-width:639px){.k-est .est-score:not([hidden])~#est-body,.est-nap-btn,.est-nap{margin-top:10px}}
+@media (max-width:639px){.k-est .est-score:not([hidden])~#est-body,.est-nap{margin-top:10px}}
 /* Napkin Math: a card with the starting thought, then the steps as rows split by dashed lines (the step left, its value
    right; the first marked START), the rough result in bold, and the sources small underneath */
 .est-nap{padding:16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
@@ -705,6 +707,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
     </section>
     <section id="est-play" hidden>
       <div class="led est-score" id="est-score" hidden>
+        <ul class="board est-rows" id="est-rows"></ul>
         <div><span class="led-num" id="est-off"></span></div>
         <div class="led-side"><span class="led-num" id="est-verdict"></span></div>
         <div class="led-bar" aria-hidden="true"><i id="est-fill"></i></div>
@@ -1622,10 +1625,9 @@ function estResults(q, fresh = false){
     return `<li${i === 0 ? ' class="first"' : ''}><span>${escH(left)}${i === 0 ? '<span class="est-start">START</span>' : ''}</span>${v ? `<span class="v">${escH(v)}</span>` : ''}</li>`;
   };
   const steps = nm.i18n?.[LANG]?.steps?.map(label => ({label})) || nm.steps;
-  $('est-body').innerHTML = `<ul class="board">
-      <li class="fact"><span class="fact-k">Your guess</span><span class="est-badge">${estBare(g, q)}</span></li>
-      <li class="fact"><span class="fact-k">Answer${tag}</span><span class="est-badge ok">${estBare(a, q)}</span></li></ul>
-    <button class="segbtn est-nap-btn" type="button" id="est-nap-btn" aria-expanded="false" aria-controls="est-nap">Napkin Math</button>
+  $('est-rows').innerHTML = `<li class="fact"><span class="fact-k">Your guess</span><span class="est-badge">${estBare(g, q)}</span></li>
+      <li class="fact"><span class="fact-k">Answer${tag}</span><span class="est-badge ok">${estBare(a, q)}</span></li>`;
+  $('est-body').innerHTML = `<button class="segbtn est-nap-btn" type="button" id="est-nap-btn" aria-expanded="false" aria-controls="est-nap">Napkin Math</button>
     <div class="est-nap" id="est-nap" hidden>
       <p class="est-nap-intro">${escH(estText(nm, 'introduction'))}</p>
       <ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.estimatedAnswer, q)}</span></li></ul>

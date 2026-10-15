@@ -525,6 +525,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 /* Today's scores, inside the score card: thin bars in one colour, a blue line at your score, a dashed line at the average */
 .led .today{grid-column:1/-1;margin:14px 0 0}
 .today-bars{position:relative;display:flex;align-items:flex-end;gap:3px;height:96px;padding-top:12px}
+.today-bars i.me{background:var(--signal)}
 .today-bars i{flex:1;min-height:3px;height:calc(var(--v) * 100%);background:color-mix(in srgb,var(--text) 22%,transparent);border-radius:3px 3px 0 0}
 .today-avg,.today-me{position:absolute;bottom:0;left:var(--x);width:0}
 .today-avg{top:12px;border-left:2px dashed color-mix(in srgb,var(--text) 70%,transparent)}
@@ -1088,7 +1089,7 @@ async function reportResult(score, max){
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 // The histogram under the results from the score counts of everyone today ([{score, n}])
-function showStats(rows, score, max, el = $('today')){
+function showStats(rows, score, max, el = $('today'), lines = true){   // lines: false colours your bar blue instead
   const total = rows.reduce((a, r) => a + Number(r.n), 0);
   const below = rows.filter(r => r.score < score).reduce((a, r) => a + Number(r.n), 0);
   if (!total) return;
@@ -1101,8 +1102,9 @@ function showStats(rows, score, max, el = $('today')){
   const pct = Math.round(100 * below / (total - 1));
   if (el === $('today')) G.stat = total < 10 ? null : {pct, total};
   const bars = el.querySelector('.today-bars');
-  bars.innerHTML = bins.map(n => `<i style="--v:${n / top}" title="${n}"></i>`).join('')
-    + `<span class="today-avg" style="--x:${at(avg)}"></span><span class="today-me" style="--x:${at(score)}"></span>`;
+  const mine = Math.min(nb - 1, Math.floor(score / width));
+  bars.innerHTML = bins.map((n, i) => `<i${!lines && i === mine ? ' class="me"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('')
+    + (lines ? `<span class="today-avg" style="--x:${at(avg)}"></span><span class="today-me" style="--x:${at(score)}"></span>` : '');
   bars.setAttribute('aria-label', `Today's scores: ${total} played, average ${Math.round(avg)}, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
   el.querySelector('.today-axis').innerHTML = `<span>0</span><span>${max}</span>`;
   el.hidden = false;
@@ -1655,7 +1657,7 @@ async function estReport(score){
   try {
     await sb('results', {day: today(), game: 'guesstimate-all', device: deviceId(), score, max: 100}, [409]);
     const rows = await sb('rpc/daily_stats', {p_day: today(), p_game: 'guesstimate-all'});
-    if (ER && ER.id === id && ER.guess != null) showStats(rows, score, 100, el);
+    if (ER && ER.id === id && ER.guess != null) showStats(rows, score, 100, el, false);
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 function estAgain(){

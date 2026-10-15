@@ -369,14 +369,14 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-est .fact{align-items:center;min-height:48px;padding:4px 9px 4px 12px;border-radius:10px;background:var(--surface)}
 .k-est .fact-k{font-size:17px;font-weight:700;color:var(--text)}   /* like the row titles of the other games */
 /* the numbers in the points box of the other games: your guess blue, the answer green */
-.est-badge{flex:none;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);
+.est-badge{flex:none;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge);
   font-size:15px;font-weight:800;line-height:1.2;font-variant-numeric:tabular-nums}
-.est-badge.ok{background:var(--led-ok)}
+.est-badge.ok{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}
 .k-est .fact-v{font-size:15px;font-weight:700;color:var(--text)}
 .est-tag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
 .k-est .est-rows{grid-column:1 / -1;margin:0}   /* your guess, the answer and how far off, then the comparison */
 .k-est .est-score .today{margin-top:16px}
-.est-badge.off{background:var(--bg);color:var(--text);box-shadow:none}
+.est-badge.off{background:var(--bg);color:var(--text);box-shadow:0 2px 0 rgba(0,0,0,.6)}
 .k-est .est-rows .fact{background:var(--surface-faint)}
 .k-est .est-score:not([hidden])~#est-body{margin-top:16px}
 /* Napkin Math: one button like the Your board / Perfect board keys, opening the card under it */
@@ -418,7 +418,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .v2 .vals i{color:transparent}
 .v2 .vals i.lit{color:inherit;text-shadow:none}
 /* Rankle: the points sit in a blue box like the Play button (same colour, corners and hard edge); no hover, only buttons that act have one */
-.v2 .pts{min-width:0;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);
+.v2 .pts{min-width:0;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge);
   font-size:15px;line-height:1.2;text-align:center}
 .v2 .row.done{padding-right:9px}   /* the 30px box in a 48px row: 9px to the top, bottom and right edge */
 .row:disabled{cursor:default}
@@ -505,12 +505,12 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .v2 .led-note{display:none}   /* the card says it all; the sentence still goes to screen readers */
 /* Rankle results: ideally placed rows in green instead of blue (title and points box) */
 .v2 .row.ideal .cat{color:var(--led-ok)}
-.v2 .row.ideal .pts,.k-rankle #board2 .pts{background:var(--led-ok)}   /* the perfect board is all green */
+.v2 .row.ideal .pts,.k-rankle #board2 .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}   /* the perfect board is all green */
 .page.v2.done .row .cat{color:var(--text)}   /* results: the titles white; only the points box carries the colour */
-.v2 .row.worst .pts{background:var(--led-no)}   /* a pick in the item's worst category: red */
+.v2 .row.worst .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}   /* a pick in the item's worst category: red */
 /* During play: green when the pick matches the perfect board, red when it is the item's worst category of all */
-.page.k-rankle:not(.done) .row.good .pts{background:var(--led-ok)}
-.page.k-rankle:not(.done) .row.bad .pts{background:var(--led-no)}
+.page.k-rankle:not(.done) .row.good .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}
+.page.k-rankle:not(.done) .row.bad .pts{background:var(--led-no);box-shadow:0 2px 0 var(--wrong)}
 /* Rankle results: "Your board" / "Perfect board" as two chips, half the width each; the active one blue, the other grey
    with the buttons' hover */
 .v2 .seg{gap:8px;margin-top:16px}   /* as far from the score card as the two buttons are apart (10px on phones) */

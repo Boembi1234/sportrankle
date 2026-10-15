@@ -58,7 +58,7 @@ Own photos go into `photos/<pool>/<item name>.jpg` (see `photos/README.txt`); th
 
 ## Online results (optional)
 
-There are no logins. When a game ends, the page records `day, game, score, max` under a random device id kept in `localStorage`, then shows how the score compares with everyone else's that day ("You beat 73 %", "1,204 played today"). The schema and policies are in `supabase/migrations/`: the public key can only insert one row per device, game and day (game keys `rankle-`, `blind-`, `sort-`, `guess-`, `guesstimate-` with any topic; a new game type needs a migration widening that pattern) and call `daily_stats()`, which returns a score histogram — individual rows are never readable from the browser.
+There are no logins. When a daily puzzle ends (practice rounds are not sent), the page records `day, game, score, max` under a random device id kept in `localStorage`, then shows how the score compares with everyone else's that day ("You beat 73 %", "1,204 played today"). The schema and policies are in `supabase/migrations/`: the public key can only insert one row per device, game and day (game keys `rankle-`, `blind-`, `sort-`, `guess-`, `guesstimate-` with any topic; a new game type needs a migration widening that pattern) and call `daily_stats()`, which returns a score histogram — individual rows are never readable from the browser.
 
 The build enables it when `supabase/anon.key` exists (the project's public "anon" key, one line). Without the file the page runs exactly the same, minus that one line on the results screen. To use your own project: `npx supabase link --project-ref <ref>`, `npx supabase db push`, then save the anon key to `supabase/anon.key` and rebuild.
 
@@ -73,6 +73,20 @@ The build writes one real page per topic, sport and game next to `index.html` (`
 ## Legal notice and privacy
 
 `legal.html` is the legal notice (Impressum) and privacy policy, served as `/legal` and linked from the bottom of the home page. The build fills in `OPERATOR` from `build.py` (Playmakerz, the people behind it, address and e-mail, the same as the Playmakerz app's Impressum) and the date. It describes exactly what the site does with data: Netlify server logs, Google Fonts, the anonymous score rows in Supabase (EU, Ireland) and the local storage in the browser. Update it when a game starts to need other data. The cookie, advertising, legal-basis and recipients parts exist in two variants: set `ADS = {"network": "<ad provider>", "analytics": "<tool or empty>"}` in `build.py` once ads run, and the build keeps the consent-based version (modelled on geotrivia.com's policy) instead of the "no ads, no cookies" one. Ads also need a real consent banner (TCF-compliant CMP) on the page.
+
+## Daily puzzles, streaks, sharing
+
+Every game (a game type on a topic, e.g. `rankle-nfl`) has a **daily puzzle**: the first round of the day deals cards seeded by the local date and the game (`dailySeed` in `lib/streak.js`), so everyone gets the same ones; it is numbered from the game's start day (`PUZZLE_START` in `build.py`, or `"puzzle_start"` on a pool that opens later). After it, Play again deals random **practice rounds**. Only the daily puzzle counts for streaks, the home-page checks, the online comparison and challenges.
+
+- **Streaks** live in `localStorage`: `streak-<game>` and `streak-all` (any game that day), each `{cur, best, last, played, hist}` with the last 30 scores. A missed day ends a streak; a second result for the same puzzle changes nothing.
+- **Share** (main button after the daily puzzle, "Challenge a friend" after practice): title with the puzzle number, an emoji row that never shows answers (Rankle: green = ideal spot, red = the card's worst category, yellow = in between; Blind ranking and Sort it: green = exact, yellow = some points, red = none; Guess the record: a five-square bar), the score with the streak, and a link to the game's page with `?c=` (base64url of game, topic, puzzle number and score; a practice round carries its seed instead, so the friend gets the same cards) and `utm_source=share&utm_medium=<game>`. Phones get the share sheet, other devices the clipboard and a "Copied!" toast.
+- **Challenge links** open the game: on today's puzzle a message shows the friend's score first and the result screen compares both; an old puzzle gets a short note and today's puzzle.
+
+The shared logic is in `lib/streak.js`, `lib/share.js` and `lib/analytics.js`; the build inlines them into the page (`/*__LIB__*/` in `template.html`). Tests: `node --test tests/streak.test.cjs` (puzzle numbers, streaks over consecutive and missed days, two games on one day, midnight rollover, challenge links, share text).
+
+## Analytics
+
+[Plausible](https://plausible.io) (no cookies, no consent banner), wrapped in `track(event, props)` and `trackPage(path)` in `lib/analytics.js`. The build takes the site's Plausible domain from `PLAUSIBLE_DOMAIN` (default `sport-minigames.com`; `PLAUSIBLE_DOMAIN=""` turns it off and drops the paragraph from `/legal`). Events are sent only from that domain; local builds and deploy previews log them to the console. Every view is a pageview with a clean path (`/rankle/nfl`, `/topic/nfl`, `/sport/hockey`, ...). Custom events: `game_start {game, puzzle}`, `game_complete {game, puzzle, score, streak}`, `share_click {game, method}`, `challenge_open {game, valid}`, `challenge_beaten {game}`, `streak_milestone {streak}`; `utm_source`, `utm_medium` and `utm_campaign` of the session's first page go along with each of them.
 
 ## Deploying
 

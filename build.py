@@ -148,6 +148,14 @@ WIDE_LOW = {"lowest", "youngest", "fewest", "earliest", "shortest", "smallest", 
 SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "supabase" / "anon.key").read_text().strip()
             if (HERE / "supabase" / "anon.key").exists() else None}
 
+# Daily puzzles: puzzle #1 of every game is on this day (a pool may set its own "puzzle_start" when it opens later).
+PUZZLE_START = "2026-10-15"
+# Plausible analytics: the site's domain there. Events are only sent from that domain (local builds log to the console);
+# PLAUSIBLE_DOMAIN="" turns analytics off.
+PLAUSIBLE_DOMAIN = os.environ.get("PLAUSIBLE_DOMAIN", "sport-minigames.com").strip() or None
+# Shared page logic, inlined into the page in this order (see lib/)
+LIBS = ["lib/streak.js", "lib/share.js", "lib/analytics.js"]
+
 # Pictures on the game-type cards of the home page (cropped 3:2 like every tile picture)
 # Home page pictures per game type; a dict entry overrides the crop (see cover())
 KIND_COVERS = {"rankle": {"file": "covers/rankle.png", "width": 0.75, "cy": 0.5}, "blind": {"file": "covers/blind.png", "width": 0.75, "cy": 0.5}, "sort": {"file": "covers/sort.png", "width": 0.75, "cy": 0.5},
@@ -1098,7 +1106,8 @@ def main():
     for key, g in data.items():
         if g.get("sport") not in SPORTS:
             raise SystemExit(f"{key}: unknown sport '{g.get('sport')}'")
-    for g in data.values():   # the page each topic's share text links to
+    for key, g in data.items():   # the page each topic's share text links to, and the day of its puzzle #1
+        g["start"] = GAMES[key].get("puzzle_start", PUZZLE_START)
         for cat in g['cats']:
             cat['title'] = cat_title(cat)
             cat['emoji'] = cat_emoji(cat)
@@ -1106,6 +1115,8 @@ def main():
                 cat['emoji'] = "🔥" if cat["name"] == "Playoff games" else "🏒"
         g["url"] = f"{SITE}/{slug(g['tab'])}"
     base = (TEMPLATE.read_text(encoding="utf-8")
+            .replace("/*__LIB__*/", "\n".join((HERE / p).read_text(encoding="utf-8") for p in LIBS))
+            .replace("__PLAUSIBLE__", json.dumps(PLAUSIBLE_DOMAIN))
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
@@ -1148,6 +1159,9 @@ def main():
     keep, drop = ("ADS", "NOADS") if ADS["network"] else ("NOADS", "ADS")
     legal = re.sub(rf"<!--{drop}-->.*?<!--/{drop}-->", "", legal, flags=re.S)
     legal = legal.replace(f"<!--{keep}-->", "").replace(f"<!--/{keep}-->", "")
+    # The visitor-statistics parts (<!--PLAUSIBLE-->...<!--/PLAUSIBLE-->) only while analytics is on
+    legal = (legal.replace("<!--PLAUSIBLE-->", "").replace("<!--/PLAUSIBLE-->", "") if PLAUSIBLE_DOMAIN
+             else re.sub(r"<!--PLAUSIBLE-->.*?<!--/PLAUSIBLE-->", "", legal, flags=re.S))
     legal = (legal.replace("__ADS_NETWORK__", esc(ADS["network"]))
              .replace("__ANALYTICS_SENTENCE__", f", and {esc(ADS['analytics'])} for anonymous usage statistics" if ADS["analytics"] else ""))
     (DIST.parent / "legal.html").write_text(legal.replace("__DATE__", time.strftime("%d %B %Y").lstrip("0")), encoding="utf-8")

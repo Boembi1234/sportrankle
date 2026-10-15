@@ -65,7 +65,8 @@ nav.toc a{text-decoration:none}
 <ul>
 <li>No registration, no name, no e-mail address is asked for or stored.</li>
 <li>Your game progress stays in your browser. Only an anonymous score goes to a database so scores can be compared.</li>
-<!--NOADS--><li>No cookies, no analytics, no advertising, no social-media plug-ins.</li><!--/NOADS-->
+<!--NOADS--><li>No cookies, no advertising, no social-media plug-ins.</li><!--/NOADS-->
+<!--PLAUSIBLE--><li>Anonymous visitor statistics with Plausible Analytics: no cookies, no personal data, no tracking across websites.</li><!--/PLAUSIBLE-->
 <!--ADS--><li>The site is financed by ads. Advertising and analytics cookies are only set after you agree in the consent banner, and you can change your mind at any time.</li><!--/ADS-->
 </ul>
 
@@ -81,9 +82,13 @@ nav.toc a{text-decoration:none}
 <p>The <b>device id</b> is a random number your browser generates the first time you finish a game and keeps in its local storage. It is not derived from your device, your IP address or anything about you, and we cannot link it to a person. Its only purpose is to allow one result per device, game and day. The rows are used to show you how your score compares with everyone else's that day ("You beat 73 %"), and in aggregated form to see which puzzles are played and how hard they are. Nobody can read individual rows through the website; the page only receives counts per score. Supabase's servers see your IP address while the row is sent, as any server does, and keep short-term access logs.</p>
 <p id="myid" hidden>Your current device id: <code id="myid-v"></code>. Quote it if you want your rows deleted.</p>
 
+<!--PLAUSIBLE--><h3>Visitor statistics</h3>
+<p>To see which games are played and how people find the site, we use <b>Plausible Analytics</b> (Plausible Insights OÜ, Estonia; data stored on servers in the EU). Plausible sets no cookies and stores nothing on your device. For each page view and game event (for example: a game started or finished, its score, the share button used, the current streak) it receives the page address, the referring site and campaign tags in the link (such as utm_source), browser, operating system, device type and country. Your IP address is used only to derive a daily changing anonymous hash and is not stored; the hash is discarded after 24 hours, so visits cannot be linked across days or to a person. We only see aggregated numbers. Legal basis: our legitimate interest in understanding and improving the site (Art. 6(1)(f) GDPR); under the FADP the processing involves no personal data in our hands.</p>
+<p>A shared result link contains the game, the puzzle number and the score, nothing about you.</p><!--/PLAUSIBLE-->
+
 <h3 id="ads">Cookies, local storage and consent</h3>
 <p><b>Necessary storage</b> (no consent needed): today's progress in each game, your past scores and streak, the device id, settings such as the last view, notices already shown<!--ADS-->, and your consent choice itself<!--/ADS-->. This lives in your browser's local storage, never leaves your device except as described above, and stays until you clear the site data in your browser. The site then starts fresh, and old results in the database can no longer be attributed to your browser.</p>
-<!--NOADS--><p><b>Optional storage:</b> none at present. The site sets no cookies, uses no analytics and shows no ads. Should that change, this policy will name the partners, and a consent banner will ask you before any advertising or analytics storage is set.</p><!--/NOADS-->
+<!--NOADS--><p><b>Optional storage:</b> none at present. The site sets no cookies and shows no ads<!--PLAUSIBLE-->; its visitor statistics (below) work without cookies or storage<!--/PLAUSIBLE-->. Should that change, this policy will name the partners, and a consent banner will ask you before any advertising or analytics storage is set.</p><!--/NOADS-->
 <!--ADS--><p><b>Optional storage</b> (only with your consent, or where the law allows it without): consent, analytics and advertising cookies and identifiers, as described in the next section.</p>
 
 <h3>Analytics and advertising</h3>

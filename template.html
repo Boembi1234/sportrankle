@@ -129,6 +129,7 @@ a{color:inherit}
 .nrow::after{content:"";flex:none;margin:0 2px 0 4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;transform:rotate(45deg)}
 .nrow-ic{flex:none;width:24px;height:24px;object-fit:contain}
 .nrow-name{flex:1;min-width:0}
+.nrow-note{flex:none;color:var(--muted);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}   /* today's puzzle done: ✓ and the score */
 @media (hover:hover){.nrow:hover{background:var(--surface)}}
 .nrow:active{background:var(--surface-edge)}
 @media (prefers-reduced-motion:reduce){.nrow{transition:none}}
@@ -569,6 +570,19 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .v2 .led-bar{display:block;grid-column:1/-1;height:8px;margin-top:12px;border-radius:4px;background:var(--bg);overflow:hidden}
 .led-bar i{display:block;width:0;height:100%;border-radius:4px;background:var(--signal);transition:width .8s cubic-bezier(.2,.7,.2,1)}
 .v2 .led-note{display:none}   /* the card says it all; the sentence still goes to screen readers */
+/* Streak (or practice round) and a friend's score, small under the bar */
+.led-streak{grid-column:1/-1;margin:8px 0 0;font-size:13px;line-height:1.35;color:var(--muted);font-variant-numeric:tabular-nums}
+.led-streak b{color:var(--text);font-weight:700}
+.led-streak .fire{margin-right:4px}
+.led-streak .vs{display:block}
+/* A short confirmation at the bottom of the screen (Copied!) */
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:70;transform:translateX(-50%);max-width:calc(100% - 32px);
+  padding:10px 16px;border-radius:8px;background:var(--text);color:var(--bg);font-weight:700;font-size:15px;box-shadow:0 6px 24px rgba(0,0,0,.4)}
+/* A message before a game starts (a friend's challenge), on the calculator's backdrop and card */
+.dlg{display:flex;flex-direction:column;gap:12px;padding:20px}
+.dlg .eyebrow{margin:0}
+.dlg-t{margin:0;font-size:18px;line-height:1.4}
+.dlg-t b{color:var(--signal)}
 /* Rankle results: ideally placed rows in green instead of blue (title and points box) */
 .v2 .row.ideal .cat{color:var(--led-ok)}
 .v2 .row.ideal .pts,.k-rankle #board2 .pts{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}   /* the perfect board is all green */
@@ -824,6 +838,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
         <div class="led-side"><span class="led-lbl">Of max</span><span class="led-num" id="led-pct"></span></div>
         <div class="led-bar" aria-hidden="true"><i id="led-fill"></i></div>
         <p class="led-note" id="led-note"></p>
+        <p class="led-streak" id="led-streak" hidden></p>
         <div class="today" id="today" hidden>
           <div class="today-bars" id="today-bars" role="img"></div>
           <div class="today-axis" id="today-axis" aria-hidden="true"></div>
@@ -846,6 +861,13 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
     <section class="alt" id="alt" hidden><h2 class="alt-h" id="alt-h"></h2><ul class="board" id="board2"></ul></section>
   </main>
   <p class="sr" id="live" aria-live="polite"></p>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="calc-bg" id="dlg" hidden>
+    <div class="calc dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-h">
+      <p class="eyebrow" id="dlg-h"></p><p class="dlg-t" id="dlg-t"></p>
+      <button class="main" id="dlg-go" type="button">Let's play</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -863,6 +885,7 @@ const GAME_TILE = {rankle: {bg: '#202D39', glow: '#69B9F5'}, blind: {bg: '#202D3
 const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cover?}}
 const ROUTE = __ROUTE__;   // the view a real URL opens on (e.g. "#t/nfl" on /nfl-teams), "" on the home page
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
+/*__LIB__*/
 const POOLS = ['athletes', 'sports', 'f1', 'nhlteams', 'nhlplayers', 'nfl', 'nflplayers', 'nflhof', 'college', 'ski', 'cl', 'footrecords', 'hockeyrecords', 'records'];
 const ORDER = Object.keys(GAMES).flatMap(k => POOLS.filter(m => !SPORTS[DATA[m].sport].soon && (!DATA[m].kinds || DATA[m].kinds.includes(k))).map(m => `${k}-${m}`));
 // A pool may be limited to some games ("kinds" in build.py); the flagship pool is the big card on the home page
@@ -906,32 +929,63 @@ function chips(sub){
 // Rankle rows: the category emoji as the icon in front, in its own 24px column like the icons in the menu
 const rowIcon = c => D.cats[c].emoji ? `<span class="row-ic" aria-hidden="true">${D.cats[c].emoji}</span>` : '';
 
-// Endless games: every start deals new random cards; leaving a game drops it.
+// Rounds: the first of the day is the daily puzzle (cards seeded by the date, see newRound), then random practice
+// rounds; leaving a game drops it (the daily puzzle deals the same cards again).
 const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 function today(){ return dayKey(new Date()); }
-// Days in a row with at least one finished game (today counts once something is finished)
-function streakDays(){
-  const days = new Set();
-  for (const k of ORDER) for (const d of Object.keys(load(k.replace('-', '-history-')) || {})) days.add(d);
-  const d = new Date();
-  if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1);
-  let n = 0;
-  while (days.has(dayKey(d))) { n++; d.setDate(d.getDate() - 1); }
-  return n;
+// Days in a row with at least one finished daily puzzle, any game (today counts once one is finished)
+const streakDays = () => streakNow(load('streak-all'), dayNum(today()));
+
+// ---- Daily puzzle or practice round ----
+// The first round of a game each day is its daily puzzle (#N, the same cards for everyone); it counts for streaks, the
+// online comparison and challenges. After it, Play again deals random practice rounds as before. A challenge link from
+// a practice round carries its seed, so the friend gets the same cards.
+let CH = null;   // a challenge opened from a link, until its game starts: {kind, pool, puzzle, score, max, seed}
+const todayNo = m => puzzleNo(DATA[m].start, today());
+const dailyDone = k => streakDone(load(`streak-${k}`), todayNo(k.split('-')[1]));
+const dailyScore = k => (load(`streak-${k}`) || {hist: {}}).hist?.[todayNo(k.split('-')[1])];
+function newRound(){
+  const k = `${KIND}-${MODE}`, day = today();
+  let daily = false, seed;
+  if (CH && CH.kind === KIND && CH.pool === MODE && CH.puzzle === 0) seed = CH.seed;   // a friend's practice cards
+  else if (!dailyDone(k)) { daily = true; seed = dailySeed(k, day); }
+  else seed = Math.random() * 2 ** 32 >>> 0;
+  return {day, daily, puzzle: daily ? todayNo(MODE) : 0, seed, rnd: seededRandom(seed)};
 }
+// The line under the button while playing says which round this is
+const playNote = text => { $('note').textContent = `${G.daily ? `Today's puzzle #${G.puzzle}` : 'Practice round'} · ${text}`; };
+// After the start of a round: analytics, and the challenge it answers (if any)
+function roundStarted(){
+  const k = `${KIND}-${MODE}`, n = todayNo(MODE), ch = CH && CH.kind === KIND && CH.pool === MODE ? CH : null;
+  G.ch = null;
+  track('game_start', {game: k, puzzle: G.daily ? G.puzzle : 'practice'});
+  if (!ch) return;
+  CH = null;
+  const theirs = `<b>${ch.score}/${ch.max}</b>`;
+  if (ch.puzzle === 0 || (ch.puzzle === n && G.daily)) {
+    G.ch = ch;
+    dialog(`Your friend scored ${theirs} on ${ch.puzzle ? "today's puzzle" : 'these cards'}. Can you beat it?`, ch.puzzle ? `${GAMES[KIND].name} · ${D.tab} #${n}` : `${GAMES[KIND].name} · ${D.tab}`);
+  } else if (ch.puzzle === n) {
+    const mine = dailyScore(k);
+    dialog(`Your friend scored ${theirs} on today's puzzle${mine ? `, you scored <b>${mine[0]}/${mine[1]}</b>: ${chalVerdict(mine[0], ch.score)}` : ''}. Here is a practice round.`, `${GAMES[KIND].name} · ${D.tab} #${n}`);
+  } else {
+    dialog(`That challenge was for puzzle #${ch.puzzle}, not today's. ${G.daily ? `Here is today's puzzle #${n}.` : `You've done today's puzzle #${n} already, so here is a practice round.`}`, `${GAMES[KIND].name} · ${D.tab}`);
+  }
+}
+const chalVerdict = (mine, theirs) => mine > theirs ? 'you win' : mine === theirs ? "it's a tie" : 'they win this one';
 function draw(pool, k, rnd){ const a = [...pool]; for (let i = a.length - 1; i > 0; i--) { const j = rnd() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, k); }
 const range = n => [...Array(n).keys()];
 function load(key){ try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
 function store(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
-// A fresh random draw for each game
-function rankleDraw(m){
-  const g = DATA[m], rnd = Math.random;
+// The cards of a round: drawn with the round's generator (seeded by the date for the daily puzzle, see newRound)
+function rankleDraw(m, rnd = Math.random){
+  const g = DATA[m];
   return {cats: draw(range(g.cats.length), PICK, rnd), items: draw(range(g.items.length), PICK, rnd)};
 }
 // Blind ranking and Sort it: one attribute, eight items with eight different values, so no two ever tie.
 // The items are grouped by value, eight groups are drawn, then one item of each group.
-function blindDraw(m, kind = 'blind'){
-  const g = DATA[m], rnd = Math.random;
+function blindDraw(m, kind = 'blind', rnd = Math.random){
+  const g = DATA[m];
   const groups = c => { const by = new Map(); g.items.forEach((it, i) => { const v = it.values[c]; if (v != null) by.set(v, [...(by.get(v) || []), i]); }); return [...by.values()]; };
   const usable = range(g.cats.length).filter(c => groups(c).length >= PICK);
   const cat = usable[rnd() * usable.length | 0];
@@ -1101,8 +1155,7 @@ $('stats-btn').addEventListener('click', e => togglePanel('stats-panel', e.curre
 function statsHTML(){
   const h = load(`${KIND}-history-${MODE}`) || {};
   const days = Object.keys(h).sort(), scores = days.map(d => h[d][0]);
-  let streak = 0;
-  for (let d = new Date(); h[`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`]; d.setDate(d.getDate() - 1)) streak++;
+  const streak = streakNow(load(`streak-${KIND}-${MODE}`), todayNo(MODE));
   const name = `${GAMES[KIND].name}, ${D.tab}`;
   return days.length
     ? `<div class="stats">
@@ -1114,30 +1167,65 @@ function statsHTML(){
       </div><p>${name} on this device.</p>`
     : `<p>No ${name} game finished yet. Your stats fill up after the first one.</p>`;
 }
-// ---- Share: a Wordle-style summary of today's result, copied or handed to the share sheet ----
+// ---- Share: a Wordle-style summary of the round with a challenge link, handed to the share sheet or copied ----
+const SITE = '__SITE__';
+const GAME_PAGE = {rankle: 'rankle', blind: 'blind-ranking', sort: 'sort-it', guess: 'guess-the-record'};   // the games' own pages
 function shareText(){
-  const h = load(`${KIND}-history-${MODE}`) || {}, [score, max] = h[G.day] || [G.score, 0];
-  const lines = [`Sportrankle – ${D.tab} · ${GAMES[KIND].name}`,
-    `${G.day} · ${score}/${max} pts (${max ? Math.round(100 * score / max) : 0} %)`,
-    (G.share || []).join('')];
-  if (G.stat) lines.push(`I beat ${G.stat.pct} % of today's ${G.stat.total.toLocaleString('en-US')} players`);
-  lines.push(D.url || location.origin);
-  return lines.filter(Boolean).join('\n');
+  const [score, max] = G.final;
+  const c = encodeChallenge({kind: KIND, pool: MODE, puzzle: G.puzzle, score, max, seed: G.daily ? null : G.seed});
+  return shareLines({brand: 'Sport Minigames', puzzle: G.puzzle, game: GAMES[KIND].name, topic: D.tab, grid: G.grid,
+    score, max, streak: G.streak, url: shareUrl(SITE, GAME_PAGE[KIND], KIND, c)});
 }
-async function share(b = $('share'), text = shareText()){
+// Phones get the share sheet; elsewhere the text goes to the clipboard and a toast says so
+async function share(text, game){
   try {
-    if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) { await navigator.share({text}); return; }
-    await navigator.clipboard.writeText(text);
-    b.textContent = 'Copied – paste it anywhere'; b.classList.add('copied');
-    setTimeout(() => { b.textContent = 'Share my score'; b.classList.remove('copied'); }, 2500);
+    if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) {
+      track('share_click', {game, method: 'native'});
+      await navigator.share({text});
+      return;
+    }
+    track('share_click', {game, method: 'clipboard'});
+    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+    else {   // older browsers and non-secure pages: copy through a hidden text field
+      const t = document.createElement('textarea');
+      t.value = text; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;opacity:0';
+      document.body.append(t); t.select(); document.execCommand('copy'); t.remove();
+    }
+    toast('Copied! Paste it anywhere');
   } catch (e) { /* the share sheet was closed or the clipboard is blocked */ }
 }
-$('share').addEventListener('click', () => share());
+let toastTimer;
+function toast(text){
+  const t = $('toast');
+  t.textContent = text; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2200);
+}
+// A short message over the game before it starts (challenges); closes with its button, Escape or a tap outside
+function dialog(html, head){
+  $('dlg-h').textContent = head; $('dlg-t').innerHTML = html; $('dlg').hidden = false;
+  $('dlg-go').focus();
+}
+const dialogClose = () => { $('dlg').hidden = true; };
+$('dlg-go').addEventListener('click', dialogClose);
+$('dlg').addEventListener('click', e => { if (e.target === $('dlg')) dialogClose(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('dlg').hidden) dialogClose(); });
 
+// The end of a round. A daily puzzle is kept (history, streaks, online comparison); a practice round only shows its score.
 function saveHistory(score, max){
+  G.final = [score, max];
+  G.streak = 0;
+  if (!G.daily) { $('today').hidden = true; return; }
   const h = load(`${KIND}-history-${MODE}`) || {};
   h[G.day] = [score, max];
   store(`${KIND}-history-${MODE}`, h);
+  const k = `${KIND}-${MODE}`, game = streakRecord(load(`streak-${k}`), G.puzzle, score, max);
+  if (game.changed) store(`streak-${k}`, game.state);
+  G.streak = game.state.cur; G.best = game.state.best;
+  const all = streakRecord(load('streak-all'), dayNum(G.day));
+  if (all.changed) {
+    store('streak-all', all.state);
+    if (STREAK_MILESTONES.includes(all.state.cur)) track('streak_milestone', {streak: all.state.cur});
+  }
   reportResult(score, max);
 }
 
@@ -1200,9 +1288,26 @@ function mainButton(label, fn, disabled = false){
   b.disabled = disabled;
   b.onclick = fn;
 }
+// Under the score: the streak (daily puzzle) or what kind of round it was, and the friend's score on a challenge.
+// After the daily puzzle Share is the main button; after a practice round it is Play again.
 function finishFooter(){
-  mainButton('Play again', route);
-  $('share').hidden = false;
+  const k = `${KIND}-${MODE}`, [score, max] = G.final, sec = $('share');
+  const line = G.daily
+    ? `<span class="fire" aria-hidden="true">\u{1F525}</span><b>${G.streak}</b>-day streak · best ${G.best} · puzzle #${G.puzzle}`
+    : `Practice round · today's puzzle #${todayNo(MODE)} ${dailyDone(k) ? 'is done' : 'is still open'}`;
+  const vs = G.ch ? `<span class="vs">Your friend: <b>${G.ch.score}/${G.ch.max}</b> · <b>${chalVerdict(score, G.ch.score)}</b></span>` : '';
+  $('led-streak').innerHTML = line + vs;
+  $('led-streak').hidden = false;
+  if (G.ch && score > G.ch.score) track('challenge_beaten', {game: k});
+  track('game_complete', {game: k, puzzle: G.daily ? G.puzzle : 'practice', score, streak: G.streak});
+  if (G.daily) {
+    mainButton('Share', () => share(shareText(), k));
+    sec.textContent = 'Play again'; sec.onclick = route;
+  } else {
+    mainButton('Play again', route);
+    sec.textContent = 'Challenge a friend'; sec.onclick = () => share(shareText(), k);
+  }
+  sec.hidden = false;
   $('note').innerHTML = `<a href="#t/${MODE}">${D.tab}</a> · <a href="#">Home</a>`;
 }
 
@@ -1211,7 +1316,9 @@ function finishFooter(){
 // Tiles: the picture on top, the menu row (icon, name, note, arrow) at its foot
 const navTile = (href, name, icon, img, label = name, note = '', kind = false, bg = '', glow = '') => `<a class="tile ntile" href="${href}" aria-label="${label}">`
   + `<span class="tile-art${kind ? ' kind-art' : ''}"${bg || glow ? ` style="${bg ? `--tile-art:${bg};` : ''}${glow ? `--tile-glow:${glow}` : ''}"` : ''}>${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>`
-  + `<span class="nrow">${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}</span></span></a>`;
+  + `<span class="nrow">${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}</span>${note ? `<span class="nrow-note">${note}</span>` : ''}</span></a>`;
+// The note on a game's tile once today's daily puzzle is done: a check and the score
+const doneNote = k => { const h = dailyDone(k) && dailyScore(k); return h ? `✓ ${h[0]}/${h[1]}` : ''; };
 const navTiles = (title, tiles) => `<div class="tiles" aria-label="${title}">${tiles.join('')}</div>`;   // no heading: the name card says it
 const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
 const topicImg = m => DATA[m].cover || SPORTS[DATA[m].sport].cover || '';
@@ -1240,20 +1347,21 @@ function renderSport(s){
 function renderTopic(m){
   const g = DATA[m], kinds = Object.keys(GAMES).filter(k => poolsFor(k).includes(m));
   $('home').innerHTML = navTitle('Choose a game')
-    + navTiles('Games', kinds.map(k => navTile(`#${k}-${m}`, GAMES[k].name, GAME_ICONS[k], KIND_ART[k], `${GAMES[k].name}, ${g.tab}`, '', true, GAME_TILE[k]?.bg, GAME_TILE[k]?.glow)));
+    + navTiles('Games', kinds.map(k => navTile(`#${k}-${m}`, GAMES[k].name, GAME_ICONS[k], KIND_ART[k], `${GAMES[k].name}, ${g.tab}`, doneNote(`${k}-${m}`), true, GAME_TILE[k]?.bg, GAME_TILE[k]?.glow)));
 }
 // Home: the sports, then the games. One game: its sports (or straight its topics when each sport has one).
 // One game and sport: its topics.
 function renderHome(kind, sport){
   if (!kind) {
     // two parts, each under its own name card: the sports, then the games
-    $('home').innerHTML = `<h1 class="ncard">Choose a sport</h1><div class="tiles">${sportRows().join('')}</div>`
+    const streak = streakDays();   // daily puzzles on consecutive days, any game: a chip under the first name card
+    $('home').innerHTML = `${navTitle('Choose a sport', streak > 0 ? [`\u{1F525} ${streak}-day streak`] : [])}<div class="tiles">${sportRows().join('')}</div>`
       + `<h2 class="ncard">Choose a game</h2><div class="tiles">${gameRows().join('')}</div>`
       + `<p class="legal-line">© ${new Date().getFullYear()} Sportrankle · <a href="/legal">Legal notice &amp; privacy</a></p>`;
     return;
   }
   // Every step is shown, even with a single choice: the game's sports, then that sport's topics
-  const topic = m => navTile(`#${kind}-${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${GAMES[kind].name}, ${DATA[m].tab}`, '', false, SPORTS[DATA[m].sport].bg, SPORTS[DATA[m].sport].glow);
+  const topic = m => navTile(`#${kind}-${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${GAMES[kind].name}, ${DATA[m].tab}`, doneNote(`${kind}-${m}`), false, SPORTS[DATA[m].sport].bg, SPORTS[DATA[m].sport].glow);
   const sportRow = s => navTile(`#${kind}/${s}`, SPORTS[s].name, SPORTS[s].icon, sportImg(s), `${GAMES[kind].name}, ${SPORTS[s].name}`, '', false, SPORTS[s].bg, SPORTS[s].glow);
   $('home').innerHTML = navTitle(sport ? 'Choose a topic' : 'Choose a sport')
     + (sport ? navTiles('Topics', poolsFor(kind, sport).map(topic)) : navTiles('Sports', sportsFor(kind).map(sportRow)));
@@ -1299,6 +1407,7 @@ $('party-setup').addEventListener('click', e => {
 function partyDeal(){
   const g = DATA[PARTY.pool], n = PARTY.players, roles = Array(n).fill(false);
   draw(range(n), PARTY.ringers, Math.random).forEach(i => { roles[i] = true; });
+  track('game_start', {game: 'impostor', puzzle: 'party'});
   P = {pool: PARTY.pool, item: g.items[Math.random() * g.items.length | 0], roles, i: 0, first: Math.random() * n | 0, phase: 'pass'};
   $('party-setup').hidden = true; $('party-play').hidden = false;
   scrollTo(0, 0);
@@ -1619,6 +1728,7 @@ function estConfirm(){
   if (v == null) return;
   $('est-main').disabled = true;
   ER.guess = v; estSave();
+  { const q = EST.find(x => x.id === ER.id); track('game_complete', {game: 'guesstimate', puzzle: 'practice', score: estFactor(Math.max(v / q.answer, q.answer / v))}); }
   estResults(EST.find(x => x.id === ER.id), true);
   scrollTo(0, 0);
 }
@@ -1678,8 +1788,8 @@ function estAgain(){
 $('est-share').addEventListener('click', () => {
   const q = EST.find(x => x.id === ER.id), f = Math.max(ER.guess / q.answer, q.answer / ER.guess);
   const mark = f <= 1.25 ? '\u{1F3AF}' : f <= 2 ? '\u{1F7E9}' : f <= 5 ? '\u{1F7E8}' : '\u{1F7E5}';
-  share($('est-share'), ['Sport Minigames – Guesstimate', `Off by ${estFactor(f)} ${mark}`,
-    `${location.origin}${location.pathname}#guesstimate/q/${q.id}`].join('\n'));
+  share(['Sport Minigames – Guesstimate', `Off by ${estFactor(f)} ${mark}`,
+    `${SITE}/guesstimate?utm_source=share&utm_medium=guesstimate#guesstimate/q/${q.id}`].join('\n'), 'guesstimate');
 });
 
 
@@ -1816,6 +1926,8 @@ function route(){
   // A page loaded on a real URL opens its own view; from then on the hash decides
   const h = location.hash.slice(1) || (!booted && ROUTE ? ROUTE.slice(1) : '');
   booted = true;
+  trackPage(pagePath(h));
+  dialogClose();
   if (h === 'guesstimate' || h.startsWith('guesstimate/')) return estRoute(h);
   if (h === 'ringer') {
     KIND = null;
@@ -1866,19 +1978,20 @@ function route(){
   $('page').className = `page k-${KIND}${V2() ? ' v2' : ''}`;   // k-rankle etc.: one game only; v2: the new design (all four daily games)
   $('title-sub').hidden = true;
   $('today').hidden = true;
-  $('led').hidden = true;
+  $('led').hidden = true; $('led-streak').hidden = true;
   $('share').hidden = true;
   $('home').hidden = true; $('game').hidden = false; $('alt').hidden = true;
   scrollTo(0, 0);
   $('seg').hidden = KIND === 'guess';
   ({rankle: startRankle, blind: startBlind, sort: startSort, guess: startGuess})[KIND]();
+  roundStarted();
 }
 addEventListener('hashchange', route);
 
 // ================= Rankle =================
 function startRankle(){
-  const {cats, items} = rankleDraw(MODE);
-  G = {day: today(), cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  const R = newRound(), {cats, items} = rankleDraw(MODE, R.rnd);
+  G = {...R, cats, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
   $('board').innerHTML = cats.map((c, i) => `<li><button class="row" type="button" id="row-${i}" aria-label="${catTitle(c)}, open">
       <span class="c-rank"></span>
@@ -1925,7 +2038,7 @@ function rankleRound(){
   $('title-sub').innerHTML = line.split(' · ').map(f => `<span class="chip">${f}</span>`).join('');
   $('title-sub').hidden = !line;
   mainButton('Reveal', confirmPick, true);
-  $('note').textContent = 'Tap a category, then reveal.';
+  playNote('Tap a category, then reveal.');
   fitPhoto();
   announce(`Round ${G.round + 1} of ${PICK}: ${D.items[s].name}`);
 }
@@ -1968,11 +2081,11 @@ function rankleResults(){
     const rank = row.querySelector('.rank');
     row.classList.toggle('ideal', ok);   // Rankle shows ideally placed rows in green
     turn(rank, rank.dataset.ch, 300 + k * 90, ok ? 'ok' : 'no');
-    G.share = (G.share || []).concat(ok ? '🟩' : '🟥');
   });
   // Red: a pick in the item's worst category of all eight (the same rule as during play, so no colour changes at the end)
   G.cats.forEach((c, k) => { const s = G.placed[k];
     $(`row-${k}`).classList.toggle('worst', !$(`row-${k}`).classList.contains('ideal') && pts(s, c) === Math.min(...G.cats.map(x => pts(s, x)))); });
+  G.grid = gridRankle(G.cats.map((c, k) => ['ideal', 'worst'].find(x => $(`row-${k}`).classList.contains(x)) || ''));
   finishFooter();
 
   // The perfect board: the same rows, each category with the item that belongs there
@@ -2030,8 +2143,8 @@ $('seg-alt').addEventListener('click', () => segView(true));
 
 // ================= Blind ranking =================
 function startBlind(){
-  const {cat, items} = blindDraw(MODE);
-  G = {day: today(), cat, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  const R = newRound(), {cat, items} = blindDraw(MODE, 'blind', R.rnd);
+  G = {...R, cat, sports: items, placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
   $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}" aria-label="Spot ${i + 1}, open">
       <span class="c-rank"></span><span class="row-no">${i + 1}</span>
@@ -2072,7 +2185,7 @@ function blindRound(){
   $('question').hidden = false;
   $('question').innerHTML = catLabel(G.cat);   // e.g. "⏳ Longest wait for a title": spot 1 is the one with the most
   mainButton('Place', confirmPick, true);
-  $('note').textContent = 'Tap a spot, then place. Spots are final.';
+  playNote('Tap a spot, then place. Spots are final.');
   fitPhoto();
   announce(`${D.items[s].name}, ${G.round + 1} of ${PICK}. ${c.name}, spot 1 = ${c.dir}.`);
 }
@@ -2111,10 +2224,10 @@ function blindResults(){
     row.querySelector('.pts').textContent = `+${p}`;
     miniCards(row.querySelector('.vals'), v ? v[0] : '', 300 + k * 90);
     turn(row.querySelector('.rank'), String(k + 1), 300 + k * 90, d ? 'no' : 'ok');
-    G.share = (G.share || []).concat(d === 0 ? '🟩' : d === 1 ? '🟨' : '🟥');
     const belongs = lo === hi ? String(lo + 1) : `${lo + 1} to ${hi + 1}`;
     row.setAttribute('aria-label', `Spot ${k + 1}: ${D.items[s].name}, ${valText(s, G.cat)}, plus ${p} points${d ? `, belongs on spot ${belongs}` : ''}`);
   });
+  G.grid = gridSpots(range(PICK).map(k => blindPts(G.placed[k], k)[0]), BLIND_PTS[0]);
   finishFooter();
 
   // The perfect order: each spot with the item that belongs there and its value, all green with the full points (it is perfect)
@@ -2132,8 +2245,8 @@ function blindResults(){
 // ================= Sort it =================
 // All eight items are on the board from the start; two taps swap two rows. Results reuse Blind ranking.
 function startSort(){
-  const {cat, items} = blindDraw(MODE, 'sort');
-  G = {day: today(), cat, sports: items, order: [...items], placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
+  const R = newRound(), {cat, items} = blindDraw(MODE, 'sort', R.rnd);
+  G = {...R, cat, sports: items, order: [...items], placed: {}, round: 0, score: 0, sel: null, phase: 'round'};
   prevTitle = '';
   $('board').innerHTML = range(PICK).map(i => `<li><button class="row" type="button" id="row-${i}">
       <span class="c-rank"></span><span class="row-no">${i + 1}</span>
@@ -2169,7 +2282,7 @@ function sortRound(){
   $('question').hidden = false;
   $('question').innerHTML = catLabel(G.cat);
   mainButton('Done', () => sortReveal(), false);
-  $('note').textContent = 'Drag the rows into order, then tap Done.';
+  playNote('Drag the rows into order, then tap Done.');
   fitPhoto();
   announce(`Sort ${PICK} ${D.plural} by ${c.name}, spot 1 = ${c.dir}. Drag the rows into order, or press two number keys to swap them.`);
 }
@@ -2253,8 +2366,8 @@ const FIELD_WORD = {h: 'hours', min: 'minutes', s: 'seconds'};
 // The record as shown: the sheet's display text plus its unit when the text is bare (5:08 is minutes, not seconds)
 const recDisplay = it => /[a-z]/i.test(it.display) ? it.display : `${it.display} ${isTime(it) ? 'min' : it.unit}`;
 function startGuess(){
-  const it = D.items[Math.floor(Math.random() * D.items.length)];
-  G = {day: today(), item: it, guess: null, round: 0, score: 0, sel: null, placed: {}, sports: [], phase: 'round'};
+  const R = newRound(), it = D.items[Math.floor(R.rnd() * D.items.length)];
+  G = {...R, item: it, guess: null, round: 0, score: 0, sel: null, placed: {}, sports: [], phase: 'round'};
   prevTitle = '';
   setPhoto(D.cover ? {img: D.cover, name: 'World records'} : null);
   titleCards(it.name, `${it.name}${it.type ? ', ' + it.type : ''}`);   // the record on the name card, its sport and type as chips
@@ -2271,7 +2384,7 @@ function startGuess(){
   $('round').textContent = ''; $('csep').hidden = $('cpts').hidden = true; shown = 0; $('score').textContent = 0;
   document.querySelectorAll('.gf').forEach(el => el.addEventListener('input', () => { $('main').disabled = readGuess(it) == null; }));
   mainButton('Lock in my guess', guessConfirm, true);
-  $('note').textContent = fields.length > 1 ? `Fill in ${fields.join(', ')}; empty parts count as 0. One guess.` : 'One guess, then the reveal.';
+  playNote(fields.length > 1 ? `Fill in ${fields.join(', ')}; empty parts count as 0. One guess.` : 'One guess, then the reveal.');
   fitPhoto();
   if (innerWidth >= 640) setTimeout(() => $('gf-0').focus(), 50);
 }
@@ -2317,7 +2430,7 @@ function guessResults(){
   setScore(score);
   saveHistory(score, 100);
   const off = Math.round(100 * (g - v) / v), offText = off === 0 ? 'spot on' : `${Math.abs(off)} % ${off > 0 ? 'over' : 'under'}`;
-  G.share = [score >= 90 ? '\u{1F3AF}' : score >= 70 ? '\u{1F7E9}' : score >= 40 ? '\u{1F7E8}' : '\u{1F7E5}'];
+  G.grid = gridBar(score);
   $('title-sub').hidden = true;
   scoreboard(score, 100, `you said ${fmtGuess(g, it)}, the record is ${recDisplay(it)} (${offText})`);
   const facts = [['Your guess', fmtGuess(g, it)], ['Record', recDisplay(it)],
@@ -2392,6 +2505,16 @@ document.addEventListener('keydown', e => {
   }
 });
 
+
+// A challenge link (?c=...) opens its game; the address keeps only the game (the UTM tags are read before this)
+(function openChallenge(){
+  const c = new URLSearchParams(location.search).get('c');
+  if (c == null) return;
+  const ch = decodeChallenge(c, (kind, pool) => kind in GAMES && !!DATA[pool] && poolsFor(kind).includes(pool));
+  track('challenge_open', {game: ch ? `${ch.kind}-${ch.pool}` : 'unknown', valid: !!ch});
+  if (ch) CH = ch;
+  history.replaceState(null, '', location.pathname + (ch ? `#${ch.kind}-${ch.pool}` : location.hash));
+})();
 
 route();
 </script>

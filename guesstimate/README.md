@@ -1,6 +1,15 @@
 # Guesstimate questions
 
-`questions.json` holds the real questions: a JSON list, one object per question. `python3 build.py` checks every
+The questions come from `Guesstimate_Fragen*.xlsx` in the project folder (German, sheets "Fragen" and "Quellen", see
+its sheet "Hinweise"). The site shows them in English: `guesstimate/en.json` holds the English texts per question id
+(`question`, `context`, `unit`, `referencePeriod`, `explanation`, `introduction`, `steps`). Numbers, answer type,
+sources and difficulty always come from the Excel. A question without an entry in `en.json` is shown in German and
+the build lists it, so a new row in the Excel needs its English text added there. Visitors who pick German see the
+Excel's own texts.
+
+Questions can also be written directly as JSON in `questions.json` (format below); both are used together.
+
+`questions.json` holds extra questions written as JSON: a list, one object per question. `python3 build.py` checks every
 question and leaves out (with a message) any that is incomplete. The game draws a random question from all of them
 (no sport to pick, no repeat until all were played); with none at all it shows a "questions on their way" page.
 
@@ -46,7 +55,7 @@ reach the live site. Don't put real questions there.
 | `context` | no | Season, region or given assumptions. Not shown in the game for now. |
 | `answer` | yes | A plain number above 0 (no units, no thousands separators): `30000`, `46.8`. |
 | `unit` | yes | Shown inside the input box and after the numbers: `pucks`, `litres`, `km`, `years`. For a time use `min:s`, `h:min` or `h:min:s`: the game shows one box per part (like Guess the Record) and `answer` / `estimatedAnswer` are then given in **seconds** (e.g. 1 h 59 min = `7140`). |
-| `answerType` | yes | `sourced` (a documented number, needs `sources`) or `estimate` (shown as "Model estimate"). |
+| `answerType` | yes | `sourced` (a documented number, needs `sources`), `calculated` (worked out from documented numbers, shown as "Calculated") or `estimate` (shown as "Model estimate"). In the Excel: belegt / berechnet / Modellschätzung. |
 | `referencePeriod` | no | E.g. `2024/25 season` or `2025`. |
 | `explanation` | yes | Short text after the guess. |
 | `napkinMath.introduction` | yes | One sentence: where to start. |

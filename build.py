@@ -978,26 +978,75 @@ def social_images():
 EST_REQUIRED = ("id", "sportCategory", "question", "answer", "unit", "answerType", "explanation", "napkinMath")
 
 
+EST_SPORT = {"Fussball": "soccer", "Eishockey": "hockey", "Basketball": "basketball", "American Football": "football",
+             "Tennis": "tennis", "Baseball": "baseball", "Motorsport": "motorsport", "Wintersport": "winter"}
+EST_TYPE = {"belegt": "sourced", "berechnet": "calculated", "Modellschätzung": "estimate", "Modellschaetzung": "estimate"}
+EST_LEVEL = {"leicht": "easy", "mittel": "medium", "schwer": "hard"}
+
+
+def est_from_excel(path):
+    """The questions of Guesstimate_Fragen*.xlsx (German, sheets "Fragen" and "Quellen"). The English texts come from
+    guesstimate/en.json (keyed by question id); the German ones stay as the translation for visitors who pick German."""
+    wb = openpyxl.load_workbook(path, data_only=True)
+    srcs = {}
+    for r in wb["Quellen"].iter_rows(min_row=2, values_only=True):
+        if r[0]:
+            srcs[str(r[0]).strip()] = {k: v for k, v in (("title", r[2]), ("publisher", r[3]), ("url", r[4]),
+                                       ("date", None if str(r[5]).strip().lower() in ("unbekannt", "none", "") else str(r[5]).strip())) if v}
+    en_path = HERE / "guesstimate" / "en.json"
+    en = json.loads(en_path.read_text(encoding="utf-8")) if en_path.exists() else {}
+    rows, missing = [], []
+    for r in wb["Fragen"].iter_rows(min_row=2, values_only=True):
+        if not r[0]:
+            continue
+        de = {"question": r[2], "context": r[3], "unit": r[5], "referencePeriod": r[7], "explanation": r[8],
+              "introduction": r[9], "steps": [str(x) for x in r[10:15] if x]}
+        tr = en.get(str(r[0]).strip())
+        if not tr:
+            missing.append(str(r[0]))
+        t = tr or de
+        q = {"id": str(r[0]).strip(), "sportCategory": EST_SPORT.get(str(r[1]).strip(), r[1]), "question": t["question"],
+             "context": t.get("context"), "answer": r[4], "unit": t["unit"], "answerType": EST_TYPE.get(str(r[6]).strip(), r[6]),
+             "referencePeriod": t.get("referencePeriod"), "explanation": t["explanation"],
+             "napkinMath": {"introduction": t["introduction"], "steps": [{"label": x} for x in t["steps"]], "estimatedAnswer": r[15]},
+             "sources": [srcs[k.strip()] for k in str(r[16] or "").split(",") if k.strip() in srcs],
+             "difficulty": EST_LEVEL.get(str(r[17]).strip(), None) if r[17] else None}
+        if tr:
+            q["i18n"] = {"de": {k: de[k] for k in ("question", "context", "unit", "referencePeriod", "explanation")}}
+            q["napkinMath"]["i18n"] = {"de": {"introduction": de["introduction"], "steps": de["steps"]}}
+        unknown = [k.strip() for k in str(r[16] or "").split(",") if k.strip() and k.strip() not in srcs]
+        if unknown:
+            print(f"  {path.name} {r[0]}: source ids not in the sheet 'Quellen': {', '.join(unknown)}")
+        rows.append({k: v for k, v in q.items() if v is not None})
+    if missing:
+        print(f"  {path.name}: no English text in guesstimate/en.json for {len(missing)} question(s), shown in German: {', '.join(missing[:8])}{' …' if len(missing) > 8 else ''}")
+    return rows
+
+
 def load_guesstimate():
-    files = [("questions.json", False)] + ([("demo.json", True)] if os.environ.get("GUESSTIMATE_DEMO") == "1" else [])
+    files = [(p.name, False) for p in sorted(HERE.glob("Guesstimate_Fragen*.xlsx")) if not p.name.startswith("~$")]
+    files += [("questions.json", False)] + ([("demo.json", True)] if os.environ.get("GUESSTIMATE_DEMO") == "1" else [])
     out, seen = [], set()
     pos = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and v > 0
     for name, demo in files:
-        path = HERE / "guesstimate" / name
+        path = HERE / name if name.endswith(".xlsx") else HERE / "guesstimate" / name
         if not path.exists():
             continue
-        try:
-            rows = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as e:
-            raise SystemExit(f"guesstimate/{name}: not valid JSON ({e})")
+        if name.endswith(".xlsx"):
+            rows = est_from_excel(path)
+        else:
+            try:
+                rows = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as e:
+                raise SystemExit(f"guesstimate/{name}: not valid JSON ({e})")
         for i, q in enumerate(rows):
-            where = f"guesstimate/{name} #{i + 1} ({q.get('id', 'no id')})"
+            where = f"{name} #{i + 1} ({q.get('id', 'no id')})"
             nm = q.get("napkinMath") or {}
             problems = [f"'{k}' missing" for k in EST_REQUIRED if q.get(k) in (None, "", [])]
             if q.get("id") in seen: problems.append("id used twice")
             if q.get("sportCategory") not in SPORTS: problems.append(f"unknown sportCategory '{q.get('sportCategory')}'")
             if not pos(q.get("answer")): problems.append("answer must be a positive number")
-            if q.get("answerType") not in ("sourced", "estimate"): problems.append("answerType must be 'sourced' or 'estimate'")
+            if q.get("answerType") not in ("sourced", "calculated", "estimate"): problems.append("answerType must be 'sourced', 'calculated' or 'estimate'")
             if not nm.get("introduction") or not nm.get("steps"): problems.append("napkinMath needs introduction and steps")
             if any(not st.get("label") for st in nm.get("steps") or []): problems.append("every napkinMath step needs a label")
             if not pos(nm.get("estimatedAnswer")): problems.append("napkinMath.estimatedAnswer must be a positive number")
@@ -1005,8 +1054,8 @@ def load_guesstimate():
             if problems:
                 print(f"  {where} left out: {'; '.join(problems)}")
                 continue
-            if q["answerType"] == "sourced" and not q.get("sources"):
-                print(f"  {where}: answerType 'sourced' but no sources listed")
+            if q["answerType"] in ("sourced", "calculated") and not q.get("sources"):
+                print(f"  {where}: answerType '{q['answerType']}' but no sources listed")
             if not 3 <= len(nm["steps"]) <= 5:
                 print(f"  {where}: napkinMath has {len(nm['steps'])} steps (3 to 5 read best)")
             seen.add(q["id"])

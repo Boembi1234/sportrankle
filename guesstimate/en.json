@@ -1,0 +1,1119 @@
+{
+ "FUS-01": {
+  "question": "How many tickets were sold in total for all 1. Bundesliga matches in the 2024/25 season?",
+  "context": "18 clubs, 34 matchdays, home and away. Counts all tickets sold for the 306 league matches, according to the DFL.",
+  "unit": "tickets",
+  "referencePeriod": "2024/25 season",
+  "explanation": "According to the DFL economic report, exactly 11,653,239 tickets were sold in the 2024/25 Bundesliga season, an average of 38,082 per match at 95.9% capacity.",
+  "introduction": "First the number of matches, then a typical stadium average.",
+  "steps": [
+   "18 clubs each play each other twice: 18 × 17 = 306 matches (or 9 matches × 34 matchdays).",
+   "Assumption: stadiums hold about 45,000 people on average and are nearly full, so about 40,000 spectators per match.",
+   "306 × 40,000 = 12,240,000 tickets."
+  ]
+ },
+ "FUS-02": {
+  "question": "How many hours of pure playing time would you have to watch to see every match of the 2024/25 Bundesliga season in full?",
+  "context": "Only the regular 90 minutes per match, without stoppage time, half-time or ads.",
+  "unit": "hours",
+  "referencePeriod": "2024/25 season",
+  "explanation": "A Bundesliga season has 306 matches (18 teams, 34 matchdays). 306 × 90 minutes = 27,540 minutes = 459 hours, a good 19 days without sleep.",
+  "introduction": "Number of matches times match length, then convert to hours.",
+  "steps": [
+   "Each matchday has 9 matches (18 teams, always two playing each other).",
+   "34 matchdays × 9 matches = about 300 matches.",
+   "Assumption: 90 minutes = 1.5 hours per match.",
+   "300 × 1.5 = 450 hours (about 19 days non-stop)."
+  ]
+ },
+ "FUS-03": {
+  "question": "What is the combined pitch area of all 18 Bundesliga stadiums in square metres?",
+  "context": "Only the pitches within the lines, 2024/25 season. Assumes the standard pitch size set by the DFB.",
+  "unit": "m²",
+  "referencePeriod": "2024/25 season",
+  "explanation": "The DFB set 105 × 68 metres as the standard size, which is 7,140 m² per pitch. 18 stadiums × 7,140 m² = 128,520 m², about 12.9 hectares – roughly 18 soccer pitches or about 1,000 single-family house plots.",
+  "introduction": "A pitch is roughly 100 by 70 metres – and there are 18 of them.",
+  "steps": [
+   "Assumption: a professional pitch measures about 100 × 70 metres.",
+   "100 × 70 = 7,000 m² per pitch.",
+   "18 clubs, 18 stadiums: 18 × 7,000 = 126,000 m²."
+  ]
+ },
+ "FUS-04": {
+  "question": "How many kilometres did all outfield players run in total across the 64 matches of the 2022 World Cup in Qatar?",
+  "context": "Counts the running distance of both teams in all 64 matches, normalised to 90 minutes (excluding goalkeepers and extra time), according to FIFA analysis.",
+  "unit": "km",
+  "referencePeriod": "2022 World Cup in Qatar",
+  "explanation": "According to the FIFA Training Centre, a team at the 2022 World Cup ran an average of 108.1 km per match (normalised to 90 minutes, excluding goalkeepers). 108.1 km × 2 teams × 64 matches = 13,837 km, so about 13,800 km – roughly a third of the way around the Earth.",
+  "introduction": "About 10 km per player per match is a well-known rule of thumb.",
+  "steps": [
+   "Assumption: an outfield player runs about 10 km per match.",
+   "10 outfield players × 10 km = 100 km per team per match.",
+   "Two teams: 200 km per match.",
+   "A World Cup has 64 matches: 64 × 200 = 12,800 km."
+  ]
+ },
+ "FUS-05": {
+  "question": "How many litres of beer are served at Signal Iduna Park in Dortmund during a Borussia Dortmund home match?",
+  "context": "Germany's largest stadium with 81,365 seats. Figure from the BVB stadium documentary for the 2025/26 season, given by the head of spectator catering.",
+  "unit": "litres",
+  "referencePeriod": "2025/26 season",
+  "explanation": "According to BVB catering chief Merlin Zepter, between 60,000 and 62,500 litres of beer flow per home match – a good 120,000 half-litre cups, or about three quarters of a litre per spectator.",
+  "introduction": "Spectators times share of beer drinkers times cups per head.",
+  "steps": [
+   "The stadium is usually full: about 80,000 spectators.",
+   "Assumption: about half drink beer, so 40,000 people.",
+   "Assumption: on average 2 cups of 0.5 litres per drinker = 1 litre.",
+   "40,000 × 1 litre = 40,000 litres."
+  ]
+ },
+ "FUS-06": {
+  "question": "How many million pounds did the 20 Premier League clubs spend on players in total during the 2023 summer transfer window?",
+  "context": "Gross transfer spending of all 20 clubs in the 2023 summer window (June to 1 September), according to the Deloitte Sports Business Group.",
+  "unit": "million GBP",
+  "referencePeriod": "2023 summer transfer window",
+  "explanation": "According to Deloitte, Premier League clubs spent a record £2.36 billion (£2,355 million) in summer 2023 – almost £440 million more than the previous record of £1.92 billion in summer 2022.",
+  "introduction": "Clubs times new signings times typical fee.",
+  "steps": [
+   "Assumption: each of the 20 clubs signs about 5 players for a fee in the summer.",
+   "20 × 5 = 100 transfers.",
+   "Assumption: an average Premier League transfer costs about £20 million (a few for 80+, many for under 10).",
+   "100 × £20 million = £2,000 million."
+  ]
+ },
+ "FUS-07": {
+  "question": "How many kilograms does the original FIFA World Cup Trophy weigh, the one the world champions lift after the final?",
+  "context": "The trophy designed by Silvio Gazzaniga and used since 1974, 36.8 cm tall, made of 18-carat gold with a malachite base.",
+  "unit": "kg",
+  "referencePeriod": "Trophy since 1974",
+  "explanation": "According to FIFA, the trophy weighs exactly 6.175 kg and is 36.8 cm tall. It is hollow inside – if it were solid gold, it would weigh around 70 to 80 kg.",
+  "introduction": "The trophy is about as tall as a large water bottle, but hollow.",
+  "steps": [
+   "Assumption: the trophy has roughly the volume of a 1.5-litre bottle, so 1,500 cm³.",
+   "Assumption: only about 15% of that is actually metal (the walls), so about 225 cm³.",
+   "Gold weighs about 19 g/cm³: 225 × 19 ≈ 4,300 g.",
+   "Plus a stone base of about 1 kg: about 5.3 kg."
+  ]
+ },
+ "FUS-08": {
+  "question": "How many soccer matches in Germany were officiated by referees in total in the 2024/25 season – from the Bundesliga down to the lowest district leagues?",
+  "context": "All officially scheduled matches under the DFB umbrella with its roughly 140,000 registered teams (incl. youth, women and amateurs).",
+  "unit": "matches",
+  "referencePeriod": "2024/25 season",
+  "explanation": "According to the DFB 2024/25 membership statistics, the more than 60,000 active referees officiated just under 1.4 million matches – about 3,800 matches per day.",
+  "introduction": "Start from the number of teams, then matches per team per season.",
+  "steps": [
+   "Germany has about 140,000 registered teams.",
+   "Assumption: each team plays about 20 competitive matches per season.",
+   "140,000 × 20 = 2,800,000 team appearances.",
+   "Every match involves two teams: 2,800,000 / 2 = 1,400,000 matches.",
+   "Not every match has an official referee (children's soccer): about 1,200,000."
+  ]
+ },
+ "FUS-09": {
+  "question": "How many official \"Al Rihla\" match balls did the two manufacturers produce for FIFA for the 2022 World Cup in Qatar?",
+  "context": "Only the match balls delivered to FIFA (for matches, team training, associations and tournament operations) – not the millions of balls for retail sale.",
+  "unit": "balls",
+  "referencePeriod": "2022 World Cup in Qatar",
+  "explanation": "According to Hassan Masood, director of Pakistani manufacturer Forward Sports, the two producers (Pakistan and China) together delivered about 300,000 match balls to FIFA; including retail versions for the open market, there were about 10 million Al Rihla balls.",
+  "introduction": "The 64 matches themselves only need a few thousand balls – the lion's share goes to teams, associations and tournament operations.",
+  "steps": [
+   "Matches: 64 × about 20 balls = about 1,300 balls.",
+   "Assumption: each of the 32 teams gets about 1,000 balls for preparation and training = 32,000.",
+   "Assumption: all 211 FIFA member associations receive about 500 balls each for coaching and youth = about 105,000.",
+   "Assumption: referees, fan festivals, sponsors, media and reserves another 100,000 or so.",
+   "Total: about 240,000 balls."
+  ]
+ },
+ "FUS-10": {
+  "question": "According to FIFA, how many people worldwide watched the 2022 World Cup final between Argentina and France on screen?",
+  "context": "Global reach of the final on 18 December 2022 (TV and streaming), as announced by FIFA one month after the tournament.",
+  "unit": "viewers",
+  "referencePeriod": "2022 World Cup final (18 December 2022)",
+  "explanation": "FIFA reported \"almost 1.5 billion\" viewers for the final; across the whole tournament, about 5 billion people are said to have engaged with the World Cup. There were 88,966 fans in the stadium in Lusail.",
+  "introduction": "Break it down from the world population.",
+  "steps": [
+   "The world has about 8 billion people.",
+   "Assumption: about half have access to TV/internet and are generally interested in soccer: 4 billion.",
+   "Assumption: about a third of them actually watch the final (time zone, daily life, no interest in the match).",
+   "4 billion / 3 ≈ 1.3 billion viewers."
+  ]
+ },
+ "EIS-01": {
+  "question": "How heavy is the Stanley Cup, the trophy awarded to the NHL champion?",
+  "context": "The players lift the trophy over their heads after winning the Final. It is made of a silver-nickel alloy and is about 90 cm tall.",
+  "unit": "kg",
+  "referencePeriod": "Current version of the trophy (Hockey Hall of Fame figure)",
+  "explanation": "The Hockey Hall of Fame gives the Stanley Cup's weight as 34.5 lbs or 15.56 kg and its height as 89.54 cm.",
+  "introduction": "The trophy is almost a metre tall and made of metal – but hollow inside. How heavy does that make it?",
+  "steps": [
+   "Assumption: the trophy is about 90 cm tall, and the base (barrel) is about 45 cm in diameter.",
+   "Assumption: the metal walls are only a few millimetres thick; most of it is hollow.",
+   "Comparison: a full 10-litre bucket of water weighs 10 kg – a player should easily be able to lift that over his head.",
+   "A solid metal trophy of this size would be well over 100 kg; hollow with thin walls, you end up at roughly 10–20 kg."
+  ]
+ },
+ "EIS-02": {
+  "question": "How many people (players, coaches, staff) were engraved on the trophy itself after the 2025 Stanley Cup Final?",
+  "context": "Each championship team may have its names engraved on one of the five rings on the base (2024/25: Florida Panthers with 52 names). When a ring is full, the oldest one is removed and displayed at the Hockey Hall of Fame. Only the names on the trophy itself count, not the retired rings.",
+  "unit": "names",
+  "referencePeriod": "After the 2025 Stanley Cup Final (latest engraving: Florida Panthers 2024/25)",
+  "explanation": "The Hockey Hall of Fame counts 2,603 people engraved on the trophy (latest entry: Florida Panthers 2024/25); including the retired rings, there are 3,489. A maximum of 52 names may be engraved per championship team.",
+  "introduction": "The trophy bears the names of the championship teams of recent decades – how many people does that add up to?",
+  "steps": [
+   "Assumption: five rings on the base, each holding about 13 championship teams – so about 65 teams on the trophy.",
+   "Assumption: each championship team has about 20 players plus 10–15 coaches and staff engraved, so about 35 names.",
+   "65 teams × 35 names ≈ 2,300 names.",
+   "Plus a few old names in the bowl and on the collar – roughly 2,500."
+  ]
+ },
+ "EIS-03": {
+  "question": "How many registered female ice hockey players (women and girls) were there worldwide in 2022 across IIHF member associations?",
+  "context": "The world governing body IIHF records the licensed players of its member associations every year. Women's hockey is growing strongly: between 2017 and 2022, the number of female players rose by 16%.",
+  "unit": "players",
+  "referencePeriod": "2022 IIHF survey",
+  "explanation": "According to the IIHF, the number of registered female players rose from 193,810 (2017) to 225,429 (2022) – an average of about 4,900 per member association.",
+  "introduction": "Women's hockey is heavily concentrated in North America – that's where the estimate starts.",
+  "steps": [
+   "Assumption: Canada has about 100,000 registered female players, the USA about 90,000.",
+   "Assumption: the strong European countries (Sweden, Finland, Czechia, Switzerland, etc.) add up to about 40,000.",
+   "Assumption: all other countries combined roughly 10,000.",
+   "100,000 + 90,000 + 40,000 + 10,000 ≈ 240,000 players."
+  ]
+ },
+ "EIS-04": {
+  "question": "How many spectators attended the regular season of the Swiss National League in 2023/24 in total?",
+  "context": "14 teams played a total of 364 regular-season games over 52 rounds (excluding playoffs). The league reported a record attendance.",
+  "unit": "spectators",
+  "referencePeriod": "National League regular season 2023/24",
+  "explanation": "SRF reported a record average of 7,130 spectators per game across 364 regular-season games: 7,130 × 364 ≈ 2,595,000, just under 2.6 million – as also stated in the article.",
+  "introduction": "The Swiss league is surprisingly well attended for its size. Let's multiply games by average.",
+  "steps": [
+   "Assumption: 14 teams, each playing 52 regular-season games → 14 × 52 ÷ 2 = 364 games.",
+   "Assumption: Bern draws about 15,000, small arenas like Ajoie or Rapperswil more like 4,000–5,000. An average of about 6,500 seems plausible.",
+   "364 × 6,500 ≈ 2.4 million spectators."
+  ]
+ },
+ "EIS-05": {
+  "question": "How many litres of water does it take to build the ice surface of an NHL arena once from scratch?",
+  "context": "An NHL ice surface measures 200 × 85 feet (about 61 × 26 metres). The ice is sprayed on in many thin layers and ends up only about 2.5 cm (1 inch) thick.",
+  "unit": "litres",
+  "referencePeriod": "Standard NHL ice surface (200 × 85 feet, approx. 1 inch thick)",
+  "explanation": "According to PBS North Carolina, an NHL ice surface needs about 10,600 US gallons of water; 10,600 × 3.785 litres ≈ 40,000 litres. That's about 40 cubic metres.",
+  "introduction": "Area times thickness gives the volume – and a cubic metre of water is 1,000 litres.",
+  "steps": [
+   "Assumption: the ice surface is about 60 m × 26 m ≈ 1,560 m² (ignoring the rounded corners).",
+   "Assumption: the ice is about 2.5 cm = 0.025 m thick.",
+   "Volume: 1,560 m² × 0.025 m ≈ 39 m³.",
+   "39 m³ × 1,000 litres/m³ ≈ 39,000 litres."
+  ]
+ },
+ "EIS-06": {
+  "question": "How many hockey sticks do all NHL teams go through combined in one season?",
+  "context": "Pros constantly break, wear out or swap their carbon sticks. In the 2019/20 season, the NHL had 31 teams. A Detroit Red Wings equipment manager estimated usage at 70 to 120 sticks per player per year.",
+  "unit": "sticks",
+  "referencePeriod": "2019/20 NHL season (31 teams)",
+  "explanation": "According to the Associated Press (February 2020), a full team goes through about 1,600 sticks per season, over 50,000 league-wide. Jack Eichel alone used about 100 per season.",
+  "introduction": "Sticks are consumables – a pro always has a dozen new ones ready.",
+  "steps": [
+   "Assumption: an NHL player uses about 2 sticks per week, so roughly 70 sticks over an 8-month season.",
+   "Assumption: a team has about 25 players on the roster (incl. reserves and goalies).",
+   "25 × 70 ≈ 1,750 sticks per team.",
+   "31 teams × 1,750 ≈ 54,000 sticks."
+  ]
+ },
+ "EIS-07": {
+  "question": "How many kilometres does a Zamboni ice resurfacer travel per year in a typical ice rink?",
+  "context": "When resurfacing, a Zamboni drives in lanes over the entire ice surface at only about 15 km/h. In a busy rink, the ice is resurfaced about ten times a day. The question asks for the distance per machine per year according to the manufacturer.",
+  "unit": "km",
+  "referencePeriod": "Zamboni Company figure (typical use per year)",
+  "explanation": "Zamboni states that a machine travels about 3/4 of a mile per resurfacing and covers 'close to 2,000 miles' per year; 2,000 miles × 1.609 ≈ 3,200 km.",
+  "introduction": "An ice surface is covered in lanes – that adds up over a day, and even more over a year.",
+  "steps": [
+   "Assumption: the ice surface is about 60 m long; the machine is about 2 m wide and, with overlap, drives about 15 lanes.",
+   "15 lanes × 60 m ≈ 900 m, plus turns and edges: about 1.2 km per resurfacing.",
+   "Assumption: about 8 resurfacings per day on about 300 operating days → 2,400 runs per year.",
+   "2,400 × 1.2 km ≈ 2,900 km per year."
+  ]
+ },
+ "EIS-08": {
+  "question": "How many kilometres did the Winnipeg Jets fly during the 2024/25 NHL regular season?",
+  "context": "Winnipeg is in the middle of Canada; the 41 road games take the team from Vancouver to Florida. The question asks for the team's flight distance over the 82 regular-season games (analysis by TJ Stats, published by The Hockey News).",
+  "unit": "km",
+  "referencePeriod": "2024/25 NHL regular season",
+  "explanation": "Based on a schedule analysis by Thomas Nestico (TJ Stats), The Hockey News reported about 48,200 miles for the Jets, 'nearly 78,000 km' – 6th in the league. The minimum was Pittsburgh with approx. 31,700 miles (approx. 51,000 km).",
+  "introduction": "41 road games, often on multi-game trips – we estimate the average distance per road game.",
+  "steps": [
+   "Assumption: 41 road games per season; outbound and return flight for each trip.",
+   "Assumption: Winnipeg–Toronto is about 1,500 km, Winnipeg–Los Angeles about 2,500 km. We estimate an average of 1,800 km per one-way leg.",
+   "Assumption: thanks to multi-game trips, it's not 82 single flights but roughly 45 flight legs.",
+   "45 × 1,800 km ≈ 81,000 km."
+  ]
+ },
+ "EIS-09": {
+  "question": "Roughly how many pucks are used in games during an NHL regular season (2023/24)?",
+  "context": "Pucks are frozen so they don't bounce. If a puck has been in play for more than a few minutes or flies into the crowd, a fresh one comes out of the cooler. The NHL says 40 to 45 different pucks are typically used per game. 1,312 games were played in 2023/24.",
+  "unit": "pucks",
+  "referencePeriod": "2023/24 NHL regular season (1,312 games)",
+  "explanation": "With about 42 pucks per game (NHL figure: 40–45) and 1,312 games, that gives 42 × 1,312 ≈ 55,000 pucks – excluding playoffs and practices.",
+  "introduction": "Pucks are disposable: a new one every few minutes, plus the ones that fly into the stands.",
+  "steps": [
+   "32 teams × 82 games ÷ 2 = 1,312 games.",
+   "Assumption: 60 minutes of playing time, a fresh puck about every 2 minutes → about 30 pucks per game.",
+   "Assumption: plus about 10 pucks that fly into the crowd or over the boards → about 40 per game.",
+   "1,312 × 40 ≈ 52,000 pucks."
+  ]
+ },
+ "EIS-10": {
+  "question": "How many Zamboni ice resurfacers has the Zamboni Company delivered in total since its founding in 1949 up to 2025?",
+  "context": "Frank Zamboni built the first ice resurfacing machine in 1949. The California company still builds every machine by hand and supplies ice rinks all over the world. The question asks for the total number of machines ever delivered, according to the manufacturer.",
+  "unit": "machines",
+  "referencePeriod": "Manufacturer figure, as of 2025 (over 75 years since 1949)",
+  "explanation": "The Zamboni Company states on its website that over 14,000 Zamboni machines have been delivered worldwide (an older FAQ figure still said more than 12,000).",
+  "introduction": "A niche company that has been building machines by hand for over 75 years – how many does that add up to?",
+  "steps": [
+   "Assumption: there are roughly 10,000 ice rinks worldwide, most with one or two resurfacers – not all of them Zambonis.",
+   "Assumption: a machine lasts about 20 years; over 75 years many rinks were re-equipped three or four times, but there were far fewer rinks in the early decades.",
+   "Assumption: averaged over the 75 years, about 150 machines delivered per year.",
+   "75 years × 150 ≈ 11,000 machines."
+  ]
+ },
+ "BSK-01": {
+  "question": "How many evenings would it take to watch every game of the 2023/24 NBA regular season individually – one game per evening?",
+  "context": "30 teams, each playing 82 games. The question is the number of regular-season games (excluding playoffs), i.e. the number of evenings.",
+  "unit": "evenings",
+  "referencePeriod": "2023/24 NBA regular season",
+  "explanation": "The 2023/24 NBA regular season had 1,230 games. One game per evening means 1,230 evenings – a good three years and four months for a single season.",
+  "introduction": "Every game involves two teams – forget that and you end up with double the answer.",
+  "steps": [
+   "Assumption: 30 teams in the league.",
+   "Assumption: each team plays around 80 games per season.",
+   "30 × 80 = 2,400 team appearances.",
+   "Each game has 2 teams on the court: 2,400 ÷ 2 = 1,200 games.",
+   "One game per evening → around 1,200 evenings."
+  ]
+ },
+ "BSK-02": {
+  "question": "How many free throws were attempted in the entire 2023/24 NBA regular season (made or missed)?",
+  "context": "Counts all free-throw attempts by all 30 teams across the whole regular season (1,230 games, excluding playoffs).",
+  "unit": "free-throw attempts",
+  "referencePeriod": "2023/24 NBA regular season",
+  "explanation": "In 2023/24 the league-average team attempted 1,781 free throws per season (21.7 per game, 17.0 of them made). 30 teams × 1,781 = 53,430, so around 53,400 free-throw attempts – Orlando led the way with 2,002.",
+  "introduction": "Every shooting foul brings two free throws – and in the NBA, players foul constantly.",
+  "steps": [
+   "Assumption: around 1,200 games in the regular season.",
+   "Assumption: each team attempts about 20 free throws per game (approx. 10 fouls with free throws × 2).",
+   "Both teams per game: 2 × 20 = 40 free throws.",
+   "1,200 × 40 = 48,000.",
+   "Result: around 48,000 free-throw attempts."
+  ]
+ },
+ "BSK-03": {
+  "question": "How many kilometres do all 30 NBA teams combined travel to their games in the 2025/26 regular season?",
+  "context": "This means the sum of all 30 teams' travel distances from venue to venue over the whole regular season (based on the schedule, straight-line distance between cities).",
+  "unit": "km",
+  "referencePeriod": "2025/26 NBA regular season (schedule)",
+  "explanation": "The travel distances of all 30 teams (calculated by analyst Chris Gunther, published via Bleacher Report) add up to 1,285,372 miles = around 2.07 million kilometres; the Orlando Magic travel the most with 53,131 miles, the Indiana Pacers the least with 35,267 miles. Calculation: 1,285,372 × 1.609 km ≈ 2,068,600 km.",
+  "introduction": "The USA is huge – and every team flies to 41 away games.",
+  "steps": [
+   "Assumption: each team has around 40 away games, plus the flights home → about 45 flights per season.",
+   "Assumption: an average flight is around 1,500 km (some short hops like Boston–New York, some transcontinental flights over 4,000 km).",
+   "45 × 1,500 km = 67,500 km per team.",
+   "30 teams: 30 × 67,500 = 2,025,000 km.",
+   "Result: around 2 million kilometres."
+  ]
+ },
+ "BSK-04": {
+  "question": "What is the combined playing area of all 30 NBA courts in square metres?",
+  "context": "Only the actual court inside the lines counts (no run-off areas, benches, etc.), one court for each of the 30 teams. NBA courts have the same dimensions everywhere.",
+  "unit": "m²",
+  "referencePeriod": "NBA (30 teams), standard court size 94 × 50 feet",
+  "explanation": "An NBA court measures 94 × 50 feet = 28.65 × 15.24 m = around 437 m². Times 30 courts: 437 × 30 ≈ 13,100 m² – about 1.3 hectares of hardwood, less than two soccer fields.",
+  "introduction": "A basketball court is smaller than you think – roughly as long as a 25 m swimming pool plus a bit.",
+  "steps": [
+   "Assumption: a court is around 28 m long and 15 m wide.",
+   "28 × 15 = 420 m² per court.",
+   "30 teams, 30 courts: 30 × 420 = 12,600 m².",
+   "Result: around 12,600 square metres."
+  ]
+ },
+ "BSK-05": {
+  "question": "How many three-pointers were made in the entire 2023/24 NBA regular season?",
+  "context": "Counts all made threes by all 30 teams across the whole regular season (excluding playoffs).",
+  "unit": "made threes",
+  "referencePeriod": "2023/24 NBA regular season",
+  "explanation": "In 2023/24 the league-average team made 1,053 threes per season (12.8 per game on 35.1 attempts). 30 teams × 1,053 = 31,590, so around 31,600 made threes.",
+  "introduction": "Threes are routine now: a team attempts over 30 per game and makes a good one in three.",
+  "steps": [
+   "Assumption: around 1,200 games in the regular season.",
+   "Assumption: each team makes about 12 threes per game.",
+   "Both teams per game: 2 × 12 = 24 threes.",
+   "1,200 × 24 = 28,800.",
+   "Result: just under 29,000 threes."
+  ]
+ },
+ "BSK-06": {
+  "question": "How many pairs of basketball shoes does NBA star Cade Cunningham say he goes through in a single season?",
+  "context": "Cunningham (Detroit Pistons) is one of the players who switch to fresh shoes very often. The question is the number per season he gave himself (as of spring 2026).",
+  "unit": "pairs of shoes",
+  "referencePeriod": "2025/26 NBA season (statement from April 2026)",
+  "explanation": "Cade Cunningham and Josh Giddey both say they go through around 60 pairs per season. According to the report, most NBA players get by with about 10 pairs – Jarrett Allen even wore his pair for around a year and a half.",
+  "introduction": "82 games plus practices – and for sneakerheads, almost every game means a shoe change.",
+  "steps": [
+   "Assumption: around 80 regular-season games, plus playoffs and practices.",
+   "Assumption: a frequent switcher takes a new pair roughly every second game → 80 ÷ 2 = 40 pairs.",
+   "Plus a few pairs for practices and specials (All-Star, playoffs): + approx. 10 pairs.",
+   "Result: around 50 pairs per season."
+  ]
+ },
+ "BSK-07": {
+  "question": "How much did all 30 NBA teams pay in player salaries combined in the 2023/24 season – in millions of USD?",
+  "context": "This means the sum of all team payrolls (player salaries) of the 30 NBA teams in the 2023/24 season. The salary cap that season was USD 136 million per team, but almost every team exceeded it.",
+  "unit": "million USD",
+  "referencePeriod": "2023/24 NBA season",
+  "explanation": "The payrolls of all 30 teams added up to around USD 5.07 billion in 2023/24 (an average of just under 169 million per team; Golden State at the top with approx. 225 million, Utah at the bottom with approx. 132 million).",
+  "introduction": "In the NBA the salary cap is more of a soft limit – most teams are above it.",
+  "steps": [
+   "Assumption: 2023/24 salary cap around USD 136 million per team.",
+   "Assumption: most teams are 10–40% over the cap → typical payroll about USD 165 million.",
+   "30 teams × 165 million = USD 4,950 million.",
+   "Result: around USD 5 billion, i.e. approx. 5,000 million."
+  ]
+ },
+ "BSK-08": {
+  "question": "How many players on NBA rosters at the start of the 2023/24 season were not from the USA?",
+  "context": "Counts all international players (born outside the USA) on the rosters of all 30 teams on opening night of the 2023/24 season. The NBA reported a record figure.",
+  "unit": "players",
+  "referencePeriod": "2023/24 NBA season (opening night, 24 October 2023)",
+  "explanation": "According to the NBA, 125 international players from 40 countries and territories were on rosters at the start of the 2023/24 season – a record. The largest contingents: Canada (26), France (14), Australia (9), Serbia (7), Germany (6).",
+  "introduction": "First the roster size, then the share of foreign players – which is now surprisingly high in the NBA.",
+  "steps": [
+   "Assumption: 30 teams with around 15 players each → 30 × 15 = 450 players.",
+   "Assumption: roughly one in four players is not from the USA (Canada, France, Australia, the Balkans ...).",
+   "450 ÷ 4 ≈ 112.",
+   "Result: around 110 international players."
+  ]
+ },
+ "BSK-09": {
+  "question": "How many spectators attended the games of the 2023 FIBA Basketball World Cup in the Philippines, Japan and Indonesia in total?",
+  "context": "The 2023 World Cup took place from 25 August to 10 September 2023 with 32 teams in five arenas. The question is the total number of arena spectators over the whole tournament.",
+  "unit": "spectators",
+  "referencePeriod": "FIBA Basketball World Cup 2023 (25.08.–10.09.2023)",
+  "explanation": "According to FIBA, more than 700,665 fans attended the 2023 World Cup games. The record crowd was the opening game Philippines vs Dominican Republic with 38,115 spectators at the Philippine Arena.",
+  "introduction": "32 teams, just over two weeks, five arenas – how many games, and how full?",
+  "steps": [
+   "Assumption: 32 teams in 8 groups of four → 8 × 6 = 48 group games; with a second group phase, classification games and the knockout round, around 90 games in total.",
+   "Assumption: arenas with 10,000 to 15,000 seats, an average of about 7,000 spectators per game (early-round games of small nations are poorly attended, host games are full).",
+   "90 × 7,000 = 630,000.",
+   "Result: around 630,000 spectators."
+  ]
+ },
+ "BSK-10": {
+  "question": "How many games did an NBA referee officiate on average in the 2023/24 regular season?",
+  "context": "Every NBA game has three referees on the court (crew chief, referee, umpire). The league's referee staff that season comprised 80 people, who shared all 1,230 games between them.",
+  "unit": "games per referee",
+  "referencePeriod": "2023/24 NBA regular season",
+  "explanation": "1,230 games × 3 referees on the court = 3,690 assignments, spread over 80 referees → 3,690 ÷ 80 ≈ 46 games per person. The busiest worked 65–66 games, newcomers and part-timers fewer than 10.",
+  "introduction": "Three people per game, a pool of referees – just count the assignments and divide them up.",
+  "steps": [
+   "Assumption: around 1,200 games in the regular season.",
+   "3 referees on the court per game: 1,200 × 3 = 3,600 assignments.",
+   "Assumption: the NBA employs about 75 referees.",
+   "3,600 ÷ 75 = 48.",
+   "Result: around 48 games per referee."
+  ]
+ },
+ "AMF-01": {
+  "question": "How many footballs does Wilson make per year at its factory in Ada, Ohio?",
+  "context": "Since 1941, every NFL point has been scored with a Wilson ball. All official NFL balls are handmade in the small town of Ada, Ohio – but the factory also supplies the college, high-school and fan markets. As of 2024.",
+  "unit": "footballs per year",
+  "referencePeriod": "2024",
+  "explanation": "According to Wilson and the NFL (opening of the new factory, June 2024), around 700,000 footballs are made in Ada every year, by about 150 employees in around 20 production steps.",
+  "introduction": "A craft factory with a limited workforce – estimate via working days and daily output.",
+  "steps": [
+   "Assumption: around 150 people work at the factory.",
+   "Assumption: each person produces a net of about 20 finished balls per day (many hands per ball, but all working in parallel).",
+   "150 × 20 = 3,000 balls per day.",
+   "Assumption: 250 working days per year → 3,000 × 250 = 750,000."
+  ]
+ },
+ "AMF-02": {
+  "question": "How many chicken wings do Americans eat on Super Bowl Sunday 2025 (Super Bowl LIX)?",
+  "context": "The Super Bowl is the biggest snacking day of the year in the USA. The poultry producers' association (National Chicken Council) publishes a forecast every year for the weekend of the final.",
+  "unit": "chicken wings",
+  "referencePeriod": "Super Bowl LIX, 9 February 2025",
+  "explanation": "In its annual Wing Report, the National Chicken Council forecast 1.47 billion wings for Super Bowl LIX – laid end to end, they would circle the Earth more than three times.",
+  "introduction": "Scale up from the US population via the share of wing eaters.",
+  "steps": [
+   "Assumption: the USA has around 340 million inhabitants.",
+   "Assumption: about a third eat wings on Super Bowl Sunday → around 110 million people.",
+   "Assumption: about 12 wings per person (a typical plate).",
+   "110 million × 12 ≈ 1.3 billion wings."
+  ]
+ },
+ "AMF-03": {
+  "question": "How many kilometres did all NFL offences gain combined through passing in the 2024 regular season?",
+  "context": "The 2024 regular season comprised 272 games (32 teams with 17 games each). Counts the passing yards of all 32 teams (excluding playoffs), converted into kilometres (1 yard = 0.9144 m).",
+  "unit": "km",
+  "referencePeriod": "2024 NFL regular season",
+  "explanation": "Pro Football Reference lists 118,384 passing yards league-wide for 2024. 118,384 × 0.9144 m ≈ 108,250 m, so around 108 km – roughly the distance from Zurich to Bern, thrown in one season.",
+  "introduction": "A typical NFL team throws for a good 200 yards per game – multiply across the league and convert.",
+  "steps": [
+   "Assumption: a team gains around 220 passing yards per game.",
+   "32 teams × 17 games = 544 team games → 544 × 220 ≈ 120,000 yards.",
+   "Assumption: 1 yard ≈ 0.9 m → 120,000 × 0.9 ≈ 108,000 m.",
+   "That is around 108 km."
+  ]
+ },
+ "AMF-04": {
+  "question": "How much does a 30-second commercial cost during the TV broadcast of Super Bowl LX (February 2026) on NBC?",
+  "context": "The Super Bowl is the most-watched TV broadcast in the USA; Super Bowl LIX (2025) drew an average of 127.7 million viewers. Ad slots are sold months in advance. The question is the reported list price in USD.",
+  "unit": "USD per 30-second spot",
+  "referencePeriod": "Super Bowl LX, 8 February 2026 (NBC)",
+  "explanation": "According to Adweek (cited by EMARKETER), NBCUniversal charged around USD 8 million per 30-second spot for Super Bowl LX – about 267,000 dollars per second.",
+  "introduction": "Ad prices scale with reach: work with a price per 1,000 viewers (CPM).",
+  "steps": [
+   "Assumption: around 125 million people watch the Super Bowl.",
+   "Assumption: for premium live sport, advertisers pay about 60 dollars per 1,000 viewers per spot.",
+   "125,000,000 ÷ 1,000 = 125,000 blocks of a thousand.",
+   "125,000 × 60 dollars ≈ 7.5 million dollars per spot."
+  ]
+ },
+ "AMF-05": {
+  "question": "How many metres does an NFL punt travel on average (2024 regular season)?",
+  "context": "On a punt, the punter drops the ball and kicks it out of his hands as far as possible into the opponent's half. The question is the average gross distance from the line of scrimmage to the landing spot or catch, in metres (1 yard = 0.9144 m).",
+  "unit": "m",
+  "referencePeriod": "2024 NFL regular season",
+  "explanation": "According to Pro Football Reference, the 2024 league average was 47.6 yards per punt (41.4 net). 47.6 × 0.9144 m ≈ 43.5 m, so around 44 m – almost half the field.",
+  "introduction": "Think about hang time: a good punt stays in the air for around 4.5 seconds.",
+  "steps": [
+   "Assumption: hang time about 4.5 seconds; the ball is kicked around 15 metres behind the line of scrimmage.",
+   "Assumption: average horizontal speed about 13 m/s → 4.5 × 13 ≈ 60 m of flight.",
+   "Subtract the 15 m behind the line: 60 − 15 ≈ 45 m.",
+   "Result: around 45 m."
+  ]
+ },
+ "AMF-06": {
+  "question": "How many minutes is the ball actually in play (from snap to whistle) during a roughly three-hour NFL broadcast?",
+  "context": "An NFL game has 60 minutes of game clock, and the broadcast lasts around three hours. But the game clock also keeps running between plays. The question is the time the ball is actually moving – according to a Wall Street Journal study.",
+  "unit": "minutes",
+  "referencePeriod": "Wall Street Journal study, January 2010 (NFL broadcasts)",
+  "explanation": "The Wall Street Journal timed it in 2010: on average the ball is 'live' for only about 11 minutes per game; around 60% of the airtime shows players in the huddle, at the line of scrimmage or getting up.",
+  "introduction": "Count the plays and estimate how long a single one lasts.",
+  "steps": [
+   "Assumption: both teams together run around 150 plays per game (incl. kicks and punts).",
+   "Assumption: a play lasts about 5 seconds from snap to whistle.",
+   "150 × 5 = 750 seconds.",
+   "750 ÷ 60 ≈ 12.5 minutes."
+  ]
+ },
+ "AMF-07": {
+  "question": "How much does a complete 53-man NFL roster weigh in total – in kilograms?",
+  "context": "Each NFL team may have a maximum of 53 players on the active roster at the start of the season. On Kickoff Weekend 2024, the average NFL player weighed 244.5 pounds. The question is the total weight of an average roster.",
+  "unit": "kg",
+  "referencePeriod": "NFL Kickoff Weekend 2024",
+  "explanation": "53 players × 244.5 lb = 12,959 lb; × 0.4536 kg/lb ≈ 5,878 kg – just under 6 tonnes, about as much as an African elephant.",
+  "introduction": "Roster size times average weight – with linemen over 140 kg and receivers around 90 kg.",
+  "steps": [
+   "Assumption: 53 players on the roster.",
+   "Assumption: average weight around 110 kg (a mix of 140 kg linemen and 90 kg skill players).",
+   "53 × 110 ≈ 5,800 kg."
+  ]
+ },
+ "AMF-08": {
+  "question": "How many cowhides does Wilson need per year to make the roughly 700,000 footballs from Ada, Ohio?",
+  "context": "Every Wilson football consists of four leather panels; the leather comes from the Horween tannery in Chicago. According to Wilson, one cowhide yields 15 to 25 footballs. Annual production: around 700,000 balls.",
+  "unit": "cowhides per year",
+  "referencePeriod": "Annual production in Ada as of 2024 (hide yield according to Wilson, 2010)",
+  "explanation": "700,000 balls ÷ 20 balls per hide (middle of Wilson's 15–25 range) = 35,000 hides per year – at 15 balls per hide it would be around 47,000, at 25 around 28,000.",
+  "introduction": "How much leather goes into a ball, and how big is a cowhide?",
+  "steps": [
+   "Assumption: Wilson makes around 700,000 balls per year.",
+   "Assumption: a cowhide yields about 4 m² of leather, of which only just over half is uniform enough for game balls → around 2.5 m² usable.",
+   "Assumption: a ball needs 4 panels of about 0.03 m² each, around 0.12 m² with offcuts → 2.5 ÷ 0.12 ≈ 20 balls per hide.",
+   "700,000 ÷ 20 ≈ 35,000 hides."
+  ]
+ },
+ "AMF-09": {
+  "question": "How many offensive plays (passes, runs and sacks) were run in the entire 2024 NFL regular season?",
+  "context": "The 2024 regular season comprised 272 games. Counts all offensive snaps of all 32 teams – excluding kickoffs, punts and field goals.",
+  "unit": "plays",
+  "referencePeriod": "2024 NFL regular season",
+  "explanation": "Pro Football Reference lists a league total of 33,812 offensive plays for 2024 – an average of 1,057 per team and around 124 per game (both teams combined).",
+  "introduction": "Games times plays per team – each offence gets about 10–12 drives per game.",
+  "steps": [
+   "272 games × 2 teams = 544 team games.",
+   "Assumption: around 11 drives per team per game with about 5–6 plays each → around 60 plays per team per game.",
+   "544 × 60 ≈ 32,600 plays."
+  ]
+ },
+ "AMF-10": {
+  "question": "How many official game balls does Wilson supply in total for the two teams at Super Bowl LIX (2025)?",
+  "context": "For a regular NFL game, each team brings 24 balls (12 game balls and 12 backups). For the Super Bowl, specially printed balls for both finalists are made in Ada, Ohio, within hours of the conference finals – including extra balls for the kickers. The question is the number of game balls for both teams combined (excluding souvenir balls for fans).",
+  "unit": "game balls",
+  "referencePeriod": "Super Bowl LIX, 9 February 2025 (Eagles vs Chiefs)",
+  "explanation": "Wilson made 108 balls per team plus 12 kicking balls, i.e. 120 per team and 240 in total; around 50 per team were stored sealed until kickoff. On top of that came 10,000–20,000 souvenir balls for fans.",
+  "introduction": "Start from a regular game day and think about why the final needs many times more (souvenirs, backups, kickers).",
+  "steps": [
+   "Assumption: normally 24 balls per team per game are enough.",
+   "Assumption: at the Super Bowl, every touchdown ball and many game balls are kept as keepsakes, so the league plans for about four times as many → around 100 per team.",
+   "Assumption: plus about 10 special balls for the kickers per team → around 110 per team.",
+   "2 teams × 110 ≈ 220 balls."
+  ]
+ },
+ "TEN-01": {
+  "question": "How many tennis balls are used in total at the Wimbledon Championships in one year (matches and practice)?",
+  "context": "Wimbledon 2024: two weeks of the tournament plus qualifying. All balls are supplied by Slazenger and are changed after 7 and then every 9 games during a match.",
+  "unit": "tennis balls",
+  "referencePeriod": "2024",
+  "explanation": "According to the tournament, around 54,000 balls (54,250 to be precise) are used per Championships – a large share of them in practice. Many used balls are then sold as souvenirs.",
+  "introduction": "Balls are changed regularly during matches, and the pros practise every day with fresh tins. Together, these make up the total.",
+  "steps": [
+   "Assumption: around 650 main-draw matches (singles, doubles, mixed, juniors).",
+   "Assumption: about 4 ball changes of 6 balls per match = ~25 balls → 650 × 25 ≈ 16,000 balls.",
+   "Qualifying: ~130 matches × 25 ≈ 3,000 balls.",
+   "Practice: assume ~250 players × 10 days × 1 tin of 6 balls ≈ 15,000 balls.",
+   "Total: 16,000 + 3,000 + 15,000 ≈ 34,000 balls."
+  ]
+ },
+ "TEN-02": {
+  "question": "How many individual strawberries were provided for the 2026 Wimbledon Championships?",
+  "context": "Strawberries and cream are the Wimbledon classic. Around 500,000 visitors come to the grounds over the two weeks of the tournament.",
+  "unit": "strawberries",
+  "referencePeriod": "2026",
+  "explanation": "In 2026 the All England Club expected 2.5 million strawberries and 17,363 litres of cream – served from 55 kitchens with 292 chefs.",
+  "introduction": "Strawberries are sold by the punnet. If you know how many people come and how many strawberries fit in a punnet, you're nearly there.",
+  "steps": [
+   "Around 500,000 visitors over two weeks.",
+   "Assumption: one in three visitors buys a punnet → ~170,000 punnets.",
+   "Assumption: about 10 strawberries per punnet → 1.7 million strawberries.",
+   "Add hospitality, restaurants and player lounges: +20% → around 2 million."
+  ]
+ },
+ "TEN-03": {
+  "question": "How many \"Honey Deuce\" cocktails were sold during the 2024 US Open?",
+  "context": "The Honey Deuce (vodka, lemonade, melon balls) is the cult drink of the US Open in New York. In 2024, more than 1 million people attended over the three weeks (Fan Week plus the main tournament) for the first time.",
+  "unit": "cocktails",
+  "referencePeriod": "2024",
+  "explanation": "The USTA reported a record 556,782 Honey Deuce cocktails sold – around 557,000, or more than one cocktail for every two visitors.",
+  "introduction": "A souvenir cocktail that almost everyone wants to hold once – attendance is the key.",
+  "steps": [
+   "Around 1 million visitors over three weeks (Fan Week + main draw).",
+   "Assumption: every second visitor buys exactly one Honey Deuce → ~500,000.",
+   "Assumption: a small share buys several, while some drink none – roughly cancelling out.",
+   "Result: around 500,000 cocktails."
+  ]
+ },
+ "TEN-04": {
+  "question": "How many rackets did the official stringing team string during the 2025 Australian Open?",
+  "context": "Yonex runs the stringing room in Melbourne with 22 stringers from 13 countries. 626 players from 61 nations competed in 24 events over three weeks (qualifying plus main draw).",
+  "unit": "rackets",
+  "referencePeriod": "2025",
+  "explanation": "According to Tennis Australia, the Yonex team strung 7,769 rackets – more than 600 on the busiest days.",
+  "introduction": "Pros have several rackets restrung almost every day. Number of players × days × rackets per day.",
+  "steps": [
+   "Around 600 players in the tournament.",
+   "Assumption: on average a player stays 4 days (many go out early, few stay two weeks).",
+   "Assumption: 3 rackets freshly strung per day.",
+   "600 × 4 × 3 = 7,200 rackets."
+  ]
+ },
+ "TEN-05": {
+  "question": "How many kilometres of tennis string in total were strung into rackets at the 2025 Australian Open?",
+  "context": "The official stringing team strung a total of 7,769 rackets at the 2025 Australian Open. Each racket uses a piece of string about 12 metres long.",
+  "unit": "km of string",
+  "referencePeriod": "2025",
+  "explanation": "7,769 rackets × 12 m of string per racket = 93,228 m, or around 93 km of string – roughly the distance from Zurich to Lucerne and back.",
+  "introduction": "A racket needs a surprisingly long piece of string. Length per racket × number of rackets.",
+  "steps": [
+   "A racket has ~16 main strings and ~19 cross strings.",
+   "Assumption: main string ~35 cm, cross string ~25 cm → 16 × 0.35 + 19 × 0.25 ≈ 5.6 + 4.8 ≈ 10.4 m.",
+   "Plus offcuts and knots: assume ~11 m per racket.",
+   "Around 7,800 rackets × 11 m ≈ 86,000 m ≈ 86 km."
+  ]
+ },
+ "TEN-06": {
+  "question": "How many kilometres of travel in total did the roughly 200 ATP players who used the \"Carbon Tracker\" app in 2023 log that season?",
+  "context": "In 2023 the ATP launched an app that lets players log and offset their tournament travel. 201 players took part; the tour includes more than 250 events in around 50 countries.",
+  "unit": "km",
+  "referencePeriod": "2023",
+  "explanation": "The ATP reported 6.55 million logged travel kilometres – around 32,000 km per player, almost once around the Earth per head, even though not everyone logged every trip.",
+  "introduction": "A tennis pro lives out of a suitcase: tournament after tournament, continent after continent.",
+  "steps": [
+   "Around 200 players took part.",
+   "Assumption: a player travels to ~20 tournaments per year.",
+   "Assumption: an average trip is ~1,500 km (many short hops in Europe, some intercontinental flights).",
+   "Per player: 20 × 1,500 = 30,000 km; × 200 players = 6 million km."
+  ]
+ },
+ "TEN-07": {
+  "question": "How many kilograms of red crushed brick make up the top layer of a single clay court at Roland-Garros?",
+  "context": "The \"terre battue\" in Paris is just the top layer: 1–2 mm of crushed brick on white limestone, with clinker and gravel underneath. Before each tournament, fresh crushed brick is spread on the roughly 20 courts.",
+  "unit": "kg",
+  "referencePeriod": "2026",
+  "explanation": "About 1.1 tonnes of crushed brick per court – more than 20 tonnes across the 20 courts. So the famous red surface is wafer-thin.",
+  "introduction": "Area × thickness × density – a court is big, but the red layer is paper-thin.",
+  "steps": [
+   "Court including run-off: assume ~36 m × 18 m ≈ 650 m².",
+   "Top layer: assume 2 mm = 0.002 m → 650 × 0.002 = 1.3 m³.",
+   "Assumption: density of loose crushed brick ~1,200 kg/m³.",
+   "1.3 m³ × 1,200 kg/m³ ≈ 1,560 kg → around 1,500 kg."
+  ]
+ },
+ "TEN-08": {
+  "question": "How many tonnes of grass seed does the All England Club at Wimbledon use per year for its grass courts?",
+  "context": "Wimbledon has 18 tournament courts and 20 practice grass courts, which are reseeded every year after the Championships. The grass (100% perennial ryegrass) is cut to a height of 8 mm.",
+  "unit": "tonnes of grass seed",
+  "referencePeriod": "2023",
+  "explanation": "According to the All England Club's official Media Fact Sheet, 10 tonnes of grass seed are used on the courts every year.",
+  "introduction": "Lawn area × seed per square metre – and that several times a year.",
+  "steps": [
+   "Around 40 grass courts of ~41 m × 22 m ≈ 900 m² each → ~36,000 m² of grass.",
+   "Assumption: reseeding with ~50 g of seed per m².",
+   "Assumption: courts are reseeded ~3 times per year → 150 g/m².",
+   "36,000 m² × 0.15 kg/m² ≈ 5,400 kg ≈ 5.5 tonnes."
+  ]
+ },
+ "TEN-09": {
+  "question": "How many tennis balls are manufactured worldwide each year?",
+  "context": "Tennis balls lose their pressure after a few hours of play and almost all end up in the bin. An estimated 90 million people play tennis worldwide (as of 2023).",
+  "unit": "tennis balls per year",
+  "referencePeriod": "2023",
+  "explanation": "According to a 2023 AP report, around 330 million balls are produced worldwide each year – almost all of them end up as waste at some point. An older figure (Scientific American, 2005) put it at more than 240 million.",
+  "introduction": "How many people play, and how many tins do they buy? That's all you need.",
+  "steps": [
+   "Assumption: around 90 million tennis players worldwide.",
+   "Assumption: most play rarely; on average each buys about one tin of 4 balls per year.",
+   "90 million × 4 = 360 million balls.",
+   "Result: roughly 300–400 million per year."
+  ]
+ },
+ "TEN-10": {
+  "question": "How many spectators attended Roland-Garros in person in 2024 in total?",
+  "context": "The tournament in Paris lasts around three weeks (qualifying plus 15 days of main draw). The 16 courts have around 38,400 seats combined; there are also evening Night Sessions on Court Philippe-Chatrier.",
+  "unit": "spectators",
+  "referencePeriod": "2024",
+  "explanation": "The French Tennis Federation (FFT) reported 675,080 spectators – a tournament record and 6.6% more than in 2023.",
+  "introduction": "Seats × days – plus qualifying week, which also draws crowds.",
+  "steps": [
+   "Around 38,000 seats on the grounds.",
+   "Assumption: practically full during the day, plus the Night Session → ~40,000 visitors per day.",
+   "15 main-draw days × 40,000 = 600,000.",
+   "Assumption: qualifying week with ~10,000 per day over 5 days = 50,000.",
+   "Total: ~650,000 spectators."
+  ]
+ },
+ "BSB-01": {
+  "question": "How many home runs were hit in total in the 2024 MLB regular season?",
+  "context": "A home run is a hit over the fence that lets the batter round all the bases in one go. All 2,429 games of the 2024 regular season across all 30 teams are counted.",
+  "unit": "home runs",
+  "referencePeriod": "2024 regular season",
+  "explanation": "According to Baseball-Reference, exactly 5,453 home runs were hit in 2024 – an average of around 182 per team, or slightly more than two per game.",
+  "introduction": "Home runs are the most spectacular event in baseball, but not the rarest. Start with a single game.",
+  "steps": [
+   "30 teams × 162 games ÷ 2 ≈ 2,430 games per season.",
+   "Assumption: about one home run per team per game – so around 2 per game.",
+   "2,430 × 2 ≈ 4,900 home runs."
+  ]
+ },
+ "BSB-02": {
+  "question": "How many pitches were thrown in total in the 2024 MLB regular season?",
+  "context": "Every throw from the pitcher to the batter counts as a pitch – whether strike, ball, foul or put in play. All 2,429 games of the 2024 regular season are counted.",
+  "unit": "pitches",
+  "referencePeriod": "2024 regular season",
+  "explanation": "Baseball-Reference counts a total of 709,510 pitches across 182,869 plate appearances in 2024 – an average of 3.88 pitches per plate appearance.",
+  "introduction": "Start with a single pitcher-versus-batter duel and work your way up to the whole season.",
+  "steps": [
+   "Assumption: about 4 batters come up per half-inning. 9 innings × 2 half-innings × 4 = around 72 plate appearances per game.",
+   "Assumption: a plate appearance lasts about 4 pitches. 72 × 4 ≈ 290 pitches per game.",
+   "30 teams × 162 games ÷ 2 ≈ 2,430 games per season.",
+   "2,430 × 290 ≈ 700,000 pitches."
+  ]
+ },
+ "BSB-03": {
+  "question": "How many strikeouts were there in total in the 2024 MLB regular season?",
+  "context": "A strikeout is an out on the batter after three strikes. All strikeouts in all 2,429 games of the 2024 regular season (both teams) are counted.",
+  "unit": "strikeouts",
+  "referencePeriod": "2024 regular season",
+  "explanation": "Baseball-Reference counts 41,197 strikeouts league-wide in 2024 – an average of around 1,373 per team and about 17 per game.",
+  "introduction": "Modern pitchers throw hard, and strikeouts have long been routine. Work it out per game and scale up.",
+  "steps": [
+   "30 teams × 162 games ÷ 2 ≈ 2,430 games.",
+   "Assumption: about 75 batters come up per game and roughly one in five strikes out – so about 8 per team, 16 per game.",
+   "2,430 × 16 ≈ 39,000 strikeouts."
+  ]
+ },
+ "BSB-04": {
+  "question": "According to the National Hot Dog and Sausage Council's forecast, how many hot dogs were sold in stadiums during the 2022 MLB season?",
+  "context": "The hot dog is the classic ballpark food in baseball. Every spring, the US industry body NHDSC estimates consumption across all 30 MLB stadiums for the whole season (excluding sausages).",
+  "unit": "hot dogs",
+  "referencePeriod": "2022 MLB season",
+  "explanation": "The NHDSC forecast around 19.1 million hot dogs plus just under 5 million sausages in MLB stadiums for 2022; the Dodgers alone accounted for almost 3 million hot dogs and sausages.",
+  "introduction": "Work it out via the crowds: how many fans come, and how many of them buy a hot dog?",
+  "steps": [
+   "Assumption: around 2,430 games with about 28,000 spectators each ≈ 68 million stadium visits per season.",
+   "Assumption: about one in four fans buys a hot dog (many eat something else, some have two).",
+   "68 million × 0.25 ≈ 17 million hot dogs."
+  ]
+ },
+ "BSB-05": {
+  "question": "How many baseballs does the Kansas City Royals' clubhouse attendant rub with special mud before each home game?",
+  "context": "New baseballs are too smooth and shiny. So before every MLB game they are rubbed by hand with \"rubbing mud\" – by the home team, for both teams. We're looking for the number per game in the 2024 season.",
+  "unit": "baseballs",
+  "referencePeriod": "2024 season (Royals home games)",
+  "explanation": "Tom Walsh prepares 17 dozen, or 204 balls, before every home game – over 81 home games that's around 16,500 balls per season.",
+  "introduction": "Think about how quickly balls get used up in a game and how much of a reserve is needed.",
+  "steps": [
+   "Assumption: a game has around 300 pitches.",
+   "Assumption: on average a ball is replaced after about 3 pitches (foul into the stands, dirt, scuffs). 300 ÷ 3 ≈ 100 balls per game.",
+   "Assumption: about double is prepared for extra innings and as a safety margin: ≈ 200 balls."
+  ]
+ },
+ "BSB-06": {
+  "question": "How many kilograms of \"Lena Blackburne Rubbing Mud\" were taken from the New Jersey river per season in 2014 to rub up the baseballs of all professional teams?",
+  "context": "All MLB and Minor League teams rub their balls with the same mud from a secret riverbank in New Jersey. The family business harvests it by hand every summer. We're looking for the amount harvested per season (as of 2014).",
+  "unit": "kg",
+  "referencePeriod": "2014 season",
+  "explanation": "NBC News reported in 2014 that Jim Bintliff harvests 1,000 to 1,500 pounds of mud per season – around 450 to 680 kg, so about 570 kg in the middle. A 32-ounce tub cost professional teams 75 dollars at the time.",
+  "introduction": "Each ball needs only a trace of mud. Work it out via the teams being supplied.",
+  "steps": [
+   "Assumption: 30 MLB teams plus around 120 Minor League teams ≈ 150 professional teams.",
+   "Assumption: a team uses about 3 kg per season (a few tubs).",
+   "150 × 3 kg ≈ 450 kg per season."
+  ]
+ },
+ "BSB-07": {
+  "question": "In 2010, what was the maximum number of baseballs per year produced by the Rawlings factory in Costa Rica, where all official MLB balls are hand-stitched?",
+  "context": "Every MLB ball has 108 hand-sewn stitches and is made in Turrialba, Costa Rica. The factory supplies not only MLB games but also the Minor Leagues, practice and sales to fans.",
+  "unit": "baseballs",
+  "referencePeriod": "2010",
+  "explanation": "According to NBC News, the factory produced up to 2.4 million balls per year in 2010; more than 300 stitchers each managed around 200 balls per week.",
+  "introduction": "Start from the league's needs and bear in mind that game balls are only a small part of production.",
+  "steps": [
+   "Assumption: around 2,430 MLB games × about 100 balls per game ≈ 250,000 game balls per season.",
+   "Assumption: practice, spring training, playoffs and the Minor Leagues need three times as many again → around 1 million in total.",
+   "Assumption: about the same number go to souvenirs and retail: ≈ 2 million balls per year."
+  ]
+ },
+ "BSB-08": {
+  "question": "How many bats (including souvenir mini bats) does Louisville Slugger say it makes per year?",
+  "context": "Louisville Slugger is the best-known baseball bat brand in the US; its factory in Louisville (Kentucky) produces wooden bats for pros, amateurs and as souvenirs. The figure comes from the Louisville Slugger Museum & Factory website (also cited by the US Congress in 2009).",
+  "unit": "bats per year",
+  "referencePeriod": "Annual production (2009 figure, still published by the museum)",
+  "explanation": "The Louisville Slugger Museum & Factory states \"1.8 million bats per year\", around 3,000 full-size bats per day; a 2009 US House of Representatives resolution likewise cited about 1,800,000 bats including souvenir bats.",
+  "introduction": "Wooden bats are now turned on lathes, no longer by hand. Work it out via factory capacity.",
+  "steps": [
+   "Assumption: the factory has about 10 lathes, each turning around one bat per minute.",
+   "10 × 60 minutes × 8 hours ≈ 4,800 bats per working day.",
+   "Assumption: 250 working days per year → 4,800 × 250 ≈ 1.2 million bats."
+  ]
+ },
+ "BSB-09": {
+  "question": "How many wooden bats does an average MLB player go through per season (as of 2016)?",
+  "context": "MLB pros hit with wooden bats made of ash, maple or birch. They break, splinter or get swapped out if they feel \"wrong\". We're looking for the average number of bats a player uses per 162-game season.",
+  "unit": "bats",
+  "referencePeriod": "2016 season (Louisville Slugger figures)",
+  "explanation": "A 2016 report from the Louisville Slugger factory cites around 90 bats per player per season; an earlier factory report spoke of 80 to 120 bats for most major league players.",
+  "introduction": "A wooden bat doesn't last for ever. Think about how often one breaks or gets discarded.",
+  "steps": [
+   "A season has 162 games.",
+   "Assumption: a bat breaks about every 3 games → 162 ÷ 3 ≈ 54 broken bats.",
+   "Assumption: about the same number are swapped out, given away or used up in practice → around 100 bats."
+  ]
+ },
+ "BSB-10": {
+  "question": "How many minutes of video were watched in total on the MLB.TV streaming service during the 2024 MLB season?",
+  "context": "MLB.TV is the league's official streaming service, letting fans worldwide watch practically every game live or on demand. MLB reports the minutes watched per season.",
+  "unit": "minutes",
+  "referencePeriod": "2024 season",
+  "explanation": "MLB reported a total of 14.5 billion minutes streamed on MLB.TV in 2024 – 14 percent more than the 12.7 billion the year before. That's around 27,600 years of baseball.",
+  "introduction": "Streaming minutes explode because the season is long and many games are played every day. Work it out via daily usage.",
+  "steps": [
+   "Assumption: the regular season lasts around 180 days.",
+   "Assumption: on a typical day about 2 million people watch something on MLB.TV.",
+   "Assumption: on average each person watches about 40 minutes (some a whole game, many just dip in briefly).",
+   "180 × 2 million × 40 ≈ 14.4 billion minutes."
+  ]
+ },
+ "MOT-01": {
+  "question": "How many times does a rear tyre of a Formula 1 car turn during the 2024 Bahrain Grand Prix (full race distance, ignoring pit stops)?",
+  "context": "The Bahrain International Circuit is 5.412 km long and the race runs over 57 laps. The 18-inch Pirelli tyres have an outer diameter of 720 mm.",
+  "unit": "revolutions",
+  "referencePeriod": "2024 Bahrain Grand Prix",
+  "explanation": "The race distance of 308.238 km divided by the tyre circumference (π × 0.72 m ≈ 2.262 m) gives around 136,000 revolutions. Wheelspin and rolling in the pit lane are ignored.",
+  "introduction": "Two things are enough: how long is the race, and how far does the tyre travel per revolution?",
+  "steps": [
+   "Assumption: an F1 race is about 300 km long, i.e. 300,000 m.",
+   "Assumption: the tyre is about 70 cm tall – circumference ≈ 3.14 × 0.7 m ≈ 2.2 m.",
+   "Calculation: 300,000 m ÷ 2.2 m ≈ 136,000 revolutions.",
+   "Around 135,000 revolutions – per tyre, in just 1.5 hours."
+  ]
+ },
+ "MOT-02": {
+  "question": "How many individual tyres did Pirelli supply in total in the 2024 Formula 1 season (all sets, including those never used)?",
+  "context": "Pirelli is the sole tyre supplier to Formula 1. The 2024 season had 24 Grands Prix with 20 cars. A set consists of four tyres.",
+  "unit": "tyres",
+  "referencePeriod": "2024 Formula 1 season",
+  "explanation": "Pirelli supplied 8,016 sets of tyres, 2,718 of which were never used. 8,016 × 4 = 32,064 tyres, rounded to 32,000.",
+  "introduction": "Scale up from one driver and one weekend to the whole season.",
+  "steps": [
+   "Assumption: 20 cars × 24 races = 480 car-weekends.",
+   "Assumption: each weekend a driver gets about 13 sets of dry tyres plus around 7 sets of wet tyres ≈ 20 sets.",
+   "Calculation: 480 × 20 sets = 9,600 sets; × 4 tyres ≈ 38,000 tyres.",
+   "Around 38,000 tyres – a large share of them go back to the warehouse unused."
+  ]
+ },
+ "MOT-03": {
+  "question": "How many kilometres did all Formula 1 cars combined cover on Pirelli tyres in the 2024 season (all practice sessions, qualifying and races)?",
+  "context": "The 2024 season had 24 Grands Prix with 20 cars each. Every lap on track counts, not just the race.",
+  "unit": "km",
+  "referencePeriod": "2024 Formula 1 season",
+  "explanation": "According to Pirelli, 334,942 km were covered on its tyres – around 94% of the Earth–Moon distance (with the Moon at its closest point to Earth).",
+  "introduction": "First add up the races, then roughly add practice on top.",
+  "steps": [
+   "Assumption: a race is about 300 km long and 20 cars take part: 20 × 300 km = 6,000 km per race.",
+   "Calculation: 24 races × 6,000 km = 144,000 km in races alone.",
+   "Assumption: Friday and Saturday practice plus qualifying add roughly the same again.",
+   "Calculation: 144,000 × 2 ≈ 290,000 km – around 300,000 km."
+  ]
+ },
+ "MOT-04": {
+  "question": "How many spectators attended the 2024 British Grand Prix weekend at Silverstone in total (Friday to Sunday, daily attendance added up)?",
+  "context": "Silverstone is one of the best-attended races on the calendar. Attendance on all three days is counted together.",
+  "unit": "spectators (daily visits)",
+  "referencePeriod": "2024 British Grand Prix",
+  "explanation": "Silverstone reported 480,000 visits over the weekend, with 164,000 on race Sunday alone – a single-day record for the circuit.",
+  "introduction": "Race Sunday is the big day; the other days are a bit quieter.",
+  "steps": [
+   "Assumption: around 150,000 people on race Sunday – roughly two big football stadiums.",
+   "Assumption: Saturday (qualifying) is almost as full: ~150,000.",
+   "Assumption: Friday (practice) about 100,000.",
+   "Calculation: 150,000 + 150,000 + 100,000 = 400,000 visits."
+  ]
+ },
+ "MOT-05": {
+  "question": "How many kilometres did the winning car of the 2025 24 Hours of Le Mans (Ferrari 499P #83) cover in the 24 hours?",
+  "context": "The Circuit de la Sarthe is about 13.6 km long. The car runs for 24 hours straight, including pit stops and driver changes.",
+  "unit": "km",
+  "referencePeriod": "2025 24 Hours of Le Mans",
+  "explanation": "The organisers give 387 laps and 5,272.54 km at an average of 219.3 km/h – roughly the distance from Zurich to Moscow and back.",
+  "introduction": "Distance = average speed × time. The time is known; the speed has to be estimated.",
+  "steps": [
+   "Assumption: on the straights the cars do over 300 km/h, much less in corners and pit stops – an average of maybe 210 km/h.",
+   "Calculation: 210 km/h × 24 h = 5,040 km.",
+   "Cross-check: 5,040 km ÷ 13.6 km per lap ≈ 370 laps – sounds plausible.",
+   "Around 5,000 km."
+  ]
+ },
+ "MOT-06": {
+  "question": "Roughly how many gear changes does a Formula 1 driver make during the Monaco Grand Prix (78 laps)?",
+  "context": "Monaco is the tightest and twistiest track on the calendar. F1 cars have 8 forward gears, shifted using paddles on the steering wheel.",
+  "unit": "gear changes",
+  "referencePeriod": "Monaco Grand Prix (figure from formula1.com, 2016)",
+  "explanation": "According to formula1.com, a driver in Monaco changes gear around 47 times per lap, so about 3,666 times over 78 laps – rounded to 3,700. That averages more than one gear change every two seconds.",
+  "introduction": "In every braking zone the driver shifts down and back up. Count the braking zones and scale up.",
+  "steps": [
+   "Assumption: Monaco has about 8 proper braking zones per lap.",
+   "Assumption: about 5 shifts per braking zone (2–3 down, 2–3 up).",
+   "Calculation: 8 × 5 = 40 gear changes per lap.",
+   "Calculation: 40 × 80 laps ≈ 3,200 gear changes."
+  ]
+ },
+ "MOT-07": {
+  "question": "How many pit stops were there in total at the 2024 Japanese Grand Prix at Suzuka (all cars combined)?",
+  "context": "20 cars started. According to Pirelli, Suzuka 2024 was the race with the most pit stops of the season; a red flag on the first lap contributed.",
+  "unit": "pit stops",
+  "referencePeriod": "2024 Japanese Grand Prix",
+  "explanation": "Pirelli counted 46 pit stops at Suzuka – the season high. The minimum was 19 stops in Jeddah.",
+  "introduction": "How many cars, and how often does each one come in?",
+  "steps": [
+   "Assumption: 20 cars on the grid.",
+   "Assumption: Suzuka is hard on tyres – 2 stops per car on average.",
+   "Calculation: 20 × 2 = 40 stops.",
+   "A few extra stops for damage or strategy experiments – around 40 to 45."
+  ]
+ },
+ "MOT-08": {
+  "question": "How long was the total route of the 2025 Dakar Rally in Saudi Arabia (special stages plus liaison sections)?",
+  "context": "The 2025 Dakar started on 3 January in Bisha and finished on 17 January in Shubaytah, with one rest day in between. Around 5,100 km of it were timed special stages.",
+  "unit": "km",
+  "referencePeriod": "2025 Dakar Rally",
+  "explanation": "The route was about 7,700 km long, around 5,100 km of it against the clock – more than the straight-line distance from Zurich to New York.",
+  "introduction": "The Dakar lasts about two weeks. Estimate the number of driving days and the daily distance.",
+  "steps": [
+   "Assumption: about 12 driving days (two weeks minus the rest day and prologue).",
+   "Assumption: per day about 400 km of special stage plus about 200 km of liaison = 600 km.",
+   "Calculation: 12 × 600 km = 7,200 km.",
+   "Around 7,000 km."
+  ]
+ },
+ "MOT-09": {
+  "question": "What was the total revenue of Formula 1 (Formula One Group) in the 2024 financial year, in USD?",
+  "context": "Formula 1 is owned by Liberty Media. Revenue comes mainly from TV rights, race hosting fees and sponsorship. There were 24 races in 2024.",
+  "unit": "USD",
+  "referencePeriod": "2024 financial year",
+  "explanation": "Liberty Media reported F1 revenue of 3,411 million USD for 2024 (+6% on 2023); 1,266 million of that went to the teams as prize money.",
+  "introduction": "Split the revenue into the three big pots and roughly estimate each one.",
+  "steps": [
+   "Assumption: each of the 24 circuits pays a hosting fee of about $30 million on average: 24 × 30 million ≈ $700 million.",
+   "Assumption: worldwide TV rights about $1 billion per year.",
+   "Assumption: sponsorship, hospitality and other income another $800 million or so.",
+   "Calculation: 0.7 + 1 + 0.8 ≈ $2.5 billion."
+  ]
+ },
+ "MOT-10": {
+  "question": "How many kilometres does a MotoGP rider cover in Sunday races during the 2024 season if he completes the full distance in all 20 Grands Prix (excluding sprints)?",
+  "context": "A MotoGP race lasts about 40 minutes. The 2024 season comprised 20 Grands Prix on tracks between 3.7 and 5.9 km long.",
+  "unit": "km",
+  "referencePeriod": "2024 MotoGP season",
+  "explanation": "MotoGP.com gives an average race distance of 114.7 km for 2024 (25 laps on tracks averaging 4.71 km). 20 races × 114.7 km = 2,294 km, rounded to 2,300 km.",
+  "introduction": "Race duration times speed gives the distance per race, then multiply by the number of races.",
+  "steps": [
+   "Assumption: a race lasts about 40 minutes, i.e. 2/3 of an hour.",
+   "Assumption: the average speed is about 160 km/h (top speed over 350, but lots of corners).",
+   "Calculation: 160 km/h × 2/3 h ≈ 107 km per race.",
+   "Calculation: 20 races × 107 km ≈ 2,100 km."
+  ]
+ },
+ "WIN-01": {
+  "question": "How many kilometres of B-nets were put up along the downhill course for the 2019 Lauberhorn races in Wengen?",
+  "context": "At around 4.5 km, the Lauberhorn downhill is the longest downhill in the Alpine Ski World Cup. The B-nets are the orange safety nets right at the edge of the piste, put up in a single day by more than 500 volunteers.",
+  "unit": "km",
+  "referencePeriod": "Lauberhorn races, January 2019",
+  "explanation": "According to the Jungfrau Zeitung, 20 km of B-nets were put up on set-up Tuesday – longer than Lake Thun. 555 volunteers were deployed for the job.",
+  "introduction": "The piste is about 4.5 km long – but the nets aren't just on one side, and not just in one row.",
+  "steps": [
+   "Course length: about 4.5 km.",
+   "Assumption: both edges of the piste are secured almost continuously → 4.5 × 2 = 9 km.",
+   "Assumption: in fast sections the nets are doubled up, so about 2 rows on average → 9 × 2 = 18 km.",
+   "Result: around 18 km of nets."
+  ]
+ },
+ "WIN-02": {
+  "question": "How many spectators in total came to Wengen over the four race days of the 2024 Lauberhorn races?",
+  "context": "Wengen is car-free; all fans arrive on the Wengernalp Railway. In 2024 there were exceptionally four World Cup races on four days (Thursday to Sunday), including two downhills.",
+  "unit": "spectators (total over 4 days)",
+  "referencePeriod": "Lauberhorn races, 11–14 January 2024",
+  "explanation": "The Jungfrau Zeitung put the crowds at over 50,000 people across the four ski days. The Jungfrau Railways brought in extra staff and at times ran double-coupled trains (250–300 passengers per trip).",
+  "introduction": "The big day is the Saturday downhill; the other days draw far fewer people.",
+  "steps": [
+   "Assumption: Saturday (classic downhill) around 25,000 fans.",
+   "Assumption: Sunday slalom about 10,000, Friday (super-G/downhill) about 10,000.",
+   "Assumption: Thursday, as an extra weekday, only around 5,000.",
+   "Total: 25,000 + 10,000 + 10,000 + 5,000 = 50,000."
+  ]
+ },
+ "WIN-03": {
+  "question": "How many participants in total have taken part in the Engadin Skimarathon from its first edition in 1969 up to and including 2024?",
+  "context": "The Engadin Skimarathon runs 42 km from Maloja to S-chanf and is Switzerland's largest mass-participation cross-country ski race. 2024 saw the 54th edition.",
+  "unit": "participants (cumulative, rounded)",
+  "referencePeriod": "Editions 1969–2024 (54 editions)",
+  "explanation": "The organiser's official statistics show a total of 617,968 participants across the 54 editions – an average of 11,444 entries per year. The record is 14,280 entries (2018).",
+  "introduction": "A mass race of this size has five-figure participant numbers year after year – you just need to count the years.",
+  "steps": [
+   "Number of editions: 1969 to 2024 gives 54 editions (the 2020/21 race was cancelled).",
+   "Assumption: only a few thousand at first, later 12,000–14,000; average across all years about 10,000 participants.",
+   "Calculation: 54 × 10,000 = 540,000.",
+   "Result: around 540,000 participants."
+  ]
+ },
+ "WIN-04": {
+  "question": "How many cubic metres of technical (artificial) snow did the organising committee have produced at the competition venues for the Milano Cortina 2026 Winter Olympics?",
+  "context": "The 2026 snow-sports events took place in Bormio, Livigno, Cortina d'Ampezzo, Antholz and Tesero. Virtually all race courses were prepared with snow cannons – regardless of natural snow.",
+  "unit": "m³ of snow",
+  "referencePeriod": "Milano Cortina 2026 Winter Olympics",
+  "explanation": "Shortly before the Games, the organising committee announced that around 1.6 million cubic metres of technical snow had been produced – less than originally forecast. Livigno alone ran more than 50 snow cannons, Bormio 75.",
+  "introduction": "Snow is length × width × depth. So: how many courses, how long, how wide, how deep?",
+  "steps": [
+   "Assumption: across the five venues about 15 race courses/trail sections averaging 3 km each → 45 km of piste.",
+   "Assumption: average piste width 40 m → 45,000 m × 40 m = 1.8 million m² of area.",
+   "Assumption: race courses need a compact snow base of about 0.8 m.",
+   "Calculation: 1.8 million m² × 0.8 m ≈ 1.4 million m³ of snow."
+  ]
+ },
+ "WIN-05": {
+  "question": "How many shots does a biathlete fire if he competes in all 25 men's individual races of the 2023/24 season (World Cup plus World Championships, excluding relays) and never needs a spare round?",
+  "context": "In the 2023/24 Biathlon World Cup the men had 3 individuals, 1 short individual, 8 sprints, 8 pursuits and 5 mass starts (including the World Championships in Nové Město). Each shooting bout has 5 targets.",
+  "unit": "shots",
+  "referencePeriod": "2023/24 biathlon season (men, incl. World Championships)",
+  "explanation": "The individual and short individual, pursuit and mass start have 4 shooting bouts of 5 shots (20); the sprint has 2 bouts (10). Calculation: (3+1) × 20 + 8 × 10 + 8 × 20 + 5 × 20 = 80 + 80 + 160 + 100 = 420 shots.",
+  "introduction": "5 shots per shooting bout – the only question is how many bouts a race has.",
+  "steps": [
+   "25 individual races in the season.",
+   "Assumption: sprints (2 bouts) are about a third of the races, the rest have 4 bouts → average about 3.3 bouts per race.",
+   "Calculation: 25 races × 3.3 bouts ≈ 83 shooting bouts.",
+   "83 × 5 shots ≈ 415 shots."
+  ]
+ },
+ "WIN-06": {
+  "question": "How many race kilometres did the seven stages of the 2023/24 Tour de Ski (Toblach, Davos, Val di Fiemme) cover in total?",
+  "context": "The Tour de Ski is the stage race series of the Cross-Country World Cup, with sprints and distance races on consecutive days. The 2023/24 edition ended with the famous Final Climb up the Alpe Cermis.",
+  "unit": "km",
+  "referencePeriod": "Tour de Ski, 30 December 2023 – 7 January 2024",
+  "explanation": "The stages: 1.4 km sprint, 10 km classic, 20 km pursuit, 1.2 km sprint, 20 km pursuit, 15 km mass start, 10 km Final Climb – 77.6 km in total, identical for men and women.",
+  "introduction": "Sprints are tiny; distance races these days are mostly between 10 and 20 km.",
+  "steps": [
+   "7 stages; assumption: 2 sprints of about 1.5 km each → 3 km.",
+   "Assumption: 5 distance races averaging 12 km → 60 km.",
+   "Total: 3 + 60 = 63 km.",
+   "Result: around 63 km."
+  ]
+ },
+ "WIN-07": {
+  "question": "How much do all 1,146 medals of the Milano Cortina 2026 Olympic and Paralympic Winter Games weigh together?",
+  "context": "735 Olympic and 411 Paralympic medals were made for the 2026 Games. Each medal is 80 mm in diameter and 10 mm thick. Gold and silver medals consist of 500 g of silver (gold additionally plated with 6 g of gold); the bronze medal is made of 420 g of copper.",
+  "unit": "kg",
+  "referencePeriod": "Milano Cortina 2026 Olympic and Paralympic Winter Games",
+  "explanation": "382 each of gold, silver and bronze medals (245 + 137). Gold: 382 × 506 g = 193.3 kg; silver: 382 × 500 g = 191.0 kg; bronze: 382 × 420 g = 160.4 kg. Total around 545 kg.",
+  "introduction": "Three types of medal, each roughly a third of the total – and they all weigh about half a kilo.",
+  "steps": [
+   "1,146 medals, around 380 of each colour.",
+   "Assumption: gold and silver weigh about 0.5 kg each, bronze a little less, about 0.4 kg.",
+   "Calculation: 380 × 0.5 + 380 × 0.5 + 380 × 0.4 = 190 + 190 + 152 = 532 kg.",
+   "Result: around 530 kg."
+  ]
+ },
+ "WIN-08": {
+  "question": "What was the total cost of the Sochi 2014 Winter Olympics including all infrastructure projects, in USD?",
+  "context": "Sochi 2014 is considered the most expensive Olympic Games in history. The budget covered not only the sports venues but also new railway lines, roads, hotels, power plants and the expansion of the airport and port. The original budget was 12 billion USD.",
+  "unit": "USD",
+  "referencePeriod": "Sochi 2014 Winter Olympics (Olimpstroy final accounts, June 2014)",
+  "explanation": "In June 2014 the state construction company Olimpstroy put the final cost at 1,524 billion roubles, around 49.5 billion USD at the time. Only about a fifth of that (approx. 10.8 billion) went directly on the Games; the rest went on transport, energy and tourism infrastructure.",
+  "introduction": "The Games themselves are only the small part – Sochi practically had to be rebuilt as a winter sports resort.",
+  "steps": [
+   "Assumption: around 10 major venues (stadiums, arenas, bobsleigh track, ski jumps) at about 0.5 billion each → 5 billion USD.",
+   "Assumption: new rail and motorway link from the coast to the mountains plus airport/port → about 10 billion USD.",
+   "Assumption: hotels, power plants, gas pipelines, urban redevelopment → another 10 billion USD or so.",
+   "Assumption: organisation, security, ceremonies → about 3 billion USD.",
+   "Total: 5 + 10 + 10 + 3 ≈ 28 billion USD."
+  ]
+ },
+ "WIN-09": {
+  "question": "What is the maximum weight allowed for a four-man bobsleigh under the rules – including the four athletes and their equipment?",
+  "context": "In bobsleigh, the combined weight of sled plus crew is capped so that the heaviest crew doesn't simply win. Lighter teams may add ballast to the sled. The empty four-man bob must weigh at least 210 kg.",
+  "unit": "kg",
+  "referencePeriod": "IBSF rules (as of the 2022 Olympic Games)",
+  "explanation": "The maximum weight of a four-man bob is 630 kg including crew and equipment; for the two-man bob it is 390 kg. Without its crew, a four-man bob weighs at least 210 kg.",
+  "introduction": "Four powerful athletes plus a steel-and-carbon sled – it soon adds up.",
+  "steps": [
+   "Assumption: bobsledders are heavy power athletes, about 100 kg each → 4 × 100 = 400 kg.",
+   "Assumption: the sled itself (steel frame, runners, carbon cowling) weighs about 200 kg.",
+   "Total: 400 + 200 = 600 kg.",
+   "Result: limit about 600 kg."
+  ]
+ },
+ "WIN-10": {
+  "question": "How many competition jumps (excluding qualification) are made in total at a Four Hills Tournament if both rounds take place as normal at all four events?",
+  "context": "The Four Hills Tournament takes place around New Year in Oberstdorf, Garmisch-Partenkirchen, Innsbruck and Bischofshofen. In the first round the top 50 qualifiers jump in 25 knockout duels; the 25 duel winners plus the 5 best losers ('lucky losers') go through to the second round.",
+  "unit": "jumps",
+  "referencePeriod": "73rd Four Hills Tournament 2024/25 (format according to ZDF FAQ)",
+  "explanation": "Per event: 50 jumps in the first round + 30 in the second = 80. Four events × 80 = 320 competition jumps.",
+  "introduction": "Four hills, two rounds – you just need to know how many are still in it for the second round.",
+  "steps": [
+   "Assumption: about 50 jumpers start in the first round.",
+   "Assumption: about half go through → around 25 jumps in the second round.",
+   "Per event: 50 + 25 = 75 jumps.",
+   "Four events: 4 × 75 = 300 jumps."
+  ]
+ }
+}

@@ -1624,7 +1624,7 @@ function estResults(q, fresh = false){
       const m = left.match(/^(.*\S)\s+(=|≈|→)\s+([^=≈→]+?)\.?$/);
       if (m && m[3].length <= 36) { left = m[1].replace(/^(Calculation|Assumption):\s*/i, '').replace(/^\p{Ll}/u, c => c.toUpperCase()); v = `${m[2] === '=' ? '' : m[2] + ' '}${m[3]}`; }
     } else if (st.calculation) left = `${st.label} (${st.calculation})`;
-    return `<li${i === 0 ? ' class="first"' : ''}><span>${escH(left)}${i === 0 ? '<span class="est-start">START</span>' : ''}</span>${v ? `<span class="v">${escH(v)}</span>` : ''}</li>`;
+    return `<li${i === 0 ? ' class="first"' : ''}><span>${escH(left)}</span>${v ? `<span class="v">${escH(v)}</span>` : ''}</li>`;
   };
   const steps = nm.i18n?.[LANG]?.steps?.map(label => ({label})) || nm.steps;
   $('est-rows').innerHTML = `<li class="fact"><span class="fact-k">Your guess</span><span class="est-badge">${estBare(g, q)}</span></li>

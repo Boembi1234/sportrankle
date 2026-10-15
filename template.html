@@ -1626,7 +1626,7 @@ function estResults(q, fresh = false){
   const steps = nm.i18n?.[LANG]?.steps?.map(label => ({label})) || nm.steps;
   $('est-rows').innerHTML = `<li class="fact"><span class="fact-k">Your guess</span><span class="est-badge">${estBare(g, q)}</span></li>
       <li class="fact"><span class="fact-k">Answer${tag}</span><span class="est-badge ok">${estBare(a, q)}</span></li>
-      <li class="fact"><span class="fact-k">Off by<span class="est-tag">${verdict}</span></span><span class="est-badge off">${estFactor(f)}</span></li>`;
+      <li class="fact"><span class="fact-k">Off by</span><span class="est-badge off">${estFactor(f)}</span></li>`;
   $('est-body').innerHTML = `<button class="segbtn est-nap-btn" type="button" id="est-nap-btn" aria-expanded="false" aria-controls="est-nap">Napkin Math</button>
     <div class="est-nap" id="est-nap" hidden>
       <p class="est-nap-intro">${escH(estText(nm, 'introduction'))}</p>

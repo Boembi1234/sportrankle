@@ -366,19 +366,16 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .chip.demo{background:var(--signal);box-shadow:0 2px 0 var(--signal-edge);color:var(--bg)}
 /* Results: the factor in the score card, the facts as rows, the explanation, Napkin Math to open, the sources */
 .k-est .est-score[hidden]{display:none}
-.k-est .est-score:not([hidden])+.est-box{margin-top:16px}   /* the score card first, the question under it */
+.page.k-est .seg.est-seg{display:flex}   /* the Your board / Perfect board switch of the other games: Your guess / Napkin Math */
+.page.k-est .seg.est-seg[hidden]{display:none}
+.k-est .est-seg:not([hidden])+.est-box{margin-top:24px}   /* 24px from the switch, like the board in the other games */
 .k-est .fact{align-items:center;min-height:48px;padding:8px 12px;border-radius:10px;background:var(--surface)}
 .k-est .fact-k{font-size:15px;font-weight:700;color:var(--muted)}
 .k-est .fact-v{font-size:15px;font-weight:700;color:var(--text)}
 .est-tag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
 .est-h{margin:24px 0 8px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .est-text{margin:0;font-size:16px;line-height:1.5;text-wrap:pretty}
-.est-napkin{margin-top:16px;border-radius:10px;background:var(--surface-faint)}
-.est-napkin summary{display:flex;align-items:center;gap:10px;min-height:52px;padding:0 16px;font-size:17px;font-weight:800;cursor:pointer;list-style:none}
-.est-napkin summary::-webkit-details-marker{display:none}
-.est-napkin summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid;border-bottom:2px solid;transform:translateY(-2px) rotate(45deg)}
-.est-napkin[open] summary::after{transform:translateY(2px) rotate(-135deg)}
-.est-napkin-body{padding:0 16px 16px}
+.est-napkin-body{margin-top:16px}
 .est-napkin-body>p{margin:0 0 12px;color:var(--muted);font-size:15px;line-height:1.45}
 .est-steps{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none;counter-reset:st}
 .est-steps li{display:grid;grid-template-columns:28px 1fr auto;gap:2px 10px;align-items:baseline;padding:10px 12px;border-radius:8px;background:var(--surface);counter-increment:st}
@@ -707,6 +704,10 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
           <div class="today-bars" role="img"></div>
           <div class="today-axis" aria-hidden="true"></div>
         </div>
+      </div>
+      <div class="seg est-seg" id="est-seg" role="group" aria-label="Result view" hidden>
+        <button class="segbtn" type="button" id="est-seg-a" aria-pressed="true">Your guess</button>
+        <button class="segbtn" type="button" id="est-seg-b" aria-pressed="false">Napkin Math</button>
       </div>
       <div class="est-box">
         <h1 class="est-q" id="est-q"></h1>
@@ -1540,7 +1541,7 @@ function estRender(){
   $('est-q').textContent = estText(q, 'question');
   $('est-note').textContent = ''; $('est-note').classList.remove('err');
   if (ER.guess != null) return estResults(q);
-  $('est-score').hidden = true;
+  $('est-score').hidden = true; $('est-seg').hidden = true;
   $('est-body').innerHTML = '';
   $('est-row').hidden = false;
   // The boxes of Guess the record: the unit inside on the right, 100 as the example (0 in each part of a time)
@@ -1608,16 +1609,18 @@ function estResults(q, fresh = false){
   const facts = [['Your guess', estShow(g, q)],
     [`Answer${{calculated: '<span class="est-tag">Calculated</span>', estimate: '<span class="est-tag">Model estimate</span>'}[q.answerType] || ''}`, estShow(a, q)],
     q.referencePeriod ? ['Refers to', escH(estText(q, 'referencePeriod'))] : null].filter(Boolean);
-  $('est-body').innerHTML = `<ul class="board">${facts.map(([k, v]) => `<li class="fact"><span class="fact-k">${k}</span><span class="fact-v">${v}</span></li>`).join('')}</ul>
+  $('est-body').innerHTML = `<div id="est-view-a"><ul class="board">${facts.map(([k, v]) => `<li class="fact"><span class="fact-k">${k}</span><span class="fact-v">${v}</span></li>`).join('')}</ul>
     <p class="est-h">Explanation</p><p class="est-text">${escH(estText(q, 'explanation'))}</p>
-    <details class="est-napkin"><summary>📝 Napkin Math</summary><div class="est-napkin-body"><p>${escH(estText(nm, 'introduction'))}</p>
+    ${srcs.length ? `<p class="est-h">Source${srcs.length > 1 ? 's' : ''}</p><ul class="est-src">${srcs.map(s => `<li><a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>`
+      + `${s.publisher || s.date ? ` <span>${[s.publisher, s.date].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ul>` : ''}</div>
+    <div class="est-napkin-body" id="est-view-b" hidden><p>${escH(estText(nm, 'introduction'))}</p>
       <ol class="est-steps">${(nm.i18n?.[LANG]?.steps?.map(label => ({label})) || nm.steps).map(st => !st.assumption && !st.calculation && !st.result
         ? `<li><span class="est-say">${escH(st.label)}</span></li>` : `<li><b>${escH(st.label)}</b>${st.result ? `<span class="est-res">${escH(st.result)}</span>` : ''}`
         + `${st.assumption || st.calculation ? `<span class="sub">${[st.assumption, st.calculation].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ol>
       <div class="est-napkin-end"><span>Rough estimate</span>≈ ${estShow(nm.estimatedAnswer, q)}</div>
-      <p class="est-ctx">A quick path to the right order of magnitude. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} above is the number that counts.</p></div></details>
-    ${srcs.length ? `<p class="est-h">Source${srcs.length > 1 ? 's' : ''}</p><ul class="est-src">${srcs.map(s => `<li><a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>`
-      + `${s.publisher || s.date ? ` <span>${[s.publisher, s.date].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ul>` : ''}`;
+      <p class="est-ctx">A quick path to the right order of magnitude. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} under "Your guess" is the number that counts.</p></div>`;
+  $('est-seg').hidden = false;
+  estView(false);
   const b = $('est-main');
   b.textContent = 'Play again'; b.onclick = estAgain;
   b.disabled = fresh;   // right after the guess a quick second tap must not skip the reveal
@@ -1626,6 +1629,14 @@ function estResults(q, fresh = false){
   $('est-share').textContent = 'Share my score';
   announce(`${verdict}. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} is ${estShow(a, q)}, you were off by ${estFactor(f)}.`);
 }
+// The switch under the score card: the guess with the answer, or the napkin math
+function estView(napkin){
+  $('est-view-a').hidden = napkin; $('est-view-b').hidden = !napkin;
+  $('est-seg-a').setAttribute('aria-pressed', String(!napkin));
+  $('est-seg-b').setAttribute('aria-pressed', String(napkin));
+}
+$('est-seg-a').addEventListener('click', () => estView(false));
+$('est-seg-b').addEventListener('click', () => estView(true));
 // Online: one result per device and day under "guesstimate-all", compared with everyone else's like the other games
 async function estReport(score){
   const el = $('est-today'), id = ER.id;

@@ -378,18 +378,18 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-est .est-score .today{margin-top:16px}
 .est-badge.off{background:var(--bg);color:var(--text);box-shadow:0 2px 0 rgba(0,0,0,.6)}
 .k-est .est-rows .fact{background:var(--surface-faint)}
-.k-est .est-score:not([hidden])~#est-body{margin-top:16px}
-/* Napkin Math: one button like the Your board / Perfect board keys, opening the card under it */
-.est-nap-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:0;padding:0 16px;border:0;cursor:pointer;font-family:var(--font)}
+/* "How to get there": a button at the bottom of the score card (like Your board / Perfect board, in the darker field
+   colour so it stands out on the card), opening the napkin math right under it */
+.k-est .est-score .est-nap-btn{grid-column:1 / -1;margin-top:16px;background:var(--surface-faint);box-shadow:0 2px 0 rgba(0,0,0,.45)}
+.est-nap-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:0 16px;border:0;cursor:pointer;font-family:var(--font)}
 .est-nap-btn::after{content:"";width:7px;height:7px;border-right:2px solid;border-bottom:2px solid;transform:translateY(-2px) rotate(45deg)}
 .est-nap-btn[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
-@media (hover:hover){.v2 .est-nap-btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--surface-edge);filter:brightness(1.08)}}
-.v2 .est-nap-btn:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge);filter:none}
-.est-nap{margin-top:16px}
-@media (max-width:639px){.k-est .est-score:not([hidden])~#est-body,.est-nap{margin-top:10px}}
+@media (hover:hover){.v2 .est-score .est-nap-btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 rgba(0,0,0,.45);filter:brightness(1.15)}}
+.v2 .est-score .est-nap-btn:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(0,0,0,.45);filter:none}
 /* Napkin Math: a card with the starting thought, then the steps as rows split by dashed lines (the step left, its value
    right; the first marked START), the rough result in bold, and the sources small underneath */
-.est-nap{padding:16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
+.est-nap{grid-column:1 / -1;margin-top:16px}
+.est-nap[hidden]{display:none}
 .est-nap-intro{margin:0 0 12px;font-size:16px;line-height:1.5;text-wrap:pretty}
 .est-nap-rows{margin:0;padding:0;list-style:none;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
 .est-nap-rows li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px dashed var(--line-strong);line-height:1.4}
@@ -716,6 +716,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
           <div class="today-bars" role="img"></div>
           <div class="today-axis" aria-hidden="true"></div>
         </div>
+        <button class="segbtn est-nap-btn" type="button" id="est-nap-btn" aria-expanded="false" aria-controls="est-nap">How to get there</button>
+        <div class="est-nap" id="est-nap" hidden></div>
       </div>
       <div class="est-box" id="est-qbox">
         <h1 class="est-q" id="est-q"></h1>
@@ -723,7 +725,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
           <div class="est-field" id="est-field"></div>
         </div>
       </div>
-      <div id="est-body"></div>
       <div class="bar">
         <button class="main" id="est-main" type="button"></button>
         <button class="share" id="est-share" type="button" hidden>Share my score</button>
@@ -1554,7 +1555,6 @@ function estRender(){
   $('est-note').textContent = ''; $('est-note').classList.remove('err');
   if (ER.guess != null) return estResults(q);
   $('est-score').hidden = true;
-  $('est-body').innerHTML = '';
   $('est-row').hidden = false;
   // The boxes of Guess the record: the unit inside on the right, 100 as the example (0 in each part of a time)
   const fields = estFields(q), words = {h: 'hours', min: 'minutes', s: 'seconds'};
@@ -1627,18 +1627,13 @@ function estResults(q, fresh = false){
   $('est-rows').innerHTML = `<li class="fact"><span class="fact-k">Your guess</span><span class="est-badge">${estBare(g, q)}</span></li>
       <li class="fact"><span class="fact-k">Answer${tag}</span><span class="est-badge ok">${estBare(a, q)}</span></li>
       <li class="fact"><span class="fact-k">Off by</span><span class="est-badge off">${estFactor(f)}</span></li>`;
-  $('est-body').innerHTML = `<button class="segbtn est-nap-btn" type="button" id="est-nap-btn" aria-expanded="false" aria-controls="est-nap">Napkin Math</button>
-    <div class="est-nap" id="est-nap" hidden>
+  $('est-nap-btn').setAttribute('aria-expanded', 'false');
+  $('est-nap').hidden = true;
+  $('est-nap').innerHTML = `
       <p class="est-nap-intro">${escH(estText(nm, 'introduction'))}</p>
       <ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.estimatedAnswer, q)}</span></li></ul>
-      ${srcs.length ? `<p class="est-nap-src">Source${srcs.length > 1 ? 's' : ''}: ${srcs.map(s => `<a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>${s.publisher ? ` (${escH(s.publisher)}${s.date ? `, ${escH(s.date)}` : ''})` : ''}`).join(' · ')}</p>` : ''}
-    </div>`;
+      ${srcs.length ? `<p class="est-nap-src">Source${srcs.length > 1 ? 's' : ''}: ${srcs.map(s => `<a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>${s.publisher ? ` (${escH(s.publisher)}${s.date ? `, ${escH(s.date)}` : ''})` : ''}`).join(' · ')}</p>` : ''}`;
   $('est-qbox').hidden = true;   // the question is not repeated in the results
-  $('est-nap-btn').addEventListener('click', e => {
-    const open = e.currentTarget.getAttribute('aria-expanded') !== 'true';
-    e.currentTarget.setAttribute('aria-expanded', String(open));
-    $('est-nap').hidden = !open;
-  });
   const b = $('est-main');
   b.textContent = 'Play again'; b.onclick = estAgain;
   b.disabled = fresh;   // right after the guess a quick second tap must not skip the reveal
@@ -1647,6 +1642,11 @@ function estResults(q, fresh = false){
   $('est-share').textContent = 'Share my score';
   announce(`${verdict}. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} is ${estShow(a, q)}, you were off by ${estFactor(f)}.`);
 }
+$('est-nap-btn').addEventListener('click', e => {
+  const open = e.currentTarget.getAttribute('aria-expanded') !== 'true';
+  e.currentTarget.setAttribute('aria-expanded', String(open));
+  $('est-nap').hidden = !open;
+});
 // Online: one result per device and day under "guesstimate-all": where the guess lay, shown against everyone else's with
 // the axis in this question's units (a tenth of the answer to ten times it)
 async function estReport(pos, ends){

@@ -171,6 +171,7 @@ a{color:inherit}
 .flag .btn{margin-top:6px}
 .flag .meta{margin:0}
 .hero:has(.flag){max-width:none}
+.flag-est{margin-top:16px}
 .sec{margin:32px 0 0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .sec+.tiles{margin-top:12px}
 
@@ -212,6 +213,9 @@ a{color:inherit}
 /* "Soon": one short dark chip everywhere (tile, header, menu), in place of the Play button or the arrow */
 .soon-chip{display:inline-block;padding:6px 12px;border-radius:6px;background:var(--surface);color:var(--signal);font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
 .soon-page p{margin:14px 0 20px;color:var(--muted);font-size:16px;line-height:1.5}
+/* On a sport tile the chip takes the Play button's place: its size, on the dark background; the picture a little dimmed */
+.tile .soon-chip{flex:none;white-space:nowrap;padding:9px 12px;background:var(--bg)}
+.tile:has(.soon-chip) .tile-art img{filter:grayscale(.35) brightness(.7)}
 .legal-line{margin:44px 0 8px;text-align:center;color:var(--muted);font-size:13px}
 .legal-line a{color:var(--muted)}
 /* Play button on a tile: rises on its hard edge like a key under the pointer, sinks when pressed */
@@ -1181,15 +1185,18 @@ function finishFooter(){
 function statusOf(keys){
   return '<span class="tile-status">Play</span>';
 }
-function bigTile(href, label, img, name, keys){
+function bigTile(href, label, img, name, keys, status = statusOf(keys)){
   return `<a class="tile" href="${href}" aria-label="${label}">
     <span class="tile-art">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>
-    <span class="tile-body"><span class="tile-name">${name}</span>${statusOf(keys)}</span>
+    <span class="tile-body"><span class="tile-name">${name}</span>${status}</span>
   </a>`;
 }
 const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
-// Sport tile over all games: to the sport page, or straight to the topic when the sport has only one
-const sportCard = s => bigTile(sportHref(s), SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(topicsOf(s)));
+// Sport tile over all games: to the sport page, or straight to the topic when the sport has only one.
+// A sport that is not open yet says "Coming soon" in place of Play and leads to its Coming soon page.
+const sportCard = s => SOON(s)
+  ? bigTile(sportHref(s), `${SPORTS[s].name}, coming soon`, sportImg(s), SPORTS[s].name, [], '<span class="soon-chip">Coming soon</span>')
+  : bigTile(sportHref(s), SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(topicsOf(s)));
 // Guess the record sits in front of the sports: one tile straight into today's record for each pool that only has that game
 const guessCards = () => {
   const ps = poolsFor('guess');
@@ -1281,6 +1288,17 @@ function renderHome(kind, sport){
       </div>
     </section>`;
   };
+  // Guesstimate gets the second big card, right under the flagship
+  const estFeature = () => `<section class="flag flag-est">
+      <a class="flag-art${KIND_ART.guesstimate ? '' : ' led'}" href="#guesstimate" aria-label="Guesstimate">${KIND_ART.guesstimate ? `<img src="${KIND_ART.guesstimate}" alt="">` : `<span class="tile-cards">GUESS</span>`}</a>
+      <div class="flag-body">
+        <p class="eyebrow">Guesstimate · think it through</p>
+        <h2 class="flag-name">How many times off are you?</h2>
+        <p class="flag-blurb">Surprising number questions from the world of sport. No one knows the answer, but you can work it out: estimate, calculate, then see how close you came.</p>
+        <a class="btn" href="#guesstimate">Play Guesstimate</a>
+        <p class="meta">${EST.length} questions · a calculator and hints if you need them</p>
+      </div>
+    </section>`;
   $('home').innerHTML = kind
     ? `<h1>${GAMES[kind].name}${sport ? ` · ${SPORTS[sport].name}` : ''}</h1>
       <p class="today">${GAMES[kind].blurb} ${sport || flat ? 'Pick a topic:' : 'Pick a sport:'}</p>
@@ -1292,6 +1310,7 @@ function renderHome(kind, sport){
         <div class="cta"><a class="btn" href="#${next}">Play now</a>
           <span class="meta">Next up: <b>${nextName}</b> · ${facts}</span></div>`}
       </section>
+      ${EST.length ? estFeature() : ''}
       <p class="sec">Pick a sport</p>
       <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(sportCard).join('')}</div>
       <p class="sec">The games</p>

@@ -26,4 +26,4 @@ rankle-nhlplayers	rankle	800
 blind-nhlplayers	blind	40
 sort-nhlplayers	sort	40
 guess-hockeyrecords	guess	100
-guesstimate-all	guess	100
+guesstimate-all	estimate	100

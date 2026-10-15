@@ -1474,7 +1474,8 @@ const estText = (q, k) => q.i18n?.[LANG]?.[k] ?? q[k];   // optional translation
 const estNum = v => Math.abs(v) >= EST_MAX || (v !== 0 && Math.abs(v) < 1e-6)
   ? v.toExponential(4).replace('.', decSep()) : v.toLocaleString(loc(), {maximumFractionDigits: Math.abs(v) < 10 ? 4 : 2});
 const estScore = f => Math.round(100 * Math.max(0, 1 - Math.log(f) / Math.log(10)));   // points for the comparison: 1× = 100, 10× off = 0
-const EST_ENDS = ['10× off', '1×'];   // the comparison runs from 10 times off (0 points) to spot on (100)
+// Where a guess lies for the comparison: 0 = ten times too low, 50 = exact, 100 = ten times too high (log scale)
+const estPos = (g, a) => Math.max(0, Math.min(100, Math.round(50 + 50 * Math.log10(g / a))));
 const estFactor = f => `${f.toLocaleString(loc(), {minimumFractionDigits: 2, maximumFractionDigits: 2})}×`;
 let ER = null;   // the round: {id, input, guess}
 const estSave = () => store('est-round', ER);
@@ -1615,7 +1616,8 @@ function estResults(q, fresh = false){
   const fill = $('est-fill');
   fill.style.width = '0';
   requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = `${score}%`; }));
-  estReport(score);
+  const round2 = v => EST_TIME[q.unit] ? v : Number(v.toPrecision(2));   // the axis ends rounded to two digits (12,000,000)
+  estReport(estPos(g, a), [estBare(round2(a / 10), q), estBare(round2(a * 10), q)]);
   const nm = q.napkinMath, srcs = (q.sources || []).filter(s => /^https?:\/\//.test(s.url));
   const tag = {calculated: '<span class="est-tag">Calculated</span>', estimate: '<span class="est-tag">Model estimate</span>'}[q.answerType] || '';
   // A step as a row: written as one sentence it is split at its last "=", "≈" or "→" when what follows is short (the value)
@@ -1650,15 +1652,16 @@ function estResults(q, fresh = false){
   $('est-share').textContent = 'Share my score';
   announce(`${verdict}. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} is ${estShow(a, q)}, you were off by ${estFactor(f)}.`);
 }
-// Online: one result per device and day under "guesstimate-all", compared with everyone else's like the other games
-async function estReport(score){
+// Online: one result per device and day under "guesstimate-all": where the guess lay, shown against everyone else's with
+// the axis in this question's units (a tenth of the answer to ten times it)
+async function estReport(pos, ends){
   const el = $('est-today'), id = ER.id;
   el.hidden = true;
   if (!SB || !crypto.randomUUID) return;
   try {
-    await sb('results', {day: today(), game: 'guesstimate-all', device: deviceId(), score, max: 100}, [409]);
+    await sb('results', {day: today(), game: 'guesstimate-all', device: deviceId(), score: pos, max: 100}, [409]);
     const rows = await sb('rpc/daily_stats', {p_day: today(), p_game: 'guesstimate-all'});
-    if (ER && ER.id === id && ER.guess != null) showStats(rows, score, 100, el, false, EST_ENDS);
+    if (ER && ER.id === id && ER.guess != null) showStats(rows, pos, 100, el, false, ends);
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 function estAgain(){

@@ -368,27 +368,25 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-est .est-score[hidden]{display:none}
 .page.k-est .seg.est-seg{display:flex}   /* the Your board / Perfect board switch of the other games: Your guess / Napkin Math */
 .page.k-est .seg.est-seg[hidden]{display:none}
-.k-est .est-seg:not([hidden])+.est-box{margin-top:24px}   /* 24px from the switch, like the board in the other games */
 .k-est .fact{align-items:center;min-height:48px;padding:8px 12px;border-radius:10px;background:var(--surface)}
 .k-est .fact-k{font-size:15px;font-weight:700;color:var(--muted)}
 .k-est .fact-v{font-size:15px;font-weight:700;color:var(--text)}
 .est-tag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
-.est-h{margin:24px 0 8px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.est-text{margin:0;font-size:16px;line-height:1.5;text-wrap:pretty}
-.est-napkin-body{margin-top:16px}
-.est-napkin-body>p{margin:0 0 12px;color:var(--muted);font-size:15px;line-height:1.45}
-.est-steps{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none;counter-reset:st}
-.est-steps li{display:grid;grid-template-columns:28px 1fr auto;gap:2px 10px;align-items:baseline;padding:10px 12px;border-radius:8px;background:var(--surface);counter-increment:st}
-.est-steps li::before{content:counter(st);grid-column:1;grid-row:1 / span 2;color:var(--signal);font-weight:800}
-.est-steps b{grid-column:2;grid-row:1;font-size:15px}
-.est-steps .est-res{grid-column:3;grid-row:1 / span 2;align-self:center;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
-.est-steps .sub{grid-column:2;grid-row:2;font-size:14px;color:var(--muted)}
-.est-steps .est-say{grid-column:2 / -1;grid-row:1;font-size:15px;line-height:1.45}   /* a step written as one sentence */
-.est-napkin-end{display:flex;justify-content:space-between;gap:12px;margin-top:10px;padding:10px 12px;border-top:1px solid var(--line);font-weight:800}
-.est-napkin-end span{color:var(--muted);font-weight:700}
-.est-src{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
-.est-src a{color:var(--signal);font-weight:700}
-.est-src span{color:var(--muted);font-size:14px}
+.k-est .est-seg:not([hidden])~#est-body{margin-top:24px}   /* 24px from the switch, like the board in the other games */
+/* Napkin Math: a card with the starting thought, then the steps as rows split by dashed lines (the step left, its value
+   right; the first marked START), the rough result in bold, and the sources small underneath */
+.est-nap{padding:16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge)}
+.est-nap-intro{margin:0 0 12px;font-size:16px;line-height:1.5;text-wrap:pretty}
+.est-nap-rows{margin:0;padding:0;list-style:none;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
+.est-nap-rows li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px dashed var(--line-strong);line-height:1.4}
+.est-nap-rows li:first-child{border-top:0}
+.est-nap-rows .v{flex:none;max-width:45%;text-align:right;font-weight:700}
+.est-nap-rows li.first .v{color:var(--signal)}
+.est-nap-rows li.end{font-weight:800;font-size:15px}
+.est-start{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:999px;background:var(--signal);color:var(--bg);
+  font:800 11px var(--font);letter-spacing:.08em;vertical-align:1px}
+.est-nap-src{margin:14px 0 0;font-size:12px;font-weight:700;letter-spacing:.08em;line-height:1.5;text-transform:uppercase;color:var(--muted)}
+.est-nap-src a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 :is(.k-guess,.k-est) .guess-unit{flex:none;margin:0;font-size:17px;font-weight:700;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){:is(.k-guess,.k-est) .gbox{transition:none}}
 /* Guess the record results: the facts as rows in the card colour like the other results (label left, value right) */
@@ -709,7 +707,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
         <button class="segbtn" type="button" id="est-seg-a" aria-pressed="true">Your guess</button>
         <button class="segbtn" type="button" id="est-seg-b" aria-pressed="false">Napkin Math</button>
       </div>
-      <div class="est-box">
+      <div class="est-box" id="est-qbox">
         <h1 class="est-q" id="est-q"></h1>
         <div class="est-row" id="est-row" hidden>
           <div class="est-field" id="est-field"></div>
@@ -1537,7 +1535,7 @@ function estNew(id, avoid){
 }
 function estRender(){
   const q = EST.find(x => x.id === ER.id);
-  $('est-empty').hidden = true; $('est-play').hidden = false;
+  $('est-empty').hidden = true; $('est-play').hidden = false; $('est-qbox').hidden = false;
   $('est-q').textContent = estText(q, 'question');
   $('est-note').textContent = ''; $('est-note').classList.remove('err');
   if (ER.guess != null) return estResults(q);
@@ -1606,19 +1604,26 @@ function estResults(q, fresh = false){
   requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = `${score}%`; }));
   estReport(score);
   const nm = q.napkinMath, srcs = (q.sources || []).filter(s => /^https?:\/\//.test(s.url));
-  const facts = [['Your guess', estShow(g, q)],
-    [`Answer${{calculated: '<span class="est-tag">Calculated</span>', estimate: '<span class="est-tag">Model estimate</span>'}[q.answerType] || ''}`, estShow(a, q)],
-    q.referencePeriod ? ['Refers to', escH(estText(q, 'referencePeriod'))] : null].filter(Boolean);
-  $('est-body').innerHTML = `<div id="est-view-a"><ul class="board">${facts.map(([k, v]) => `<li class="fact"><span class="fact-k">${k}</span><span class="fact-v">${v}</span></li>`).join('')}</ul>
-    <p class="est-h">Explanation</p><p class="est-text">${escH(estText(q, 'explanation'))}</p>
-    ${srcs.length ? `<p class="est-h">Source${srcs.length > 1 ? 's' : ''}</p><ul class="est-src">${srcs.map(s => `<li><a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>`
-      + `${s.publisher || s.date ? ` <span>${[s.publisher, s.date].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ul>` : ''}</div>
-    <div class="est-napkin-body" id="est-view-b" hidden><p>${escH(estText(nm, 'introduction'))}</p>
-      <ol class="est-steps">${(nm.i18n?.[LANG]?.steps?.map(label => ({label})) || nm.steps).map(st => !st.assumption && !st.calculation && !st.result
-        ? `<li><span class="est-say">${escH(st.label)}</span></li>` : `<li><b>${escH(st.label)}</b>${st.result ? `<span class="est-res">${escH(st.result)}</span>` : ''}`
-        + `${st.assumption || st.calculation ? `<span class="sub">${[st.assumption, st.calculation].filter(Boolean).map(escH).join(' · ')}</span>` : ''}</li>`).join('')}</ol>
-      <div class="est-napkin-end"><span>Rough estimate</span>≈ ${estShow(nm.estimatedAnswer, q)}</div>
-      <p class="est-ctx">A quick path to the right order of magnitude. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} under "Your guess" is the number that counts.</p></div>`;
+  const tag = {calculated: '<span class="est-tag">Calculated</span>', estimate: '<span class="est-tag">Model estimate</span>'}[q.answerType] || '';
+  // A step as a row: written as one sentence it is split at its last "=", "≈" or "→" when what follows is short (the value)
+  const row = (st, i) => {
+    let left = st.label, v = st.result || '';
+    if (!v && !st.assumption && !st.calculation) {
+      const m = left.match(/^(.*\S)\s+(=|≈|→)\s+([^=≈→]+?)\.?$/);
+      if (m && m[3].length <= 36) { left = m[1].replace(/^(Calculation|Assumption):\s*/i, '').replace(/^\p{Ll}/u, c => c.toUpperCase()); v = `${m[2] === '=' ? '' : m[2] + ' '}${m[3]}`; }
+    } else if (st.calculation) left = `${st.label} (${st.calculation})`;
+    return `<li${i === 0 ? ' class="first"' : ''}><span>${escH(left)}${i === 0 ? '<span class="est-start">START</span>' : ''}</span>${v ? `<span class="v">${escH(v)}</span>` : ''}</li>`;
+  };
+  const steps = nm.i18n?.[LANG]?.steps?.map(label => ({label})) || nm.steps;
+  $('est-body').innerHTML = `<div id="est-view-a"><ul class="board">
+      <li class="fact"><span class="fact-k">Your guess</span><span class="fact-v">${estShow(g, q)}</span></li>
+      <li class="fact"><span class="fact-k">Answer${tag}</span><span class="fact-v">${estShow(a, q)}</span></li></ul></div>
+    <div class="est-nap" id="est-view-b" hidden>
+      <p class="est-nap-intro">${escH(estText(nm, 'introduction'))}</p>
+      <ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.estimatedAnswer, q)}</span></li></ul>
+      ${srcs.length ? `<p class="est-nap-src">Source${srcs.length > 1 ? 's' : ''}: ${srcs.map(s => `<a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>${s.publisher ? ` (${escH(s.publisher)}${s.date ? `, ${escH(s.date)}` : ''})` : ''}`).join(' · ')}</p>` : ''}
+    </div>`;
+  $('est-qbox').hidden = true;   // the question is not repeated in the results
   $('est-seg').hidden = false;
   estView(false);
   const b = $('est-main');

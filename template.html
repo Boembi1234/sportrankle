@@ -368,8 +368,12 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-est .est-score[hidden]{display:none}
 .page.k-est .seg.est-seg{display:flex}   /* the Your board / Perfect board switch of the other games: Your guess / Napkin Math */
 .page.k-est .seg.est-seg[hidden]{display:none}
-.k-est .fact{align-items:center;min-height:48px;padding:8px 12px;border-radius:10px;background:var(--surface)}
-.k-est .fact-k{font-size:15px;font-weight:700;color:var(--muted)}
+.k-est .fact{align-items:center;min-height:48px;padding:4px 9px 4px 12px;border-radius:10px;background:var(--surface)}
+.k-est .fact-k{font-size:17px;font-weight:700;color:var(--text)}   /* like the row titles of the other games */
+/* the numbers in the points box of the other games: your guess blue, the answer green */
+.est-badge{flex:none;padding:6px 10px;border-radius:6px;background:var(--signal);color:var(--bg);box-shadow:0 2px 0 var(--signal-edge);
+  font-size:15px;font-weight:800;line-height:1.2;font-variant-numeric:tabular-nums}
+.est-badge.ok{background:var(--led-ok);box-shadow:0 2px 0 var(--correct)}
 .k-est .fact-v{font-size:15px;font-weight:700;color:var(--text)}
 .est-tag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
 .k-est .est-seg:not([hidden])~#est-body{margin-top:24px}   /* 24px from the switch, like the board in the other games */
@@ -1501,6 +1505,7 @@ function estDur(secs, q){
   const m = Math.floor(secs / 60), sec = secs - m * 60;
   return `${m}:${Number.isInteger(sec) ? two(sec) : sec.toFixed(1).padStart(4, '0').replace('.', decSep())} min`;
 }
+const estBare = (v, q) => EST_TIME[q.unit] ? estDur(v, q) : estNum(v);   // the number alone (a time keeps its h / min)
 const estShow = (v, q) => EST_TIME[q.unit] ? estDur(v, q) : `${estNum(v)} ${escH(estText(q, 'unit'))}`;
 
 function estRoute(h){
@@ -1616,8 +1621,8 @@ function estResults(q, fresh = false){
   };
   const steps = nm.i18n?.[LANG]?.steps?.map(label => ({label})) || nm.steps;
   $('est-body').innerHTML = `<div id="est-view-a"><ul class="board">
-      <li class="fact"><span class="fact-k">Your guess</span><span class="fact-v">${estShow(g, q)}</span></li>
-      <li class="fact"><span class="fact-k">Answer${tag}</span><span class="fact-v">${estShow(a, q)}</span></li></ul></div>
+      <li class="fact"><span class="fact-k">Your guess</span><span class="est-badge">${estBare(g, q)}</span></li>
+      <li class="fact"><span class="fact-k">Answer${tag}</span><span class="est-badge ok">${estBare(a, q)}</span></li></ul></div>
     <div class="est-nap" id="est-view-b" hidden>
       <p class="est-nap-intro">${escH(estText(nm, 'introduction'))}</p>
       <ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.estimatedAnswer, q)}</span></li></ul>

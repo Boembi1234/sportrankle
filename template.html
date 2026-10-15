@@ -302,6 +302,10 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-sort .board>li.dragging{z-index:2}
 .k-sort .row{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .k-sort .board>li.dragging .row{cursor:grabbing;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+/* The grip on the right: six dots (two columns of three) say the rows can be dragged; gone once the order is revealed */
+.k-sort .grip{flex:none;width:10px;height:16px;margin-left:auto;margin-right:2px;color:var(--muted);
+  background:radial-gradient(circle,currentColor 1.6px,transparent 2px) 0 0 / 5px 5.5px}
+.k-sort .row:disabled .grip,.page.k-sort.done .grip{display:none}
 @media (prefers-reduced-motion:reduce){.k-sort .board>li{transition:none}}
 .page:is(.k-blind,.k-sort,.k-guess,.k-ringer,.k-est) .question{margin:24px 0 0;font-size:17px;font-weight:700;font-stretch:100%;line-height:1.25;text-wrap:balance}
 .page:is(.k-blind,.k-sort,.k-guess):not(.done) .question{font-size:17px;margin-top:24px}
@@ -1957,7 +1961,7 @@ function startSort(){
       <span class="c-rank"></span><span class="row-no">${i + 1}</span>
       <span class="body"><span class="cat"></span>
         <span class="res"><span class="vals"></span><span class="unit"></span></span></span>
-      <span class="pts"></span>
+      <span class="pts"></span><span class="grip" aria-hidden="true"></span>
     </button></li>`).join('');
   range(PICK).forEach(i => {
     const c = card('rank');

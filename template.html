@@ -396,18 +396,14 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 /* the calculation as a box of its own: the start value, then one operation per row (× 90, ÷ 60), the result at the bottom */
 .est-calc-box{padding:4px 16px;border-radius:8px;background:var(--surface-faint);font-family:var(--font);font-size:15px}
 .est-calc-box li{align-items:center;min-height:48px;padding:6px 0}
-.est-calc-box li>span:first-child{font-weight:600;color:var(--muted)}
-.est-calc-box li.first>span:first-child{color:var(--text)}
-.est-calc-box .v{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
-.est-calc-box .op{display:inline-block;width:1.2em;color:var(--signal);text-align:center}
+.est-calc-box li>span:first-child{font-weight:700;color:var(--text)}
+.est-calc-box .est-badge{white-space:nowrap}   /* every number in a dark box like Off by, the result in green like the answer */
+.est-calc-box .op{color:var(--signal);margin-right:2px}
 .est-calc-box li.end{border-top:2px solid var(--line-strong)}
-.est-calc-box li.end>span:first-child{font-weight:800;font-size:16px;color:var(--text)}
-.est-calc-box li.end .v{font-size:20px}
+.est-calc-box li.end>span:first-child{font-weight:800}
 .est-nap-rows .v{flex:none;max-width:45%;text-align:right;font-weight:700}
 .est-nap-rows li.first .v{color:var(--signal)}
 .est-nap-rows li.end{font-weight:800;font-size:15px}
-.est-start{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:999px;background:var(--signal);color:var(--bg);
-  font:800 11px var(--font);letter-spacing:.08em;vertical-align:1px}
 :is(.k-guess,.k-est) .guess-unit{flex:none;margin:0;font-size:17px;font-weight:700;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){:is(.k-guess,.k-est) .gbox{transition:none}}
 /* Guess the record results: the facts as rows in the card colour like the other results (label left, value right) */
@@ -1637,8 +1633,8 @@ function estResults(q, fresh = false){
   $('est-nap-btn').setAttribute('aria-expanded', 'false');
   $('est-nap').hidden = true;
   $('est-nap').innerHTML = `
-      ${nm.calc ? `<ul class="est-nap-rows est-calc-box">${nm.calc.rows.map((r, i) => `<li${i === 0 ? ' class="first"' : ''}><span>${escH(r.label)}${i === 0 ? '<span class="est-start">START</span>' : ''}</span>`
-        + `<span class="v">${i === 0 ? '' : `<span class="op">${r.op}</span> `}${estNum(r.v)}</span></li>`).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.calc.result, q)}</span></li></ul>`
+      ${nm.calc ? `<ul class="est-nap-rows est-calc-box">${nm.calc.rows.map((r, i) => `<li><span>${escH(r.label)}</span>`
+        + `<span class="est-badge off">${i === 0 ? '' : `<span class="op">${r.op}</span> `}${estNum(r.v)}</span></li>`).join('')}<li class="end"><span>Rough estimate</span><span class="est-badge ok">≈ ${estShow(nm.calc.result, q)}</span></li></ul>`
       : `<ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.estimatedAnswer, q)}</span></li></ul>`}`;
   $('est-qbox').hidden = true;   // the question is not repeated in the results
   const b = $('est-main');

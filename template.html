@@ -707,7 +707,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
         <ul class="board est-rows" id="est-rows"></ul>
         <div class="today" id="est-today" hidden>
           <div class="today-bars" role="img"></div>
-          <div class="today-axis" aria-hidden="true"></div>
         </div>
         <div class="est-nap" id="est-nap"></div>
       </div>
@@ -1099,7 +1098,8 @@ function showStats(rows, score, max, el = $('today'), lines = true, ends = [0, m
   bars.innerHTML = bins.map((n, i) => `<i${!lines && i === mine ? ' class="me"' : i === ok ? ' class="ok"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('')
     + (lines ? `<span class="today-avg" style="--x:${at(avg)}"></span><span class="today-me" style="--x:${at(score)}"></span>` : '');
   bars.setAttribute('aria-label', `Today's scores: ${total} played, average ${Math.round(avg)}, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
-  el.querySelector('.today-axis').innerHTML = `<span>${ends[0]}</span><span>${ends[1]}</span>`;
+  const axis = el.querySelector('.today-axis');   // Guesstimate's chart has no labels
+  if (axis) axis.innerHTML = `<span>${ends[0]}</span><span>${ends[1]}</span>`;
   el.hidden = false;
 }
 
@@ -1599,10 +1599,7 @@ function estResults(q, fresh = false){
   const a = q.answer, g = ER.guess, f = Math.max(g / a, a / g);
   const verdict = g === a ? 'Spot on' : g > a ? 'Too high' : 'Too low';
   $('est-score').hidden = false;
-  // The axis ends: two digits, large numbers shortened (1.2M, 140k, 3B); a time stays a time
-  const end = v => EST_TIME[q.unit] ? estDur(v, q) : v < 1000 ? estNum(Number(v.toPrecision(2)))
-    : Number(v.toPrecision(2)).toLocaleString('en-US', {notation: 'compact', maximumSignificantDigits: 2}).replace('K', 'k');
-  estReport(estPos(g, a), [end(a / 10), end(a * 10)]);
+  estReport(estPos(g, a));
   const nm = q.napkinMath;
   const tag = {calculated: '<span class="est-tag">Calculated</span>', estimate: '<span class="est-tag">Model estimate</span>'}[q.answerType] || '';
   // A step as a row: written as one sentence it is split at its last "=", "≈" or "→" when what follows is short (the value)
@@ -1631,16 +1628,16 @@ function estResults(q, fresh = false){
   $('est-share').textContent = 'Share my score';
   announce(`${verdict}. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} is ${estShow(a, q)}, you were off by ${estFactor(f)}.`);
 }
-// Online: one result per device and day under "guesstimate-all": where the guess lay, shown against everyone else's with
-// the axis in this question's units (a tenth of the answer to ten times it)
-async function estReport(pos, ends){
+// Online: one result per device and day under "guesstimate-all": where the guess lay (a tenth of the answer to ten times
+// it), shown against everyone else's; your bar blue, the right answer's green
+async function estReport(pos){
   const el = $('est-today'), id = ER.id;
   el.hidden = true;
   if (!SB || !crypto.randomUUID) return;
   try {
     await sb('results', {day: today(), game: 'guesstimate-all', device: deviceId(), score: pos, max: 100}, [409]);
     const rows = await sb('rpc/daily_stats', {p_day: today(), p_game: 'guesstimate-all'});
-    if (ER && ER.id === id && ER.guess != null) showStats(rows, pos, 100, el, false, ends, 50);
+    if (ER && ER.id === id && ER.guess != null) showStats(rows, pos, 100, el, false, undefined, 50);
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 function estAgain(){

@@ -720,7 +720,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
       <div class="bar">
         <button class="main" id="est-main" type="button"></button>
         <button class="share" id="est-share" type="button" hidden>Share my score</button>
-        <a class="share est-back" id="est-back" href="#" hidden>Back to the games</a>
         <p class="est-note" id="est-note" aria-live="polite"></p>
       </div>
     </section>
@@ -1562,7 +1561,7 @@ function estRender(){
   const inp = ins[0];
   const b = $('est-main');
   b.hidden = false; b.textContent = 'Lock in my guess'; b.onclick = estConfirm;
-  $('est-share').hidden = true; $('est-back').hidden = true;
+  $('est-share').hidden = true;
   estCheck();
   if (innerWidth >= 640) setTimeout(() => inp.focus(), 50);
 }
@@ -1628,7 +1627,7 @@ function estResults(q, fresh = false){
   b.textContent = 'Play again'; b.onclick = estAgain;
   b.disabled = fresh;   // right after the guess a quick second tap must not skip the reveal
   if (fresh) setTimeout(() => { b.disabled = false; }, 700);
-  $('est-row').hidden = true; $('est-field').innerHTML = ''; $('est-share').hidden = false; $('est-back').hidden = false;
+  $('est-row').hidden = true; $('est-field').innerHTML = ''; $('est-share').hidden = false;
   $('est-share').textContent = 'Share my score';
   announce(`${verdict}. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} is ${estShow(a, q)}, you were off by ${estFactor(f)}.`);
 }

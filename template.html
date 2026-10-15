@@ -378,11 +378,10 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-est .est-score .today{margin-top:16px}
 .est-badge.off{background:var(--bg);color:var(--text);box-shadow:0 2px 0 rgba(0,0,0,.6)}
 .k-est .est-rows .fact{background:var(--surface-faint)}
-/* "How to get there": the calculation at the bottom of the score card, always open, under a small heading */
-.est-nap-h{grid-column:1 / -1;margin:20px 0 0;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+/* the calculation at the bottom of the score card, always open */
 /* Napkin Math: a card with the starting thought, then the steps as rows split by dashed lines (the step left, its value
    right; the first marked START), the rough result in bold, and the sources small underneath */
-.est-nap{grid-column:1 / -1;margin-top:8px}
+.est-nap{grid-column:1 / -1;margin-top:16px}
 .est-nap-rows{margin:0;padding:0;list-style:none;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
 .est-nap-rows li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px dashed var(--line-strong);line-height:1.4}
 .est-nap-rows li:first-child{border-top:0}
@@ -712,7 +711,6 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
           <div class="today-bars" role="img"></div>
           <div class="today-axis" aria-hidden="true"></div>
         </div>
-        <p class="est-nap-h">How to get there</p>
         <div class="est-nap" id="est-nap"></div>
       </div>
       <div class="est-box" id="est-qbox">

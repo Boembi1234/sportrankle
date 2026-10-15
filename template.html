@@ -1089,7 +1089,7 @@ async function reportResult(score, max){
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 // The histogram under the results from the score counts of everyone today ([{score, n}])
-function showStats(rows, score, max, el = $('today'), lines = true){   // lines: false colours your bar blue instead
+function showStats(rows, score, max, el = $('today'), lines = true, ends = [0, max]){   // lines: false colours your bar blue instead; ends: the axis labels
   const total = rows.reduce((a, r) => a + Number(r.n), 0);
   const below = rows.filter(r => r.score < score).reduce((a, r) => a + Number(r.n), 0);
   if (!total) return;
@@ -1106,7 +1106,7 @@ function showStats(rows, score, max, el = $('today'), lines = true){   // lines:
   bars.innerHTML = bins.map((n, i) => `<i${!lines && i === mine ? ' class="me"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('')
     + (lines ? `<span class="today-avg" style="--x:${at(avg)}"></span><span class="today-me" style="--x:${at(score)}"></span>` : '');
   bars.setAttribute('aria-label', `Today's scores: ${total} played, average ${Math.round(avg)}, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
-  el.querySelector('.today-axis').innerHTML = `<span>0</span><span>${max}</span>`;
+  el.querySelector('.today-axis').innerHTML = `<span>${ends[0]}</span><span>${ends[1]}</span>`;
   el.hidden = false;
 }
 
@@ -1474,6 +1474,7 @@ const estText = (q, k) => q.i18n?.[LANG]?.[k] ?? q[k];   // optional translation
 const estNum = v => Math.abs(v) >= EST_MAX || (v !== 0 && Math.abs(v) < 1e-6)
   ? v.toExponential(4).replace('.', decSep()) : v.toLocaleString(loc(), {maximumFractionDigits: Math.abs(v) < 10 ? 4 : 2});
 const estScore = f => Math.round(100 * Math.max(0, 1 - Math.log(f) / Math.log(10)));   // points for the comparison: 1× = 100, 10× off = 0
+const EST_ENDS = ['10× off', '1×'];   // the comparison runs from 10 times off (0 points) to spot on (100)
 const estFactor = f => `${f.toLocaleString(loc(), {minimumFractionDigits: 2, maximumFractionDigits: 2})}×`;
 let ER = null;   // the round: {id, input, guess}
 const estSave = () => store('est-round', ER);
@@ -1657,7 +1658,7 @@ async function estReport(score){
   try {
     await sb('results', {day: today(), game: 'guesstimate-all', device: deviceId(), score, max: 100}, [409]);
     const rows = await sb('rpc/daily_stats', {p_day: today(), p_game: 'guesstimate-all'});
-    if (ER && ER.id === id && ER.guess != null) showStats(rows, score, 100, el, false);
+    if (ER && ER.id === id && ER.guess != null) showStats(rows, score, 100, el, false, EST_ENDS);
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 function estAgain(){

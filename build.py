@@ -1171,6 +1171,7 @@ def main():
     # it needs the list of games. supabase/seed_games.txt is that list as of the last migration.
     seed_now = {f"{k}-{key}" for k, g in KIND_NAMES.items() for key, cfg in GAMES.items()
                 if not SPORTS[cfg["sport"]].get("soon") and k in (cfg.get("kinds") or ["rankle", "blind", "sort"])}
+    seed_now.add("guesstimate-all")   # Guesstimate: one game key for all its questions
     seed_file = HERE / "supabase" / "seed_games.txt"
     seed_known = {line.split("	")[0] for line in seed_file.read_text(encoding="utf-8").splitlines() if line.strip()} if seed_file.exists() else set()
     if seed_now != seed_known:

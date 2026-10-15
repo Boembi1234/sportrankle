@@ -365,13 +365,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .est-back{display:flex;align-items:center;justify-content:center;text-decoration:none}
 .chip.demo{background:var(--signal);box-shadow:0 2px 0 var(--signal-edge);color:var(--bg)}
 /* Results: the factor in the score card, the facts as rows, the explanation, Napkin Math to open, the sources */
-.k-est .led.est-score{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px}
-.k-est .led.est-score[hidden]{display:none}
-.est-fac{font-size:40px;font-weight:900;line-height:1;color:var(--signal);font-variant-numeric:tabular-nums}
-.est-fac small{display:block;margin-top:6px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.est-verdict{flex:none;padding:8px 14px;border-radius:6px;font-size:15px;font-weight:800}
-.est-verdict.hi,.est-verdict.lo{background:var(--bg);color:var(--text)}
-.est-verdict.ok{background:var(--correct);color:var(--bg)}
+.k-est .est-score[hidden]{display:none}
+.k-est .est-score:not([hidden])+.est-box{margin-top:16px}   /* the score card first, the question under it */
 .k-est .fact{align-items:center;min-height:48px;padding:8px 12px;border-radius:10px;background:var(--surface)}
 .k-est .fact-k{font-size:15px;font-weight:700;color:var(--muted)}
 .k-est .fact-v{font-size:15px;font-weight:700;color:var(--text)}
@@ -704,13 +699,21 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
       <div class="bar"><a class="share est-back" href="#">Back to the games</a></div>
     </section>
     <section id="est-play" hidden>
+      <div class="led est-score" id="est-score" hidden>
+        <div><span class="led-num" id="est-off"></span></div>
+        <div class="led-side"><span class="led-num" id="est-verdict"></span></div>
+        <div class="led-bar" aria-hidden="true"><i id="est-fill"></i></div>
+        <div class="today" id="est-today" hidden>
+          <div class="today-bars" role="img"></div>
+          <div class="today-axis" aria-hidden="true"></div>
+        </div>
+      </div>
       <div class="est-box">
         <h1 class="est-q" id="est-q"></h1>
         <div class="est-row" id="est-row" hidden>
           <div class="est-field" id="est-field"></div>
         </div>
       </div>
-      <div class="led est-score" id="est-score" hidden></div>
       <div id="est-body"></div>
       <div class="bar">
         <button class="main" id="est-main" type="button"></button>
@@ -1077,8 +1080,7 @@ async function reportResult(score, max){
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 // The histogram under the results from the score counts of everyone today ([{score, n}])
-function showStats(rows, score, max){
-  const el = $('today');
+function showStats(rows, score, max, el = $('today')){
   const total = rows.reduce((a, r) => a + Number(r.n), 0);
   const below = rows.filter(r => r.score < score).reduce((a, r) => a + Number(r.n), 0);
   if (!total) return;
@@ -1089,11 +1091,12 @@ function showStats(rows, score, max){
   rows.forEach(r => { bins[Math.min(nb - 1, Math.floor(r.score / width))] += Number(r.n); });
   const top = Math.max(...bins), avg = rows.reduce((a, r) => a + r.score * Number(r.n), 0) / total;
   const pct = Math.round(100 * below / (total - 1));
-  G.stat = total < 10 ? null : {pct, total};
-  $('today-bars').innerHTML = bins.map(n => `<i style="--v:${n / top}" title="${n}"></i>`).join('')
+  if (el === $('today')) G.stat = total < 10 ? null : {pct, total};
+  const bars = el.querySelector('.today-bars');
+  bars.innerHTML = bins.map(n => `<i style="--v:${n / top}" title="${n}"></i>`).join('')
     + `<span class="today-avg" style="--x:${at(avg)}"></span><span class="today-me" style="--x:${at(score)}"></span>`;
-  $('today-bars').setAttribute('aria-label', `Today's scores: ${total} played, average ${Math.round(avg)}, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
-  $('today-axis').innerHTML = `<span>0</span><span>${max}</span>`;
+  bars.setAttribute('aria-label', `Today's scores: ${total} played, average ${Math.round(avg)}, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
+  el.querySelector('.today-axis').innerHTML = `<span>0</span><span>${max}</span>`;
   el.hidden = false;
 }
 
@@ -1460,6 +1463,7 @@ const escH = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '
 const estText = (q, k) => q.i18n?.[LANG]?.[k] ?? q[k];   // optional translations per question: {"i18n": {"de": {"question": ...}}}
 const estNum = v => Math.abs(v) >= EST_MAX || (v !== 0 && Math.abs(v) < 1e-6)
   ? v.toExponential(4).replace('.', decSep()) : v.toLocaleString(loc(), {maximumFractionDigits: Math.abs(v) < 10 ? 4 : 2});
+const estScore = f => Math.round(100 * Math.max(0, 1 - Math.log(f) / Math.log(10)));   // points for the comparison: 1× = 100, 10× off = 0
 const estFactor = f => `${f.toLocaleString(loc(), {minimumFractionDigits: 2, maximumFractionDigits: 2})}×`;
 let ER = null;   // the round: {id, input, guess}
 const estSave = () => store('est-round', ER);
@@ -1589,10 +1593,17 @@ function estConfirm(){
 }
 function estResults(q, fresh = false){
   const a = q.answer, g = ER.guess, f = Math.max(g / a, a / g);
-  const [cls, verdict] = g === a ? ['ok', 'Spot on'] : g > a ? ['hi', 'Too high'] : ['lo', 'Too low'];
-  const sc = $('est-score');
-  sc.hidden = false;
-  sc.innerHTML = `<div class="est-fac">${estFactor(f)}<small>${g === a ? 'perfect' : 'off by'}</small></div><span class="est-verdict ${cls}">${verdict}</span>`;
+  const verdict = g === a ? 'Spot on' : g > a ? 'Too high' : 'Too low';
+  // The score card of the other games: "Off by 1.53×" where they show 25/100, the verdict where they show the share,
+  // the bar filled by closeness (1× full, 10× off empty), then the comparison with everyone else
+  const score = estScore(f);
+  $('est-score').hidden = false;
+  $('est-off').textContent = `Off by ${estFactor(f)}`;
+  $('est-verdict').textContent = verdict;
+  const fill = $('est-fill');
+  fill.style.width = '0';
+  requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = `${score}%`; }));
+  estReport(score);
   const nm = q.napkinMath, srcs = (q.sources || []).filter(s => /^https?:\/\//.test(s.url));
   const facts = [['Your guess', estShow(g, q)],
     [`Answer${{calculated: '<span class="est-tag">Calculated</span>', estimate: '<span class="est-tag">Model estimate</span>'}[q.answerType] || ''}`, estShow(a, q)],
@@ -1614,6 +1625,17 @@ function estResults(q, fresh = false){
   $('est-row').hidden = true; $('est-field').innerHTML = ''; $('est-share').hidden = false; $('est-back').hidden = false;
   $('est-share').textContent = 'Share my score';
   announce(`${verdict}. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} is ${estShow(a, q)}, you were off by ${estFactor(f)}.`);
+}
+// Online: one result per device and day under "guesstimate-all", compared with everyone else's like the other games
+async function estReport(score){
+  const el = $('est-today'), id = ER.id;
+  el.hidden = true;
+  if (!SB || !crypto.randomUUID) return;
+  try {
+    await sb('results', {day: today(), game: 'guesstimate-all', device: deviceId(), score, max: 100}, [409]);
+    const rows = await sb('rpc/daily_stats', {p_day: today(), p_game: 'guesstimate-all'});
+    if (ER && ER.id === id && ER.guess != null) showStats(rows, score, 100, el);
+  } catch (e) { /* offline or blocked: the game works without it */ }
 }
 function estAgain(){
   estNew(null, ER.id);

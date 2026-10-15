@@ -1008,7 +1008,8 @@ def est_from_excel(path):
         q = {"id": str(r[0]).strip(), "sportCategory": EST_SPORT.get(str(r[1]).strip(), r[1]), "question": t["question"],
              "context": t.get("context"), "answer": r[4], "unit": t["unit"], "answerType": EST_TYPE.get(str(r[6]).strip(), r[6]),
              "referencePeriod": t.get("referencePeriod"), "explanation": t["explanation"],
-             "napkinMath": {"introduction": t["introduction"], "steps": [{"label": x} for x in t["steps"]], "estimatedAnswer": r[15]},
+             "napkinMath": {"introduction": t["introduction"], "steps": [{"label": x} for x in t["steps"]], "estimatedAnswer": r[15],
+                            **({"calc": tr["calc"]} if tr and tr.get("calc") else {})},
              "sources": [srcs[k.strip()] for k in str(r[16] or "").split(",") if k.strip() in srcs],
              "difficulty": EST_LEVEL.get(str(r[17]).strip(), None) if r[17] else None}
         if tr:

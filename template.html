@@ -394,6 +394,9 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .est-nap-rows{margin:0;padding:0;list-style:none;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
 .est-nap-rows li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px dashed var(--line-strong);line-height:1.4}
 .est-nap-rows li:first-child{border-top:0}
+/* the calculation as a box of its own: the start value, then one operation per row (× 90, ÷ 60), the result at the bottom */
+.est-calc-box{padding:4px 14px;border-radius:8px;background:var(--surface-faint)}
+.est-calc-box li.end{border-top:1px solid var(--line-strong)}
 .est-nap-rows .v{flex:none;max-width:45%;text-align:right;font-weight:700}
 .est-nap-rows li.first .v{color:var(--signal)}
 .est-nap-rows li.end{font-weight:800;font-size:15px}
@@ -1631,7 +1634,9 @@ function estResults(q, fresh = false){
   $('est-nap').hidden = true;
   $('est-nap').innerHTML = `
       <p class="est-nap-intro">${escH(estText(nm, 'introduction'))}</p>
-      <ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.estimatedAnswer, q)}</span></li></ul>
+      ${nm.calc ? `<ul class="est-nap-rows est-calc-box">${nm.calc.rows.map((r, i) => `<li${i === 0 ? ' class="first"' : ''}><span>${escH(r.label)}${i === 0 ? '<span class="est-start">START</span>' : ''}</span>`
+        + `<span class="v">${i === 0 ? '' : `${r.op} `}${estNum(r.v)}</span></li>`).join('')}<li class="end"><span>= Rough estimate</span><span class="v">≈ ${estShow(nm.calc.result, q)}</span></li></ul>`
+      : `<ul class="est-nap-rows">${steps.map(row).join('')}<li class="end"><span>Rough estimate</span><span class="v">≈ ${estShow(nm.estimatedAnswer, q)}</span></li></ul>`}
       ${srcs.length ? `<p class="est-nap-src">Source${srcs.length > 1 ? 's' : ''}: ${srcs.map(s => `<a href="${escH(s.url)}" target="_blank" rel="noopener">${escH(s.title)}</a>${s.publisher ? ` (${escH(s.publisher)}${s.date ? `, ${escH(s.date)}` : ''})` : ''}`).join(' · ')}</p>` : ''}`;
   $('est-qbox').hidden = true;   // the question is not repeated in the results
   const b = $('est-main');

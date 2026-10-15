@@ -10,7 +10,26 @@
    "18 clubs each play each other twice: 18 × 17 = 306 matches (or 9 matches × 34 matchdays).",
    "Assumption: stadiums hold about 45,000 people on average and are nearly full, so about 40,000 spectators per match.",
    "306 × 40,000 = 12,240,000 tickets."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Clubs",
+     "v": 18
+    },
+    {
+     "label": "Opponents per club",
+     "v": 17,
+     "op": "×"
+    },
+    {
+     "label": "Spectators per match",
+     "v": 40000,
+     "op": "×"
+    }
+   ],
+   "result": 12200000
+  }
  },
  "FUS-02": {
   "question": "How many hours of pure playing time would you have to watch to see every match of the 2024/25 Bundesliga season in full?",
@@ -24,7 +43,26 @@
    "34 matchdays × 9 matches = about 300 matches.",
    "Assumption: 90 minutes = 1.5 hours per match.",
    "300 × 1.5 = 450 hours (about 19 days non-stop)."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Matchdays",
+     "v": 34
+    },
+    {
+     "label": "Matches per matchday",
+     "v": 9,
+     "op": "×"
+    },
+    {
+     "label": "Hours per match",
+     "v": 1.5,
+     "op": "×"
+    }
+   ],
+   "result": 459
+  }
  },
  "FUS-03": {
   "question": "What is the combined pitch area of all 18 Bundesliga stadiums in square metres?",
@@ -37,7 +75,26 @@
    "Assumption: a professional pitch measures about 100 × 70 metres.",
    "100 × 70 = 7,000 m² per pitch.",
    "18 clubs, 18 stadiums: 18 × 7,000 = 126,000 m²."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Pitch length in m",
+     "v": 100
+    },
+    {
+     "label": "Pitch width in m",
+     "v": 70,
+     "op": "×"
+    },
+    {
+     "label": "Stadiums",
+     "v": 18,
+     "op": "×"
+    }
+   ],
+   "result": 126000
+  }
  },
  "FUS-04": {
   "question": "How many kilometres did all outfield players run in total across the 64 matches of the 2022 World Cup in Qatar?",
@@ -51,7 +108,31 @@
    "10 outfield players × 10 km = 100 km per team per match.",
    "Two teams: 200 km per match.",
    "A World Cup has 64 matches: 64 × 200 = 12,800 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Km per player per match",
+     "v": 10
+    },
+    {
+     "label": "Outfield players per team",
+     "v": 10,
+     "op": "×"
+    },
+    {
+     "label": "Teams per match",
+     "v": 2,
+     "op": "×"
+    },
+    {
+     "label": "Matches",
+     "v": 64,
+     "op": "×"
+    }
+   ],
+   "result": 12800
+  }
  },
  "FUS-05": {
   "question": "How many litres of beer are served at Signal Iduna Park in Dortmund during a Borussia Dortmund home match?",
@@ -65,7 +146,31 @@
    "Assumption: about half drink beer, so 40,000 people.",
    "Assumption: on average 2 cups of 0.5 litres per drinker = 1 litre.",
    "40,000 × 1 litre = 40,000 litres."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Spectators",
+     "v": 80000
+    },
+    {
+     "label": "Share drinking beer",
+     "v": 0.5,
+     "op": "×"
+    },
+    {
+     "label": "Cups per drinker",
+     "v": 2,
+     "op": "×"
+    },
+    {
+     "label": "Litres per cup",
+     "v": 0.5,
+     "op": "×"
+    }
+   ],
+   "result": 40000
+  }
  },
  "FUS-06": {
   "question": "How many million pounds did the 20 Premier League clubs spend on players in total during the 2023 summer transfer window?",
@@ -79,7 +184,26 @@
    "20 × 5 = 100 transfers.",
    "Assumption: an average Premier League transfer costs about £20 million (a few for 80+, many for under 10).",
    "100 × £20 million = £2,000 million."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Clubs",
+     "v": 20
+    },
+    {
+     "label": "Paid signings per club",
+     "v": 5,
+     "op": "×"
+    },
+    {
+     "label": "Average fee in £m",
+     "v": 20,
+     "op": "×"
+    }
+   ],
+   "result": 2000
+  }
  },
  "FUS-07": {
   "question": "How many kilograms does the original FIFA World Cup Trophy weigh, the one the world champions lift after the final?",
@@ -93,7 +217,36 @@
    "Assumption: only about 15% of that is actually metal (the walls), so about 225 cm³.",
    "Gold weighs about 19 g/cm³: 225 × 19 ≈ 4,300 g.",
    "Plus a stone base of about 1 kg: about 5.3 kg."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Trophy volume in cm³",
+     "v": 1500
+    },
+    {
+     "label": "Share that is metal",
+     "v": 0.15,
+     "op": "×"
+    },
+    {
+     "label": "Grams of gold per cm³",
+     "v": 19,
+     "op": "×"
+    },
+    {
+     "label": "Grams per kg",
+     "v": 1000,
+     "op": "÷"
+    },
+    {
+     "label": "Stone base in kg",
+     "v": 1,
+     "op": "+"
+    }
+   ],
+   "result": 5.28
+  }
  },
  "FUS-08": {
   "question": "How many soccer matches in Germany were officiated by referees in total in the 2024/25 season – from the Bundesliga down to the lowest district leagues?",
@@ -108,7 +261,31 @@
    "140,000 × 20 = 2,800,000 team appearances.",
    "Every match involves two teams: 2,800,000 / 2 = 1,400,000 matches.",
    "Not every match has an official referee (children's soccer): about 1,200,000."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Registered teams",
+     "v": 140000
+    },
+    {
+     "label": "Matches per team",
+     "v": 20,
+     "op": "×"
+    },
+    {
+     "label": "Teams per match",
+     "v": 2,
+     "op": "÷"
+    },
+    {
+     "label": "Matches without referee",
+     "v": 200000,
+     "op": "−"
+    }
+   ],
+   "result": 1200000
+  }
  },
  "FUS-09": {
   "question": "How many official \"Al Rihla\" match balls did the two manufacturers produce for FIFA for the 2022 World Cup in Qatar?",
@@ -123,7 +300,36 @@
    "Assumption: all 211 FIFA member associations receive about 500 balls each for coaching and youth = about 105,000.",
    "Assumption: referees, fan festivals, sponsors, media and reserves another 100,000 or so.",
    "Total: about 240,000 balls."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "World Cup matches",
+     "v": 64
+    },
+    {
+     "label": "Balls per match",
+     "v": 20,
+     "op": "×"
+    },
+    {
+     "label": "Balls for the 32 teams",
+     "v": 32000,
+     "op": "+"
+    },
+    {
+     "label": "Balls for member associations",
+     "v": 105000,
+     "op": "+"
+    },
+    {
+     "label": "Referees, fans, sponsors, reserves",
+     "v": 100000,
+     "op": "+"
+    }
+   ],
+   "result": 238000
+  }
  },
  "FUS-10": {
   "question": "According to FIFA, how many people worldwide watched the 2022 World Cup final between Argentina and France on screen?",
@@ -137,7 +343,26 @@
    "Assumption: about half have access to TV/internet and are generally interested in soccer: 4 billion.",
    "Assumption: about a third of them actually watch the final (time zone, daily life, no interest in the match).",
    "4 billion / 3 ≈ 1.3 billion viewers."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "World population",
+     "v": 8000000000
+    },
+    {
+     "label": "Share with access and interest",
+     "v": 0.5,
+     "op": "×"
+    },
+    {
+     "label": "Fraction watching the final",
+     "v": 3,
+     "op": "÷"
+    }
+   ],
+   "result": 1330000000
+  }
  },
  "EIS-01": {
   "question": "How heavy is the Stanley Cup, the trophy awarded to the NHL champion?",
@@ -151,7 +376,26 @@
    "Assumption: the metal walls are only a few millimetres thick; most of it is hollow.",
    "Comparison: a full 10-litre bucket of water weighs 10 kg – a player should easily be able to lift that over his head.",
    "A solid metal trophy of this size would be well over 100 kg; hollow with thin walls, you end up at roughly 10–20 kg."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Low estimate for hollow trophy, kg",
+     "v": 10
+    },
+    {
+     "label": "High estimate for hollow trophy, kg",
+     "v": 20,
+     "op": "+"
+    },
+    {
+     "label": "Midpoint of the range",
+     "v": 2,
+     "op": "÷"
+    }
+   ],
+   "result": 15
+  }
  },
  "EIS-02": {
   "question": "How many people (players, coaches, staff) were engraved on the trophy itself after the 2025 Stanley Cup Final?",
@@ -165,7 +409,31 @@
    "Assumption: each championship team has about 20 players plus 10–15 coaches and staff engraved, so about 35 names.",
    "65 teams × 35 names ≈ 2,300 names.",
    "Plus a few old names in the bowl and on the collar – roughly 2,500."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Rings on the base",
+     "v": 5
+    },
+    {
+     "label": "Teams per ring",
+     "v": 13,
+     "op": "×"
+    },
+    {
+     "label": "Names per team",
+     "v": 35,
+     "op": "×"
+    },
+    {
+     "label": "Old names in bowl and collar",
+     "v": 200,
+     "op": "+"
+    }
+   ],
+   "result": 2480
+  }
  },
  "EIS-03": {
   "question": "How many registered female ice hockey players (women and girls) were there worldwide in 2022 across IIHF member associations?",
@@ -179,7 +447,31 @@
    "Assumption: the strong European countries (Sweden, Finland, Czechia, Switzerland, etc.) add up to about 40,000.",
    "Assumption: all other countries combined roughly 10,000.",
    "100,000 + 90,000 + 40,000 + 10,000 ≈ 240,000 players."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Canada",
+     "v": 100000
+    },
+    {
+     "label": "USA",
+     "v": 90000,
+     "op": "+"
+    },
+    {
+     "label": "Strong European countries",
+     "v": 40000,
+     "op": "+"
+    },
+    {
+     "label": "All other countries",
+     "v": 10000,
+     "op": "+"
+    }
+   ],
+   "result": 240000
+  }
  },
  "EIS-04": {
   "question": "How many spectators attended the regular season of the Swiss National League in 2023/24 in total?",
@@ -192,7 +484,31 @@
    "Assumption: 14 teams, each playing 52 regular-season games → 14 × 52 ÷ 2 = 364 games.",
    "Assumption: Bern draws about 15,000, small arenas like Ajoie or Rapperswil more like 4,000–5,000. An average of about 6,500 seems plausible.",
    "364 × 6,500 ≈ 2.4 million spectators."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Teams",
+     "v": 14
+    },
+    {
+     "label": "Games per team",
+     "v": 52,
+     "op": "×"
+    },
+    {
+     "label": "Teams per game",
+     "v": 2,
+     "op": "÷"
+    },
+    {
+     "label": "Average attendance",
+     "v": 6500,
+     "op": "×"
+    }
+   ],
+   "result": 2370000
+  }
  },
  "EIS-05": {
   "question": "How many litres of water does it take to build the ice surface of an NHL arena once from scratch?",
@@ -206,7 +522,31 @@
    "Assumption: the ice is about 2.5 cm = 0.025 m thick.",
    "Volume: 1,560 m² × 0.025 m ≈ 39 m³.",
    "39 m³ × 1,000 litres/m³ ≈ 39,000 litres."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Rink length in m",
+     "v": 60
+    },
+    {
+     "label": "Rink width in m",
+     "v": 26,
+     "op": "×"
+    },
+    {
+     "label": "Ice thickness in m",
+     "v": 0.025,
+     "op": "×"
+    },
+    {
+     "label": "Litres per m³",
+     "v": 1000,
+     "op": "×"
+    }
+   ],
+   "result": 39000
+  }
  },
  "EIS-06": {
   "question": "How many hockey sticks do all NHL teams go through combined in one season?",
@@ -220,7 +560,26 @@
    "Assumption: a team has about 25 players on the roster (incl. reserves and goalies).",
    "25 × 70 ≈ 1,750 sticks per team.",
    "31 teams × 1,750 ≈ 54,000 sticks."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Sticks per player per season",
+     "v": 70
+    },
+    {
+     "label": "Players per team",
+     "v": 25,
+     "op": "×"
+    },
+    {
+     "label": "Teams",
+     "v": 31,
+     "op": "×"
+    }
+   ],
+   "result": 54200
+  }
  },
  "EIS-07": {
   "question": "How many kilometres does a Zamboni ice resurfacer travel per year in a typical ice rink?",
@@ -234,7 +593,26 @@
    "15 lanes × 60 m ≈ 900 m, plus turns and edges: about 1.2 km per resurfacing.",
    "Assumption: about 8 resurfacings per day on about 300 operating days → 2,400 runs per year.",
    "2,400 × 1.2 km ≈ 2,900 km per year."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Km per resurfacing",
+     "v": 1.2
+    },
+    {
+     "label": "Resurfacings per day",
+     "v": 8,
+     "op": "×"
+    },
+    {
+     "label": "Operating days per year",
+     "v": 300,
+     "op": "×"
+    }
+   ],
+   "result": 2880
+  }
  },
  "EIS-08": {
   "question": "How many kilometres did the Winnipeg Jets fly during the 2024/25 NHL regular season?",
@@ -248,7 +626,21 @@
    "Assumption: Winnipeg–Toronto is about 1,500 km, Winnipeg–Los Angeles about 2,500 km. We estimate an average of 1,800 km per one-way leg.",
    "Assumption: thanks to multi-game trips, it's not 82 single flights but roughly 45 flight legs.",
    "45 × 1,800 km ≈ 81,000 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Flight legs",
+     "v": 45
+    },
+    {
+     "label": "Km per leg",
+     "v": 1800,
+     "op": "×"
+    }
+   ],
+   "result": 81000
+  }
  },
  "EIS-09": {
   "question": "Roughly how many pucks are used in games during an NHL regular season (2023/24)?",
@@ -262,7 +654,31 @@
    "Assumption: 60 minutes of playing time, a fresh puck about every 2 minutes → about 30 pucks per game.",
    "Assumption: plus about 10 pucks that fly into the crowd or over the boards → about 40 per game.",
    "1,312 × 40 ≈ 52,000 pucks."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Teams",
+     "v": 32
+    },
+    {
+     "label": "Games per team",
+     "v": 82,
+     "op": "×"
+    },
+    {
+     "label": "Teams per game",
+     "v": 2,
+     "op": "÷"
+    },
+    {
+     "label": "Pucks per game",
+     "v": 40,
+     "op": "×"
+    }
+   ],
+   "result": 52500
+  }
  },
  "EIS-10": {
   "question": "How many Zamboni ice resurfacers has the Zamboni Company delivered in total since its founding in 1949 up to 2025?",
@@ -276,7 +692,21 @@
    "Assumption: a machine lasts about 20 years; over 75 years many rinks were re-equipped three or four times, but there were far fewer rinks in the early decades.",
    "Assumption: averaged over the 75 years, about 150 machines delivered per year.",
    "75 years × 150 ≈ 11,000 machines."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Years",
+     "v": 75
+    },
+    {
+     "label": "Machines per year",
+     "v": 150,
+     "op": "×"
+    }
+   ],
+   "result": 11200
+  }
  },
  "BSK-01": {
   "question": "How many evenings would it take to watch every game of the 2023/24 NBA regular season individually – one game per evening?",
@@ -291,7 +721,26 @@
    "30 × 80 = 2,400 team appearances.",
    "Each game has 2 teams on the court: 2,400 ÷ 2 = 1,200 games.",
    "One game per evening → around 1,200 evenings."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Teams in the league",
+     "v": 30
+    },
+    {
+     "label": "Games per team",
+     "v": 80,
+     "op": "×"
+    },
+    {
+     "label": "Teams per game",
+     "v": 2,
+     "op": "÷"
+    }
+   ],
+   "result": 1200
+  }
  },
  "BSK-02": {
   "question": "How many free throws were attempted in the entire 2023/24 NBA regular season (made or missed)?",
@@ -306,7 +755,26 @@
    "Both teams per game: 2 × 20 = 40 free throws.",
    "1,200 × 40 = 48,000.",
    "Result: around 48,000 free-throw attempts."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games in the regular season",
+     "v": 1200
+    },
+    {
+     "label": "Teams per game",
+     "v": 2,
+     "op": "×"
+    },
+    {
+     "label": "Free throws per team per game",
+     "v": 20,
+     "op": "×"
+    }
+   ],
+   "result": 48000
+  }
  },
  "BSK-03": {
   "question": "How many kilometres do all 30 NBA teams combined travel to their games in the 2025/26 regular season?",
@@ -321,7 +789,26 @@
    "45 × 1,500 km = 67,500 km per team.",
    "30 teams: 30 × 67,500 = 2,025,000 km.",
    "Result: around 2 million kilometres."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Flights per team",
+     "v": 45
+    },
+    {
+     "label": "Km per flight",
+     "v": 1500,
+     "op": "×"
+    },
+    {
+     "label": "Teams",
+     "v": 30,
+     "op": "×"
+    }
+   ],
+   "result": 2020000
+  }
  },
  "BSK-04": {
   "question": "What is the combined playing area of all 30 NBA courts in square metres?",
@@ -335,7 +822,26 @@
    "28 × 15 = 420 m² per court.",
    "30 teams, 30 courts: 30 × 420 = 12,600 m².",
    "Result: around 12,600 square metres."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Court length (m)",
+     "v": 28
+    },
+    {
+     "label": "Court width (m)",
+     "v": 15,
+     "op": "×"
+    },
+    {
+     "label": "Courts",
+     "v": 30,
+     "op": "×"
+    }
+   ],
+   "result": 12600
+  }
  },
  "BSK-05": {
   "question": "How many three-pointers were made in the entire 2023/24 NBA regular season?",
@@ -350,7 +856,26 @@
    "Both teams per game: 2 × 12 = 24 threes.",
    "1,200 × 24 = 28,800.",
    "Result: just under 29,000 threes."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games in the regular season",
+     "v": 1200
+    },
+    {
+     "label": "Teams per game",
+     "v": 2,
+     "op": "×"
+    },
+    {
+     "label": "Threes made per team per game",
+     "v": 12,
+     "op": "×"
+    }
+   ],
+   "result": 28800
+  }
  },
  "BSK-06": {
   "question": "How many pairs of basketball shoes does NBA star Cade Cunningham say he goes through in a single season?",
@@ -364,7 +889,26 @@
    "Assumption: a frequent switcher takes a new pair roughly every second game → 80 ÷ 2 = 40 pairs.",
    "Plus a few pairs for practices and specials (All-Star, playoffs): + approx. 10 pairs.",
    "Result: around 50 pairs per season."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Regular-season games",
+     "v": 80
+    },
+    {
+     "label": "Games per new pair",
+     "v": 2,
+     "op": "÷"
+    },
+    {
+     "label": "Pairs for practices and specials",
+     "v": 10,
+     "op": "+"
+    }
+   ],
+   "result": 50
+  }
  },
  "BSK-07": {
   "question": "How much did all 30 NBA teams pay in player salaries combined in the 2023/24 season – in millions of USD?",
@@ -378,7 +922,21 @@
    "Assumption: most teams are 10–40% over the cap → typical payroll about USD 165 million.",
    "30 teams × 165 million = USD 4,950 million.",
    "Result: around USD 5 billion, i.e. approx. 5,000 million."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Typical payroll (million USD)",
+     "v": 165
+    },
+    {
+     "label": "Teams",
+     "v": 30,
+     "op": "×"
+    }
+   ],
+   "result": 4950
+  }
  },
  "BSK-08": {
   "question": "How many players on NBA rosters at the start of the 2023/24 season were not from the USA?",
@@ -392,7 +950,26 @@
    "Assumption: roughly one in four players is not from the USA (Canada, France, Australia, the Balkans ...).",
    "450 ÷ 4 ≈ 112.",
    "Result: around 110 international players."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Teams",
+     "v": 30
+    },
+    {
+     "label": "Players per team",
+     "v": 15,
+     "op": "×"
+    },
+    {
+     "label": "One in four is international",
+     "v": 4,
+     "op": "÷"
+    }
+   ],
+   "result": 112
+  }
  },
  "BSK-09": {
   "question": "How many spectators attended the games of the 2023 FIBA Basketball World Cup in the Philippines, Japan and Indonesia in total?",
@@ -406,7 +983,21 @@
    "Assumption: arenas with 10,000 to 15,000 seats, an average of about 7,000 spectators per game (early-round games of small nations are poorly attended, host games are full).",
    "90 × 7,000 = 630,000.",
    "Result: around 630,000 spectators."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games in total",
+     "v": 90
+    },
+    {
+     "label": "Spectators per game",
+     "v": 7000,
+     "op": "×"
+    }
+   ],
+   "result": 630000
+  }
  },
  "BSK-10": {
   "question": "How many games did an NBA referee officiate on average in the 2023/24 regular season?",
@@ -421,7 +1012,26 @@
    "Assumption: the NBA employs about 75 referees.",
    "3,600 ÷ 75 = 48.",
    "Result: around 48 games per referee."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games in the regular season",
+     "v": 1200
+    },
+    {
+     "label": "Referees per game",
+     "v": 3,
+     "op": "×"
+    },
+    {
+     "label": "Referees employed",
+     "v": 75,
+     "op": "÷"
+    }
+   ],
+   "result": 48
+  }
  },
  "AMF-01": {
   "question": "How many footballs does Wilson make per year at its factory in Ada, Ohio?",
@@ -435,7 +1045,26 @@
    "Assumption: each person produces a net of about 20 finished balls per day (many hands per ball, but all working in parallel).",
    "150 × 20 = 3,000 balls per day.",
    "Assumption: 250 working days per year → 3,000 × 250 = 750,000."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Factory workers",
+     "v": 150
+    },
+    {
+     "label": "Balls per worker per day",
+     "v": 20,
+     "op": "×"
+    },
+    {
+     "label": "Working days per year",
+     "v": 250,
+     "op": "×"
+    }
+   ],
+   "result": 750000
+  }
  },
  "AMF-02": {
   "question": "How many chicken wings do Americans eat on Super Bowl Sunday 2025 (Super Bowl LIX)?",
@@ -449,7 +1078,26 @@
    "Assumption: about a third eat wings on Super Bowl Sunday → around 110 million people.",
    "Assumption: about 12 wings per person (a typical plate).",
    "110 million × 12 ≈ 1.3 billion wings."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "US inhabitants",
+     "v": 340000000
+    },
+    {
+     "label": "One in three eats wings",
+     "v": 3,
+     "op": "÷"
+    },
+    {
+     "label": "Wings per person",
+     "v": 12,
+     "op": "×"
+    }
+   ],
+   "result": 1360000000
+  }
  },
  "AMF-03": {
   "question": "How many kilometres did all NFL offences gain combined through passing in the 2024 regular season?",
@@ -463,7 +1111,36 @@
    "32 teams × 17 games = 544 team games → 544 × 220 ≈ 120,000 yards.",
    "Assumption: 1 yard ≈ 0.9 m → 120,000 × 0.9 ≈ 108,000 m.",
    "That is around 108 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Teams",
+     "v": 32
+    },
+    {
+     "label": "Games per team",
+     "v": 17,
+     "op": "×"
+    },
+    {
+     "label": "Passing yards per team game",
+     "v": 220,
+     "op": "×"
+    },
+    {
+     "label": "Metres per yard",
+     "v": 0.9,
+     "op": "×"
+    },
+    {
+     "label": "Metres per km",
+     "v": 1000,
+     "op": "÷"
+    }
+   ],
+   "result": 108
+  }
  },
  "AMF-04": {
   "question": "How much does a 30-second commercial cost during the TV broadcast of Super Bowl LX (February 2026) on NBC?",
@@ -477,7 +1154,26 @@
    "Assumption: for premium live sport, advertisers pay about 60 dollars per 1,000 viewers per spot.",
    "125,000,000 ÷ 1,000 = 125,000 blocks of a thousand.",
    "125,000 × 60 dollars ≈ 7.5 million dollars per spot."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Super Bowl viewers",
+     "v": 125000000
+    },
+    {
+     "label": "Viewers per CPM block",
+     "v": 1000,
+     "op": "÷"
+    },
+    {
+     "label": "USD per 1,000 viewers",
+     "v": 60,
+     "op": "×"
+    }
+   ],
+   "result": 7500000
+  }
  },
  "AMF-05": {
   "question": "How many metres does an NFL punt travel on average (2024 regular season)?",
@@ -491,7 +1187,26 @@
    "Assumption: average horizontal speed about 13 m/s → 4.5 × 13 ≈ 60 m of flight.",
    "Subtract the 15 m behind the line: 60 − 15 ≈ 45 m.",
    "Result: around 45 m."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Hang time (s)",
+     "v": 4.5
+    },
+    {
+     "label": "Horizontal speed (m/s)",
+     "v": 13,
+     "op": "×"
+    },
+    {
+     "label": "Kicked from behind the line (m)",
+     "v": 15,
+     "op": "−"
+    }
+   ],
+   "result": 43.5
+  }
  },
  "AMF-06": {
   "question": "How many minutes is the ball actually in play (from snap to whistle) during a roughly three-hour NFL broadcast?",
@@ -505,7 +1220,26 @@
    "Assumption: a play lasts about 5 seconds from snap to whistle.",
    "150 × 5 = 750 seconds.",
    "750 ÷ 60 ≈ 12.5 minutes."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Plays per game",
+     "v": 150
+    },
+    {
+     "label": "Seconds per play",
+     "v": 5,
+     "op": "×"
+    },
+    {
+     "label": "Seconds per minute",
+     "v": 60,
+     "op": "÷"
+    }
+   ],
+   "result": 12.5
+  }
  },
  "AMF-07": {
   "question": "How much does a complete 53-man NFL roster weigh in total – in kilograms?",
@@ -518,7 +1252,21 @@
    "Assumption: 53 players on the roster.",
    "Assumption: average weight around 110 kg (a mix of 140 kg linemen and 90 kg skill players).",
    "53 × 110 ≈ 5,800 kg."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Players on the roster",
+     "v": 53
+    },
+    {
+     "label": "Average weight (kg)",
+     "v": 110,
+     "op": "×"
+    }
+   ],
+   "result": 5830
+  }
  },
  "AMF-08": {
   "question": "How many cowhides does Wilson need per year to make the roughly 700,000 footballs from Ada, Ohio?",
@@ -532,7 +1280,21 @@
    "Assumption: a cowhide yields about 4 m² of leather, of which only just over half is uniform enough for game balls → around 2.5 m² usable.",
    "Assumption: a ball needs 4 panels of about 0.03 m² each, around 0.12 m² with offcuts → 2.5 ÷ 0.12 ≈ 20 balls per hide.",
    "700,000 ÷ 20 ≈ 35,000 hides."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Balls per year",
+     "v": 700000
+    },
+    {
+     "label": "Balls per cowhide",
+     "v": 20,
+     "op": "÷"
+    }
+   ],
+   "result": 35000
+  }
  },
  "AMF-09": {
   "question": "How many offensive plays (passes, runs and sacks) were run in the entire 2024 NFL regular season?",
@@ -545,7 +1307,26 @@
    "272 games × 2 teams = 544 team games.",
    "Assumption: around 11 drives per team per game with about 5–6 plays each → around 60 plays per team per game.",
    "544 × 60 ≈ 32,600 plays."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games",
+     "v": 272
+    },
+    {
+     "label": "Teams per game",
+     "v": 2,
+     "op": "×"
+    },
+    {
+     "label": "Plays per team per game",
+     "v": 60,
+     "op": "×"
+    }
+   ],
+   "result": 32600
+  }
  },
  "AMF-10": {
   "question": "How many official game balls does Wilson supply in total for the two teams at Super Bowl LIX (2025)?",
@@ -559,7 +1340,31 @@
    "Assumption: at the Super Bowl, every touchdown ball and many game balls are kept as keepsakes, so the league plans for about four times as many → around 100 per team.",
    "Assumption: plus about 10 special balls for the kickers per team → around 110 per team.",
    "2 teams × 110 ≈ 220 balls."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Balls per team, normal game",
+     "v": 24
+    },
+    {
+     "label": "Super Bowl multiplier",
+     "v": 4,
+     "op": "×"
+    },
+    {
+     "label": "Kicking balls per team",
+     "v": 10,
+     "op": "+"
+    },
+    {
+     "label": "Teams",
+     "v": 2,
+     "op": "×"
+    }
+   ],
+   "result": 212
+  }
  },
  "TEN-01": {
   "question": "How many tennis balls are used in total at the Wimbledon Championships in one year (matches and practice)?",
@@ -574,7 +1379,31 @@
    "Qualifying: ~130 matches × 25 ≈ 3,000 balls.",
    "Practice: assume ~250 players × 10 days × 1 tin of 6 balls ≈ 15,000 balls.",
    "Total: 16,000 + 3,000 + 15,000 ≈ 34,000 balls."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Main-draw matches",
+     "v": 650
+    },
+    {
+     "label": "Qualifying matches",
+     "v": 130,
+     "op": "+"
+    },
+    {
+     "label": "Balls per match",
+     "v": 25,
+     "op": "×"
+    },
+    {
+     "label": "Practice balls",
+     "v": 15000,
+     "op": "+"
+    }
+   ],
+   "result": 34500
+  }
  },
  "TEN-02": {
   "question": "How many individual strawberries were provided for the 2026 Wimbledon Championships?",
@@ -588,7 +1417,31 @@
    "Assumption: one in three visitors buys a punnet → ~170,000 punnets.",
    "Assumption: about 10 strawberries per punnet → 1.7 million strawberries.",
    "Add hospitality, restaurants and player lounges: +20% → around 2 million."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Visitors",
+     "v": 500000
+    },
+    {
+     "label": "One in three buys a punnet",
+     "v": 3,
+     "op": "÷"
+    },
+    {
+     "label": "Strawberries per punnet",
+     "v": 10,
+     "op": "×"
+    },
+    {
+     "label": "Hospitality extra (+20%)",
+     "v": 1.2,
+     "op": "×"
+    }
+   ],
+   "result": 2000000
+  }
  },
  "TEN-03": {
   "question": "How many \"Honey Deuce\" cocktails were sold during the 2024 US Open?",
@@ -602,7 +1455,21 @@
    "Assumption: every second visitor buys exactly one Honey Deuce → ~500,000.",
    "Assumption: a small share buys several, while some drink none – roughly cancelling out.",
    "Result: around 500,000 cocktails."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Visitors",
+     "v": 1000000
+    },
+    {
+     "label": "Share buying a cocktail",
+     "v": 0.5,
+     "op": "×"
+    }
+   ],
+   "result": 500000
+  }
  },
  "TEN-04": {
   "question": "How many rackets did the official stringing team string during the 2025 Australian Open?",
@@ -616,7 +1483,26 @@
    "Assumption: on average a player stays 4 days (many go out early, few stay two weeks).",
    "Assumption: 3 rackets freshly strung per day.",
    "600 × 4 × 3 = 7,200 rackets."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Players",
+     "v": 600
+    },
+    {
+     "label": "Days per player",
+     "v": 4,
+     "op": "×"
+    },
+    {
+     "label": "Rackets strung per day",
+     "v": 3,
+     "op": "×"
+    }
+   ],
+   "result": 7200
+  }
  },
  "TEN-05": {
   "question": "How many kilometres of tennis string in total were strung into rackets at the 2025 Australian Open?",
@@ -630,7 +1516,26 @@
    "Assumption: main string ~35 cm, cross string ~25 cm → 16 × 0.35 + 19 × 0.25 ≈ 5.6 + 4.8 ≈ 10.4 m.",
    "Plus offcuts and knots: assume ~11 m per racket.",
    "Around 7,800 rackets × 11 m ≈ 86,000 m ≈ 86 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Rackets strung",
+     "v": 7800
+    },
+    {
+     "label": "Metres of string per racket",
+     "v": 11,
+     "op": "×"
+    },
+    {
+     "label": "Metres per km",
+     "v": 1000,
+     "op": "÷"
+    }
+   ],
+   "result": 85.8
+  }
  },
  "TEN-06": {
   "question": "How many kilometres of travel in total did the roughly 200 ATP players who used the \"Carbon Tracker\" app in 2023 log that season?",
@@ -644,7 +1549,26 @@
    "Assumption: a player travels to ~20 tournaments per year.",
    "Assumption: an average trip is ~1,500 km (many short hops in Europe, some intercontinental flights).",
    "Per player: 20 × 1,500 = 30,000 km; × 200 players = 6 million km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Players",
+     "v": 200
+    },
+    {
+     "label": "Tournaments per year",
+     "v": 20,
+     "op": "×"
+    },
+    {
+     "label": "Km per trip",
+     "v": 1500,
+     "op": "×"
+    }
+   ],
+   "result": 6000000
+  }
  },
  "TEN-07": {
   "question": "How many kilograms of red crushed brick make up the top layer of a single clay court at Roland-Garros?",
@@ -658,7 +1582,26 @@
    "Top layer: assume 2 mm = 0.002 m → 650 × 0.002 = 1.3 m³.",
    "Assumption: density of loose crushed brick ~1,200 kg/m³.",
    "1.3 m³ × 1,200 kg/m³ ≈ 1,560 kg → around 1,500 kg."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Court area (m²)",
+     "v": 650
+    },
+    {
+     "label": "Top layer thickness (m)",
+     "v": 0.002,
+     "op": "×"
+    },
+    {
+     "label": "Density (kg/m³)",
+     "v": 1200,
+     "op": "×"
+    }
+   ],
+   "result": 1560
+  }
  },
  "TEN-08": {
   "question": "How many tonnes of grass seed does the All England Club at Wimbledon use per year for its grass courts?",
@@ -672,7 +1615,31 @@
    "Assumption: reseeding with ~50 g of seed per m².",
    "Assumption: courts are reseeded ~3 times per year → 150 g/m².",
    "36,000 m² × 0.15 kg/m² ≈ 5,400 kg ≈ 5.5 tonnes."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Grass area (m²)",
+     "v": 36000
+    },
+    {
+     "label": "Seed per reseeding (kg/m²)",
+     "v": 0.05,
+     "op": "×"
+    },
+    {
+     "label": "Reseedings per year",
+     "v": 3,
+     "op": "×"
+    },
+    {
+     "label": "Kg per tonne",
+     "v": 1000,
+     "op": "÷"
+    }
+   ],
+   "result": 5.4
+  }
  },
  "TEN-09": {
   "question": "How many tennis balls are manufactured worldwide each year?",
@@ -686,7 +1653,21 @@
    "Assumption: most play rarely; on average each buys about one tin of 4 balls per year.",
    "90 million × 4 = 360 million balls.",
    "Result: roughly 300–400 million per year."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Tennis players worldwide",
+     "v": 90000000
+    },
+    {
+     "label": "Balls bought per player",
+     "v": 4,
+     "op": "×"
+    }
+   ],
+   "result": 360000000
+  }
  },
  "TEN-10": {
   "question": "How many spectators attended Roland-Garros in person in 2024 in total?",
@@ -701,7 +1682,26 @@
    "15 main-draw days × 40,000 = 600,000.",
    "Assumption: qualifying week with ~10,000 per day over 5 days = 50,000.",
    "Total: ~650,000 spectators."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Visitors per day",
+     "v": 40000
+    },
+    {
+     "label": "Main-draw days",
+     "v": 15,
+     "op": "×"
+    },
+    {
+     "label": "Qualifying week visitors",
+     "v": 50000,
+     "op": "+"
+    }
+   ],
+   "result": 650000
+  }
  },
  "BSB-01": {
   "question": "How many home runs were hit in total in the 2024 MLB regular season?",
@@ -714,7 +1714,31 @@
    "30 teams × 162 games ÷ 2 ≈ 2,430 games per season.",
    "Assumption: about one home run per team per game – so around 2 per game.",
    "2,430 × 2 ≈ 4,900 home runs."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Teams",
+     "v": 30
+    },
+    {
+     "label": "Games per team",
+     "v": 162,
+     "op": "×"
+    },
+    {
+     "label": "Teams per game",
+     "v": 2,
+     "op": "÷"
+    },
+    {
+     "label": "Home runs per game",
+     "v": 2,
+     "op": "×"
+    }
+   ],
+   "result": 4860
+  }
  },
  "BSB-02": {
   "question": "How many pitches were thrown in total in the 2024 MLB regular season?",
@@ -728,7 +1752,26 @@
    "Assumption: a plate appearance lasts about 4 pitches. 72 × 4 ≈ 290 pitches per game.",
    "30 teams × 162 games ÷ 2 ≈ 2,430 games per season.",
    "2,430 × 290 ≈ 700,000 pitches."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games per season",
+     "v": 2430
+    },
+    {
+     "label": "Plate appearances per game",
+     "v": 72,
+     "op": "×"
+    },
+    {
+     "label": "Pitches per plate appearance",
+     "v": 4,
+     "op": "×"
+    }
+   ],
+   "result": 700000
+  }
  },
  "BSB-03": {
   "question": "How many strikeouts were there in total in the 2024 MLB regular season?",
@@ -741,7 +1784,21 @@
    "30 teams × 162 games ÷ 2 ≈ 2,430 games.",
    "Assumption: about 75 batters come up per game and roughly one in five strikes out – so about 8 per team, 16 per game.",
    "2,430 × 16 ≈ 39,000 strikeouts."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games per season",
+     "v": 2430
+    },
+    {
+     "label": "Strikeouts per game",
+     "v": 16,
+     "op": "×"
+    }
+   ],
+   "result": 38900
+  }
  },
  "BSB-04": {
   "question": "According to the National Hot Dog and Sausage Council's forecast, how many hot dogs were sold in stadiums during the 2022 MLB season?",
@@ -754,7 +1811,26 @@
    "Assumption: around 2,430 games with about 28,000 spectators each ≈ 68 million stadium visits per season.",
    "Assumption: about one in four fans buys a hot dog (many eat something else, some have two).",
    "68 million × 0.25 ≈ 17 million hot dogs."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games per season",
+     "v": 2430
+    },
+    {
+     "label": "Spectators per game",
+     "v": 28000,
+     "op": "×"
+    },
+    {
+     "label": "Share buying a hot dog",
+     "v": 0.25,
+     "op": "×"
+    }
+   ],
+   "result": 17000000
+  }
  },
  "BSB-05": {
   "question": "How many baseballs does the Kansas City Royals' clubhouse attendant rub with special mud before each home game?",
@@ -767,7 +1843,26 @@
    "Assumption: a game has around 300 pitches.",
    "Assumption: on average a ball is replaced after about 3 pitches (foul into the stands, dirt, scuffs). 300 ÷ 3 ≈ 100 balls per game.",
    "Assumption: about double is prepared for extra innings and as a safety margin: ≈ 200 balls."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Pitches per game",
+     "v": 300
+    },
+    {
+     "label": "Pitches per ball",
+     "v": 3,
+     "op": "÷"
+    },
+    {
+     "label": "Reserve factor",
+     "v": 2,
+     "op": "×"
+    }
+   ],
+   "result": 200
+  }
  },
  "BSB-06": {
   "question": "How many kilograms of \"Lena Blackburne Rubbing Mud\" were taken from the New Jersey river per season in 2014 to rub up the baseballs of all professional teams?",
@@ -780,7 +1875,26 @@
    "Assumption: 30 MLB teams plus around 120 Minor League teams ≈ 150 professional teams.",
    "Assumption: a team uses about 3 kg per season (a few tubs).",
    "150 × 3 kg ≈ 450 kg per season."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "MLB teams",
+     "v": 30
+    },
+    {
+     "label": "Minor League teams",
+     "v": 120,
+     "op": "+"
+    },
+    {
+     "label": "Kg of mud per team",
+     "v": 3,
+     "op": "×"
+    }
+   ],
+   "result": 450
+  }
  },
  "BSB-07": {
   "question": "In 2010, what was the maximum number of baseballs per year produced by the Rawlings factory in Costa Rica, where all official MLB balls are hand-stitched?",
@@ -793,7 +1907,31 @@
    "Assumption: around 2,430 MLB games × about 100 balls per game ≈ 250,000 game balls per season.",
    "Assumption: practice, spring training, playoffs and the Minor Leagues need three times as many again → around 1 million in total.",
    "Assumption: about the same number go to souvenirs and retail: ≈ 2 million balls per year."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games per season",
+     "v": 2430
+    },
+    {
+     "label": "Balls per game",
+     "v": 100,
+     "op": "×"
+    },
+    {
+     "label": "Practice, playoffs, minors",
+     "v": 4,
+     "op": "×"
+    },
+    {
+     "label": "Souvenirs and retail",
+     "v": 2,
+     "op": "×"
+    }
+   ],
+   "result": 1940000
+  }
  },
  "BSB-08": {
   "question": "How many bats (including souvenir mini bats) does Louisville Slugger say it makes per year?",
@@ -806,7 +1944,31 @@
    "Assumption: the factory has about 10 lathes, each turning around one bat per minute.",
    "10 × 60 minutes × 8 hours ≈ 4,800 bats per working day.",
    "Assumption: 250 working days per year → 4,800 × 250 ≈ 1.2 million bats."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Lathes",
+     "v": 10
+    },
+    {
+     "label": "Bats per lathe per hour",
+     "v": 60,
+     "op": "×"
+    },
+    {
+     "label": "Hours per day",
+     "v": 8,
+     "op": "×"
+    },
+    {
+     "label": "Working days per year",
+     "v": 250,
+     "op": "×"
+    }
+   ],
+   "result": 1200000
+  }
  },
  "BSB-09": {
   "question": "How many wooden bats does an average MLB player go through per season (as of 2016)?",
@@ -819,7 +1981,26 @@
    "A season has 162 games.",
    "Assumption: a bat breaks about every 3 games → 162 ÷ 3 ≈ 54 broken bats.",
    "Assumption: about the same number are swapped out, given away or used up in practice → around 100 bats."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Games per season",
+     "v": 162
+    },
+    {
+     "label": "Games per broken bat",
+     "v": 3,
+     "op": "÷"
+    },
+    {
+     "label": "Swapped or practice bats",
+     "v": 2,
+     "op": "×"
+    }
+   ],
+   "result": 108
+  }
  },
  "BSB-10": {
   "question": "How many minutes of video were watched in total on the MLB.TV streaming service during the 2024 MLB season?",
@@ -833,7 +2014,26 @@
    "Assumption: on a typical day about 2 million people watch something on MLB.TV.",
    "Assumption: on average each person watches about 40 minutes (some a whole game, many just dip in briefly).",
    "180 × 2 million × 40 ≈ 14.4 billion minutes."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Days in season",
+     "v": 180
+    },
+    {
+     "label": "Daily viewers",
+     "v": 2000000,
+     "op": "×"
+    },
+    {
+     "label": "Minutes per viewer",
+     "v": 40,
+     "op": "×"
+    }
+   ],
+   "result": 14400000000
+  }
  },
  "MOT-01": {
   "question": "How many times does a rear tyre of a Formula 1 car turn during the 2024 Bahrain Grand Prix (full race distance, ignoring pit stops)?",
@@ -847,7 +2047,21 @@
    "Assumption: the tyre is about 70 cm tall – circumference ≈ 3.14 × 0.7 m ≈ 2.2 m.",
    "Calculation: 300,000 m ÷ 2.2 m ≈ 136,000 revolutions.",
    "Around 135,000 revolutions – per tyre, in just 1.5 hours."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Race distance (m)",
+     "v": 300000
+    },
+    {
+     "label": "Tyre circumference (m)",
+     "v": 2.2,
+     "op": "÷"
+    }
+   ],
+   "result": 136000
+  }
  },
  "MOT-02": {
   "question": "How many individual tyres did Pirelli supply in total in the 2024 Formula 1 season (all sets, including those never used)?",
@@ -861,7 +2075,31 @@
    "Assumption: each weekend a driver gets about 13 sets of dry tyres plus around 7 sets of wet tyres ≈ 20 sets.",
    "Calculation: 480 × 20 sets = 9,600 sets; × 4 tyres ≈ 38,000 tyres.",
    "Around 38,000 tyres – a large share of them go back to the warehouse unused."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Cars",
+     "v": 20
+    },
+    {
+     "label": "Races",
+     "v": 24,
+     "op": "×"
+    },
+    {
+     "label": "Tyre sets per weekend",
+     "v": 20,
+     "op": "×"
+    },
+    {
+     "label": "Tyres per set",
+     "v": 4,
+     "op": "×"
+    }
+   ],
+   "result": 38400
+  }
  },
  "MOT-03": {
   "question": "How many kilometres did all Formula 1 cars combined cover on Pirelli tyres in the 2024 season (all practice sessions, qualifying and races)?",
@@ -875,7 +2113,31 @@
    "Calculation: 24 races × 6,000 km = 144,000 km in races alone.",
    "Assumption: Friday and Saturday practice plus qualifying add roughly the same again.",
    "Calculation: 144,000 × 2 ≈ 290,000 km – around 300,000 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Cars",
+     "v": 20
+    },
+    {
+     "label": "Km per race",
+     "v": 300,
+     "op": "×"
+    },
+    {
+     "label": "Races",
+     "v": 24,
+     "op": "×"
+    },
+    {
+     "label": "Practice and qualifying factor",
+     "v": 2,
+     "op": "×"
+    }
+   ],
+   "result": 288000
+  }
  },
  "MOT-04": {
   "question": "How many spectators attended the 2024 British Grand Prix weekend at Silverstone in total (Friday to Sunday, daily attendance added up)?",
@@ -889,7 +2151,26 @@
    "Assumption: Saturday (qualifying) is almost as full: ~150,000.",
    "Assumption: Friday (practice) about 100,000.",
    "Calculation: 150,000 + 150,000 + 100,000 = 400,000 visits."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Sunday spectators",
+     "v": 150000
+    },
+    {
+     "label": "Saturday spectators",
+     "v": 150000,
+     "op": "+"
+    },
+    {
+     "label": "Friday spectators",
+     "v": 100000,
+     "op": "+"
+    }
+   ],
+   "result": 400000
+  }
  },
  "MOT-05": {
   "question": "How many kilometres did the winning car of the 2025 24 Hours of Le Mans (Ferrari 499P #83) cover in the 24 hours?",
@@ -903,7 +2184,21 @@
    "Calculation: 210 km/h × 24 h = 5,040 km.",
    "Cross-check: 5,040 km ÷ 13.6 km per lap ≈ 370 laps – sounds plausible.",
    "Around 5,000 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Average speed (km/h)",
+     "v": 210
+    },
+    {
+     "label": "Hours",
+     "v": 24,
+     "op": "×"
+    }
+   ],
+   "result": 5040
+  }
  },
  "MOT-06": {
   "question": "Roughly how many gear changes does a Formula 1 driver make during the Monaco Grand Prix (78 laps)?",
@@ -917,7 +2212,26 @@
    "Assumption: about 5 shifts per braking zone (2–3 down, 2–3 up).",
    "Calculation: 8 × 5 = 40 gear changes per lap.",
    "Calculation: 40 × 80 laps ≈ 3,200 gear changes."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Braking zones per lap",
+     "v": 8
+    },
+    {
+     "label": "Shifts per braking zone",
+     "v": 5,
+     "op": "×"
+    },
+    {
+     "label": "Laps",
+     "v": 80,
+     "op": "×"
+    }
+   ],
+   "result": 3200
+  }
  },
  "MOT-07": {
   "question": "How many pit stops were there in total at the 2024 Japanese Grand Prix at Suzuka (all cars combined)?",
@@ -931,7 +2245,21 @@
    "Assumption: Suzuka is hard on tyres – 2 stops per car on average.",
    "Calculation: 20 × 2 = 40 stops.",
    "A few extra stops for damage or strategy experiments – around 40 to 45."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Cars",
+     "v": 20
+    },
+    {
+     "label": "Stops per car",
+     "v": 2,
+     "op": "×"
+    }
+   ],
+   "result": 40
+  }
  },
  "MOT-08": {
   "question": "How long was the total route of the 2025 Dakar Rally in Saudi Arabia (special stages plus liaison sections)?",
@@ -945,7 +2273,26 @@
    "Assumption: per day about 400 km of special stage plus about 200 km of liaison = 600 km.",
    "Calculation: 12 × 600 km = 7,200 km.",
    "Around 7,000 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Special stage km per day",
+     "v": 400
+    },
+    {
+     "label": "Liaison km per day",
+     "v": 200,
+     "op": "+"
+    },
+    {
+     "label": "Driving days",
+     "v": 12,
+     "op": "×"
+    }
+   ],
+   "result": 7200
+  }
  },
  "MOT-09": {
   "question": "What was the total revenue of Formula 1 (Formula One Group) in the 2024 financial year, in USD?",
@@ -959,7 +2306,31 @@
    "Assumption: worldwide TV rights about $1 billion per year.",
    "Assumption: sponsorship, hospitality and other income another $800 million or so.",
    "Calculation: 0.7 + 1 + 0.8 ≈ $2.5 billion."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Circuits",
+     "v": 24
+    },
+    {
+     "label": "Hosting fee per circuit (USD)",
+     "v": 30000000,
+     "op": "×"
+    },
+    {
+     "label": "TV rights (USD)",
+     "v": 1000000000,
+     "op": "+"
+    },
+    {
+     "label": "Sponsorship and other (USD)",
+     "v": 800000000,
+     "op": "+"
+    }
+   ],
+   "result": 2520000000
+  }
  },
  "MOT-10": {
   "question": "How many kilometres does a MotoGP rider cover in Sunday races during the 2024 season if he completes the full distance in all 20 Grands Prix (excluding sprints)?",
@@ -973,7 +2344,31 @@
    "Assumption: the average speed is about 160 km/h (top speed over 350, but lots of corners).",
    "Calculation: 160 km/h × 2/3 h ≈ 107 km per race.",
    "Calculation: 20 races × 107 km ≈ 2,100 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Average speed (km/h)",
+     "v": 160
+    },
+    {
+     "label": "Race minutes",
+     "v": 40,
+     "op": "×"
+    },
+    {
+     "label": "Minutes per hour",
+     "v": 60,
+     "op": "÷"
+    },
+    {
+     "label": "Races",
+     "v": 20,
+     "op": "×"
+    }
+   ],
+   "result": 2130
+  }
  },
  "WIN-01": {
   "question": "How many kilometres of B-nets were put up along the downhill course for the 2019 Lauberhorn races in Wengen?",
@@ -987,7 +2382,26 @@
    "Assumption: both edges of the piste are secured almost continuously → 4.5 × 2 = 9 km.",
    "Assumption: in fast sections the nets are doubled up, so about 2 rows on average → 9 × 2 = 18 km.",
    "Result: around 18 km of nets."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Course length (km)",
+     "v": 4.5
+    },
+    {
+     "label": "Sides of the piste",
+     "v": 2,
+     "op": "×"
+    },
+    {
+     "label": "Rows of nets",
+     "v": 2,
+     "op": "×"
+    }
+   ],
+   "result": 18
+  }
  },
  "WIN-02": {
   "question": "How many spectators in total came to Wengen over the four race days of the 2024 Lauberhorn races?",
@@ -1001,7 +2415,31 @@
    "Assumption: Sunday slalom about 10,000, Friday (super-G/downhill) about 10,000.",
    "Assumption: Thursday, as an extra weekday, only around 5,000.",
    "Total: 25,000 + 10,000 + 10,000 + 5,000 = 50,000."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Saturday spectators",
+     "v": 25000
+    },
+    {
+     "label": "Sunday spectators",
+     "v": 10000,
+     "op": "+"
+    },
+    {
+     "label": "Friday spectators",
+     "v": 10000,
+     "op": "+"
+    },
+    {
+     "label": "Thursday spectators",
+     "v": 5000,
+     "op": "+"
+    }
+   ],
+   "result": 50000
+  }
  },
  "WIN-03": {
   "question": "How many participants in total have taken part in the Engadin Skimarathon from its first edition in 1969 up to and including 2024?",
@@ -1015,7 +2453,21 @@
    "Assumption: only a few thousand at first, later 12,000–14,000; average across all years about 10,000 participants.",
    "Calculation: 54 × 10,000 = 540,000.",
    "Result: around 540,000 participants."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Editions",
+     "v": 54
+    },
+    {
+     "label": "Average participants",
+     "v": 10000,
+     "op": "×"
+    }
+   ],
+   "result": 540000
+  }
  },
  "WIN-04": {
   "question": "How many cubic metres of technical (artificial) snow did the organising committee have produced at the competition venues for the Milano Cortina 2026 Winter Olympics?",
@@ -1029,7 +2481,31 @@
    "Assumption: average piste width 40 m → 45,000 m × 40 m = 1.8 million m² of area.",
    "Assumption: race courses need a compact snow base of about 0.8 m.",
    "Calculation: 1.8 million m² × 0.8 m ≈ 1.4 million m³ of snow."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Courses",
+     "v": 15
+    },
+    {
+     "label": "Length per course (m)",
+     "v": 3000,
+     "op": "×"
+    },
+    {
+     "label": "Piste width (m)",
+     "v": 40,
+     "op": "×"
+    },
+    {
+     "label": "Snow depth (m)",
+     "v": 0.8,
+     "op": "×"
+    }
+   ],
+   "result": 1440000
+  }
  },
  "WIN-05": {
   "question": "How many shots does a biathlete fire if he competes in all 25 men's individual races of the 2023/24 season (World Cup plus World Championships, excluding relays) and never needs a spare round?",
@@ -1043,7 +2519,26 @@
    "Assumption: sprints (2 bouts) are about a third of the races, the rest have 4 bouts → average about 3.3 bouts per race.",
    "Calculation: 25 races × 3.3 bouts ≈ 83 shooting bouts.",
    "83 × 5 shots ≈ 415 shots."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Individual races",
+     "v": 25
+    },
+    {
+     "label": "Shooting bouts per race",
+     "v": 3.3,
+     "op": "×"
+    },
+    {
+     "label": "Shots per bout",
+     "v": 5,
+     "op": "×"
+    }
+   ],
+   "result": 412
+  }
  },
  "WIN-06": {
   "question": "How many race kilometres did the seven stages of the 2023/24 Tour de Ski (Toblach, Davos, Val di Fiemme) cover in total?",
@@ -1057,7 +2552,26 @@
    "Assumption: 5 distance races averaging 12 km → 60 km.",
    "Total: 3 + 60 = 63 km.",
    "Result: around 63 km."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Sprints",
+     "v": 2
+    },
+    {
+     "label": "Km per sprint",
+     "v": 1.5,
+     "op": "×"
+    },
+    {
+     "label": "Distance race km (5 × 12)",
+     "v": 60,
+     "op": "+"
+    }
+   ],
+   "result": 63
+  }
  },
  "WIN-07": {
   "question": "How much do all 1,146 medals of the Milano Cortina 2026 Olympic and Paralympic Winter Games weigh together?",
@@ -1071,7 +2585,21 @@
    "Assumption: gold and silver weigh about 0.5 kg each, bronze a little less, about 0.4 kg.",
    "Calculation: 380 × 0.5 + 380 × 0.5 + 380 × 0.4 = 190 + 190 + 152 = 532 kg.",
    "Result: around 530 kg."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Medals per colour",
+     "v": 380
+    },
+    {
+     "label": "Gold + silver + bronze (kg)",
+     "v": 1.4,
+     "op": "×"
+    }
+   ],
+   "result": 532
+  }
  },
  "WIN-08": {
   "question": "What was the total cost of the Sochi 2014 Winter Olympics including all infrastructure projects, in USD?",
@@ -1086,7 +2614,36 @@
    "Assumption: hotels, power plants, gas pipelines, urban redevelopment → another 10 billion USD or so.",
    "Assumption: organisation, security, ceremonies → about 3 billion USD.",
    "Total: 5 + 10 + 10 + 3 ≈ 28 billion USD."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Major venues",
+     "v": 10
+    },
+    {
+     "label": "Cost per venue (USD)",
+     "v": 500000000,
+     "op": "×"
+    },
+    {
+     "label": "Rail, road and airport (USD)",
+     "v": 10000000000,
+     "op": "+"
+    },
+    {
+     "label": "Hotels, power, redevelopment (USD)",
+     "v": 10000000000,
+     "op": "+"
+    },
+    {
+     "label": "Organisation and security (USD)",
+     "v": 3000000000,
+     "op": "+"
+    }
+   ],
+   "result": 28000000000
+  }
  },
  "WIN-09": {
   "question": "What is the maximum weight allowed for a four-man bobsleigh under the rules – including the four athletes and their equipment?",
@@ -1100,7 +2657,26 @@
    "Assumption: the sled itself (steel frame, runners, carbon cowling) weighs about 200 kg.",
    "Total: 400 + 200 = 600 kg.",
    "Result: limit about 600 kg."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "Athletes",
+     "v": 4
+    },
+    {
+     "label": "Weight per athlete (kg)",
+     "v": 100,
+     "op": "×"
+    },
+    {
+     "label": "Sled weight (kg)",
+     "v": 200,
+     "op": "+"
+    }
+   ],
+   "result": 600
+  }
  },
  "WIN-10": {
   "question": "How many competition jumps (excluding qualification) are made in total at a Four Hills Tournament if both rounds take place as normal at all four events?",
@@ -1114,6 +2690,25 @@
    "Assumption: about half go through → around 25 jumps in the second round.",
    "Per event: 50 + 25 = 75 jumps.",
    "Four events: 4 × 75 = 300 jumps."
-  ]
+  ],
+  "calc": {
+   "rows": [
+    {
+     "label": "First-round jumps",
+     "v": 50
+    },
+    {
+     "label": "Second-round jumps",
+     "v": 25,
+     "op": "+"
+    },
+    {
+     "label": "Events",
+     "v": 4,
+     "op": "×"
+    }
+   ],
+   "result": 300
+  }
  }
 }

@@ -2,7 +2,9 @@
 
 The questions come from `Guesstimate_Fragen*.xlsx` in the project folder (German, sheets "Fragen" and "Quellen", see
 its sheet "Hinweise"). The site shows them in English: `guesstimate/en.json` holds the English texts per question id
-(`question`, `context`, `unit`, `referencePeriod`, `explanation`, `introduction`, `steps`). Numbers, answer type,
+(`question`, `context`, `unit`, `referencePeriod`, `explanation`, `introduction`, `steps`) and the worked calculation
+shown under "How to get there": `calc` = {"rows": [{"label": "Matchdays", "v": 34}, {"label": "Matches per matchday", "op": "×", "v": 9}, …], "result": 459}
+(the first row is the start value, every further row applies its operation `×`, `÷`, `+` or `−` in order). Numbers, answer type,
 sources and difficulty always come from the Excel. A question without an entry in `en.json` is shown in German and
 the build lists it, so a new row in the Excel needs its English text added there. Visitors who pick German see the
 Excel's own texts.

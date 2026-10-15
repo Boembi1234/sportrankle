@@ -378,18 +378,11 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .k-est .est-score .today{margin-top:16px}
 .est-badge.off{background:var(--bg);color:var(--text);box-shadow:0 2px 0 rgba(0,0,0,.6)}
 .k-est .est-rows .fact{background:var(--surface-faint)}
-/* "How to get there": a button at the bottom of the score card (like Your board / Perfect board, in the darker field
-   colour so it stands out on the card), opening the napkin math right under it */
-.k-est .est-score .est-nap-btn{grid-column:1 / -1;margin-top:16px;background:var(--surface-faint);box-shadow:0 2px 0 rgba(0,0,0,.45)}
-.est-nap-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:0 16px;border:0;cursor:pointer;font-family:var(--font)}
-.est-nap-btn::after{content:"";width:7px;height:7px;border-right:2px solid;border-bottom:2px solid;transform:translateY(-2px) rotate(45deg)}
-.est-nap-btn[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
-@media (hover:hover){.v2 .est-score .est-nap-btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 rgba(0,0,0,.45);filter:brightness(1.15)}}
-.v2 .est-score .est-nap-btn:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(0,0,0,.45);filter:none}
+/* "How to get there": the calculation at the bottom of the score card, always open, under a small heading */
+.est-nap-h{grid-column:1 / -1;margin:20px 0 0;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 /* Napkin Math: a card with the starting thought, then the steps as rows split by dashed lines (the step left, its value
    right; the first marked START), the rough result in bold, and the sources small underneath */
-.est-nap{grid-column:1 / -1;margin-top:16px}
-.est-nap[hidden]{display:none}
+.est-nap{grid-column:1 / -1;margin-top:8px}
 .est-nap-rows{margin:0;padding:0;list-style:none;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
 .est-nap-rows li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px dashed var(--line-strong);line-height:1.4}
 .est-nap-rows li:first-child{border-top:0}
@@ -719,8 +712,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
           <div class="today-bars" role="img"></div>
           <div class="today-axis" aria-hidden="true"></div>
         </div>
-        <button class="segbtn est-nap-btn" type="button" id="est-nap-btn" aria-expanded="false" aria-controls="est-nap">How to get there</button>
-        <div class="est-nap" id="est-nap" hidden></div>
+        <p class="est-nap-h">How to get there</p>
+        <div class="est-nap" id="est-nap"></div>
       </div>
       <div class="est-box" id="est-qbox">
         <h1 class="est-q" id="est-q"></h1>
@@ -1630,8 +1623,6 @@ function estResults(q, fresh = false){
   $('est-rows').innerHTML = `<li class="fact"><span class="fact-k">Your guess</span><span class="est-badge">${estBare(g, q)}</span></li>
       <li class="fact"><span class="fact-k">Answer${tag}</span><span class="est-badge ok">${estBare(a, q)}</span></li>
       <li class="fact"><span class="fact-k">Off by</span><span class="est-badge off">${estFactor(f)}</span></li>`;
-  $('est-nap-btn').setAttribute('aria-expanded', 'false');
-  $('est-nap').hidden = true;
   $('est-nap').innerHTML = `
       ${nm.calc ? `<ul class="est-nap-rows est-calc-box">${nm.calc.rows.map((r, i) => `<li><span>${escH(r.label)}</span>`
         + `<span class="est-badge off">${i === 0 ? '' : `<span class="op">${r.op}</span> `}${estNum(r.v)}</span></li>`).join('')}<li class="end"><span>Rough estimate</span><span class="est-badge ok">≈ ${estBare(nm.calc.result, q)}</span></li></ul>`
@@ -1645,11 +1636,6 @@ function estResults(q, fresh = false){
   $('est-share').textContent = 'Share my score';
   announce(`${verdict}. The ${q.answerType === 'estimate' ? 'model estimate' : 'answer'} is ${estShow(a, q)}, you were off by ${estFactor(f)}.`);
 }
-$('est-nap-btn').addEventListener('click', e => {
-  const open = e.currentTarget.getAttribute('aria-expanded') !== 'true';
-  e.currentTarget.setAttribute('aria-expanded', String(open));
-  $('est-nap').hidden = !open;
-});
 // Online: one result per device and day under "guesstimate-all": where the guess lay, shown against everyone else's with
 // the axis in this question's units (a tenth of the answer to ten times it)
 async function estReport(pos, ends){

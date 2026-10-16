@@ -56,7 +56,7 @@ SPORTS = {
 GAMES = {
     # "cover" is the picture on the home tile; games without one show their first item's photo
     "sports": {"file": "Mannschaftssportarten*.xlsx", "tab": "Team sports", "noun": "sport", "plural": "sports", "word": "SPORTS",
-               "sport": "mixed", "cover": "covers/sports.png"},
+               "sport": "mixed", "cover": {"file": "covers/sports.png", "width": 0.75, "cy": 0.5}},
     "f1": {"file": "F1-Strecken*.xlsx", "tab": "F1 circuits", "noun": "circuit", "plural": "circuits", "word": "F1",
            "sport": "motorsport", "cover": "covers/f1.png"},
     # Names are already English; "short" says what goes on the title board: the last word or all but the first.
@@ -106,7 +106,7 @@ GAMES["athletes"] = {
     # The flagship: Rankle only ("kinds"), shown as the big card on top of the home page ("flagship")
     "file": "Sportrankle_Top150*.xlsx", "tab": "Top 150 athletes", "noun": "athlete", "plural": "athletes", "word": "TOP 150",
     "english": True, "short": "surname", "sport": "mixed", "kinds": ["rankle"], "flagship": True,
-    "cover": {"file": "covers/athletes.png", "ratio": 1.5, "width": 1.0, "cy": 0.5, "bg": "#282c50"},   # 3:2 like every tile picture
+    "cover": {"file": "covers/athletes.png", "width": 0.75, "cy": 0.5},   # framed like the sport pictures
     "format": "wide", "name_col": "Athlete", "sub": ["Sport", "Nationality"],
     "cats": {
         "Age (1.9.2026)": ("Age", "years", "dec1", "oldest"),
@@ -130,7 +130,7 @@ GAMES["athletes"] = {
 GAMES["records"] = {
     # Guess the record: one world record a day, guess the number. Not a ranking pool: no categories, its own loader.
     "file": "Sports_World_Records*.xlsx", "tab": "World records", "noun": "record", "plural": "records", "word": "RECORD",
-    "sport": "mixed", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/records.png", "ratio": 1.5, "pad": True}}
+    "sport": "mixed", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/records.png", "width": 0.75, "cy": 0.5}}
 GAMES["footrecords"] = {
     "file": "Football_Records*.xlsx", "tab": "Football records", "noun": "record", "plural": "records", "word": "RECORD",
     "sport": "soccer", "kinds": ["guess"], "format": "records", "cover": {"file": "covers/footrecords.png", "ratio": 1.5, "pad": True}}

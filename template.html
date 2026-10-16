@@ -140,12 +140,12 @@ a{color:inherit}
 /* Hover: a soft glow in a lighter shade of the tile's colour rises behind the picture, which zooms in a little and lifts */
 .ntile .tile-art{overflow:hidden}
 .ntile .tile-art::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .35s ease;
-  background:radial-gradient(circle at 50% 58%,color-mix(in srgb,var(--tile-art),#fff 22%) 0%,transparent 58%)}
+  background:radial-gradient(ellipse 85% 75% at 50% 62%,color-mix(in srgb,var(--tile-art),#fff 9%) 0%,color-mix(in srgb,var(--tile-art),#fff 4%) 45%,transparent 85%)}   /* wide and faint, fading out softly */
 .ntile .tile-art img{transition:transform .45s cubic-bezier(.2,.7,.2,1)}
 .ntile .tile-chip{z-index:1}
 @media (hover:hover){
   .ntile:hover .tile-art::before{opacity:1}
-  .ntile:hover .tile-art img{transform:scale(1.07) translateY(-2.5%)}
+  .ntile:hover .tile-art img{transform:scale(1.03) translateY(-1%)}
 }
 .ntile:focus-visible .tile-art::before{opacity:1}
 @media (prefers-reduced-motion:reduce){.ntile .tile-art img{transition:none}.ntile:hover .tile-art img{transform:none}}   /* the tile's foot: the menu row, the whole tile is the link */

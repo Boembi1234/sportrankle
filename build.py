@@ -102,7 +102,7 @@ GAMES["athletes"] = {
     # The flagship: Rankle only ("kinds"), shown as the big card on top of the home page ("flagship")
     "file": "Sportrankle_Top150*.xlsx", "tab": "Top 150 athletes", "noun": "athlete", "plural": "athletes", "word": "TOP 150",
     "english": True, "short": "surname", "sport": "mixed", "kinds": ["rankle"], "flagship": True,
-    "cover": {"file": "covers/athletes.png", "ratio": 1, "width": 1.0, "cy": 0.5, "bg": "#282c50"},   # whole square, shown on its own navy
+    "cover": {"file": "covers/athletes.png", "ratio": 1.5, "width": 1.0, "cy": 0.5, "bg": "#282c50"},   # 3:2 like every tile picture
     "format": "wide", "name_col": "Athlete", "sub": ["Sport", "Nationality"],
     "cats": {
         "Age (1.9.2026)": ("Age", "years", "dec1", "oldest"),
@@ -144,7 +144,7 @@ WIDE_LOW = {"lowest", "youngest", "fewest", "earliest", "shortest", "smallest", 
 SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "supabase" / "anon.key").read_text().strip()
             if (HERE / "supabase" / "anon.key").exists() else None}
 
-# Pictures on the two game-type cards of the home page (tall subjects: cropped 2:1 around them)
+# Pictures on the game-type cards of the home page (cropped 3:2 like every tile picture)
 # Home page pictures per game type; a dict entry overrides the crop (see cover())
 KIND_COVERS = {"rankle": "covers/rankle.png", "blind": "covers/blind.png", "sort": "covers/sort.png",
                "guess": {"file": "covers/records.png", "pad": True},
@@ -1083,7 +1083,7 @@ def main():
     for k, f in KIND_COVERS.items():
         opts = f if isinstance(f, dict) else {"file": f}
         if next(HERE.glob(opts["file"]), None):
-            kinds[k] = cover(opts["file"], ratio=2, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000, pad=opts.get("pad", False))
+            kinds[k] = cover(opts["file"], ratio=1.5, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000, pad=opts.get("pad", False))   # 3:2 like every tile picture
     # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's;
     # a menu icon if covers/icon-<key>.png exists (a transparent PNG)
     sports = {k: {"name": s["name"], **({"soon": True} if s.get("soon") else {}),

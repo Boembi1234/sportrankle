@@ -48,7 +48,7 @@ a{color:inherit}
 /* The header spans the window (24px side margin); the content is centred and at most 1032px wide, with at least that
    24px to the window edge; the play screens are narrower still */
 .page>main{width:100%;max-width:760px;margin-inline:auto}
-.page.at-home>main{max-width:1032px}
+.page.at-home>main{max-width:760px}
 .page.done,.page.at-home{height:auto;min-height:100dvh}
 
 /* Header */
@@ -118,7 +118,23 @@ a{color:inherit}
 @media (prefers-reduced-motion:reduce){.drawer,.menu-open .drawer,.drawer-bg,.drawer-x,.menu-open .drawer-x{transition:none}}
 
 /* Home: today's games as tiles */
-.home{padding-block:32px 56px}
+.home{padding-block:24px 56px}
+/* Home and overview pages, like the menu and the games: the name card, small section headings, rows with an icon,
+   a name and an arrow (a faint box, the full card colour under the pointer) */
+.home .ncard{margin:0;min-height:52px;padding:15px 16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);
+  font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;text-align:center;text-wrap:balance}
+.nlead{margin:16px 0 0;color:var(--muted);font-size:15px;line-height:1.45;text-align:center;text-wrap:balance}
+.nsec{margin:24px 0 8px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.nlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.nrow{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 16px 0 14px;border-radius:10px;background:var(--surface-faint);
+  color:var(--text);text-decoration:none;font-weight:700;font-size:17px;transition:background-color .15s}
+.nrow::after{content:"";flex:none;margin:0 2px 0 4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;transform:rotate(45deg)}
+.nrow-ic{flex:none;width:24px;height:24px;object-fit:contain}
+.nrow-name{flex:1;min-width:0}
+.nrow-note{flex:none;font-size:14px;font-weight:600;color:var(--muted)}
+@media (hover:hover){.nrow:hover{background:var(--surface)}}
+.nrow:active{background:var(--surface-edge)}
+@media (prefers-reduced-motion:reduce){.nrow{transition:none}}
 .home h1{font-weight:800;font-stretch:80%;font-size:44px;line-height:1;margin:0}
 .home .today{margin:8px 0 0;color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums;max-width:60ch}
 /* Hero: one question, one line of facts, one button to the next open game */
@@ -585,7 +601,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 /* Tablet and phone */
 @media (max-width:1023px){
   .page>main{max-width:560px}
-  .page.at-home>main{max-width:1032px}
+  .page.at-home>main{max-width:760px}
   .game{padding-block:12px 0}
   .question{font-size:24px;margin-top:10px}
   .right{margin-top:10px}
@@ -1176,145 +1192,50 @@ function finishFooter(){
   $('note').innerHTML = `<a href="#t/${MODE}">${D.tab}</a> · <a href="#">Home</a>`;
 }
 
-// ---- Home ----
-// A tile with a picture, a name and a Play / Continue status
-function statusOf(keys){
-  return '<span class="tile-status">Play</span>';
-}
-function bigTile(href, label, img, name, keys){
-  return `<a class="tile" href="${href}" aria-label="${label}">
-    <span class="tile-art">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>
-    <span class="tile-body"><span class="tile-name">${name}</span>${statusOf(keys)}</span>
-  </a>`;
-}
-const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
-// Sport tile over all games: to the sport page, or straight to the topic when the sport has only one
-const sportCard = s => bigTile(sportHref(s), SPORTS[s].name, sportImg(s), SPORTS[s].name, keysOf(topicsOf(s)));
-// Guess the record sits in front of the sports: one tile straight into today's record for each pool that only has that game
-const guessCards = () => {
-  const ps = poolsFor('guess');
-  if (!ps.length) return [];
-  const lead = ps.find(m => DATA[m].sport === 'mixed') || ps[0];
-  return [bigTile(ps.length > 1 ? '#guess' : `#guess-${lead}`, `${GAMES.guess.name}, ${ps.map(m => DATA[m].tab).join(', ')}`,
-    DATA[lead].cover, GAMES.guess.name, ps.map(m => `guess-${m}`))];
-};
-const topicCard = m => bigTile(`#t/${m}`, `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, DATA[m].cover, DATA[m].tab, keysOf([m]));
+// ---- Home and the overview pages, built like the menu and the games ----
+// A title card like the games' name card, then sections with a small heading (like the menu's) and rows: icon, name,
+// sometimes a short note, an arrow
+const navRow = (href, name, icon, label = name, note = '') => `<li><a class="nrow" href="${href}" aria-label="${label}">`
+  + `${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}</span>${note ? `<span class="nrow-note">${note}</span>` : ''}</a></li>`;
+const navList = (title, rows) => `<p class="nsec">${title}</p><ul class="nlist">${rows.join('')}</ul>`;
+const navTitle = (title, chips = []) => `<h1 class="ncard">${title}</h1>${chips.length ? `<div class="title-sub">${chips.map(c => `<span class="chip">${c}</span>`).join('')}</div>` : ''}`;
+const games = n => `${n} game${n === 1 ? '' : 's'}`;
+// The games in the menu's order: Guesstimate before Guess the Record, Impostor last
+const gameRows = () => [...Object.keys(GAMES).filter(k => k !== 'guess').map(k => navRow(`#${k}`, GAMES[k].name, GAME_ICONS[k], `${GAMES[k].name}. ${GAMES[k].blurb}`)),
+  navRow('#guesstimate', 'Guesstimate', GAME_ICONS.guesstimate, 'Guesstimate. Surprising number questions from the world of sport.', EST.length ? '' : 'Soon'),
+  navRow('#guess', GAMES.guess.name, GAME_ICONS.guess, `${GAMES.guess.name}. ${GAMES.guess.blurb}`),
+  navRow('#ringer', 'Impostor', GAME_ICONS.ringer, 'Impostor. Party game on one phone, 3 to 12 players.', 'Party')];
+const sportRows = (only = s => true) => Object.keys(SPORTS).filter(s => (topicsOf(s).length || SOON(s)) && only(s)).map(s => navRow(sportHref(s), SPORTS[s].name, SPORTS[s].icon));
+const topicRow = m => navRow(`#t/${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, games(DATA[m].kinds.length));
 
-// Sport page: its topics
+// Sport page: its topics (a sport still to come says so and lists the others)
 function renderSport(s){
-  if (SOON(s)) {
-    const img = sportImg(s);
-    $('home').innerHTML = `<h1>${SPORTS[s].name}</h1>
-      <div class="topic soon-page">
-        <div class="topic-art">${img ? `<img src="${img}" alt="">` : ''}</div>
-        <div><span class="soon-chip">Coming soon</span>
-          <p>We're building the ${SPORTS[s].name.toLowerCase()} topics for every game. Until then, try another sport.</p>
-          <a class="btn" href="#">Pick another sport</a></div>
-      </div>`;
-    return;
-  }
-  $('home').innerHTML = `<h1>${SPORTS[s].name}</h1>
-    <p class="today">Pick a topic. ${topicsOf(s).map(m => `${DATA[m].tab}: ${DATA[m].kinds.length === 1 ? 'one game' : `${DATA[m].kinds.length} games`}`).join(' · ')}.</p>
-    <div class="tiles">${topicsOf(s).map(topicCard).join('')}</div>`;
+  $('home').innerHTML = SOON(s)
+    ? navTitle(SPORTS[s].name, ['Coming soon']) + `<p class="nlead">We're building the ${SPORTS[s].name.toLowerCase()} topics for every game. Until then, try another sport.</p>`
+      + navList('Sports', sportRows(x => !SOON(x)))
+    : navTitle(SPORTS[s].name) + navList('Topics', topicsOf(s).map(topicRow));
 }
-// Topic page: the games on it side by side, with their status, and a button to the first one
+// Topic page: its games
 function renderTopic(m){
   const g = DATA[m], kinds = Object.keys(GAMES).filter(k => poolsFor(k).includes(m));
-  const next = `${kinds[0]}-${m}`;
-  const rows = kinds.map(k => `<li><a class="grow" href="#${k}-${m}" aria-label="${GAMES[k].name}, ${g.tab}">
-      <span class="grow-name">${GAMES[k].name}</span>${statusOf([`${k}-${m}`])}<span class="grow-blurb">${GAMES[k].blurb}</span></a></li>`).join('');
-  $('home').innerHTML = `<h1>${g.tab}</h1>
-    <p class="today">${SPORTS[g.sport].name} · ${g.items.length} ${g.plural}${g.cats.length ? ` · ${g.cats.length} categories` : ''}. ${kinds.length === 1 ? 'One game, play as often as you like.' : `${kinds.length} games, play as often as you like.`}</p>
-    <div class="topic">
-      <div class="topic-art">${g.cover ? `<img src="${g.cover}" alt="">` : ''}</div>
-      <div><ul class="games">${rows}</ul>
-        <a class="btn" href="#${next}">Play ${GAMES[next.split('-')[0]].name}</a></div>
-    </div>`;
+  $('home').innerHTML = navTitle(g.tab, [SPORTS[g.sport].name, `${g.items.length} ${g.plural}`, ...(g.cats.length ? [`${g.cats.length} categories`] : [])])
+    + navList('Games', kinds.map(k => navRow(`#${k}-${m}`, GAMES[k].name, GAME_ICONS[k], `${GAMES[k].name}, ${g.tab}`)));
 }
-
+// Home: the games, then the sports. One game: its sports (or straight its topics when each sport has one).
+// One game and sport: its topics.
 function renderHome(kind, sport){
-  // Level 2: the sports of one game. A sport with a single pool links straight to that pool.
-  const sportTile = (kind, s) => {
-    const sp = poolsFor(kind, s), img = SPORTS[s].cover || (sp.map(m => DATA[m].cover).find(Boolean));
-    const status = statusOf(sp.map(m => `${kind}-${m}`));
-    return `<a class="tile" href="${sp.length > 1 ? `#${kind}/${s}` : `#${kind}-${sp[0]}`}" aria-label="${GAMES[kind].name}, ${SPORTS[s].name}">
-      <span class="tile-art">${img ? `<img src="${img}" alt="">` : ''}</span>
-      <span class="tile-body"><span class="tile-name">${SPORTS[s].name}</span>${status}</span>
-    </a>`;
-  };
-  const tile = (kind, m) => {
-    const g = DATA[m];
-    const img = g.cover || (g.cats.length ? g.items[(kind === 'rankle' ? rankleDraw(m) : blindDraw(m, kind)).items[0]].img : '');
-    const status = statusOf([]);
-    return `<a class="tile" href="#${kind}-${m}" aria-label="${GAMES[kind].name}, ${g.tab}">
-      <span class="tile-art">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>
-      <span class="tile-body"><span class="tile-name">${g.tab}</span>${status}</span>
-    </a>`;
-  };
-  // Level 1: one card per game type; level 2: that game's sports; level 3: the pools of one sport
-  const pools = poolsFor(kind || 'blind', sport);
-  const flat = kind && !sport && sportsFor(kind).every(s => poolsFor(kind, s).length === 1);   // one topic per sport: skip the sport level
-  const kindCard = (kind, g) => {
-    const status = statusOf(poolsFor(kind).map(m => `${kind}-${m}`));
-    return `<a class="tile" href="#${kind}" aria-label="${g.name}. ${g.blurb}">
-      <span class="tile-art kind-art${KIND_ART[kind] ? '' : ' led'}">${KIND_ART[kind] ? `<img src="${KIND_ART[kind]}" alt="">` : `<span class="tile-cards">${g.word}</span>`}</span>
-      <span class="tile-body"><span class="tile-name">${g.name}</span>${status}</span>
-    </a>`;
-  };
-  // Facts line: the first game, the streak
-  const next = ORDER[0];
-  const nextName = next && `${GAMES[next.split('-')[0]].name} · ${DATA[next.split('-')[1]].tab}`;
-  const streak = streakDays();
-  const facts = [`<b>${ORDER.length}</b> games, endless rounds`, streak > 1 ? `<b>${streak}-day</b> streak` : ''].filter(Boolean).join(' · ');
-  // The flagship: Rankle on the big pool, the one card everyone plays first
-  const flagship = () => {
-    const g = DATA[FLAG], h = load(`rankle-history-${FLAG}`) || {};
-    const best = Math.max(0, ...Object.values(h).map(([a, b]) => Math.round(100 * a / b)));
-    return `<section class="flag">
-      <a class="flag-art${g.cover ? '' : ' led'}" href="#rankle-${FLAG}" aria-label="Rankle, ${g.tab}"${g.cover_bg ? ` style="background:${g.cover_bg}"` : ''}>${g.cover ? `<img src="${g.cover}" alt="" fetchpriority="high"${g.cover_bg ? ' style="object-fit:contain"' : ''}>` : `<span class="tile-cards">${g.word}</span>`}</a>
-      <div class="flag-body">
-        <p class="eyebrow">Rankle · the flagship game</p>
-        <h2 class="flag-name">${g.tab}</h2>
-        <p class="flag-blurb">Eight of the world's biggest athletes, eight categories, one board. New cards every game, play as often as you like.</p>
-        <a class="btn" href="#rankle-${FLAG}">Play Rankle</a>
-        <p class="meta">${best ? `Your best: ${best} %` : 'Eight rounds, about two minutes'}<span id="flag-n"></span></p>
-      </div>
-    </section>`;
-  };
-  $('home').innerHTML = kind
-    ? `<h1>${GAMES[kind].name}${sport ? ` · ${SPORTS[sport].name}` : ''}</h1>
-      <p class="today">${GAMES[kind].blurb} ${sport || flat ? 'Pick a topic:' : 'Pick a sport:'}</p>
-      <div class="tiles">${sport || flat ? pools.map(m => tile(kind, m)).join('') : sportsFor(kind).map(s => sportTile(kind, s)).join('')}</div>`
-    : `<section class="hero">
-        <p class="eyebrow">Sports puzzles</p>
-        <h1>How much of a sports freak are you?</h1>
-        ${FLAG ? flagship() : `<p class="lead">Four games, ${pools.length} pools, new cards every round. Play as long as you like — find out where you stand.</p>
-        <div class="cta"><a class="btn" href="#${next}">Play now</a>
-          <span class="meta">Next up: <b>${nextName}</b> · ${facts}</span></div>`}
-      </section>
-      <p class="sec">Pick a sport</p>
-      <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(sportCard).join('')}</div>
-      <p class="sec">The games</p>
-      <div class="tiles">${Object.entries(GAMES).filter(([k]) => k !== 'guess').map(([k, g]) => kindCard(k, g)).join('')}
-        <a class="tile" href="#guesstimate" aria-label="Guesstimate. Surprising number questions from the world of sport. How many times off are you?">
-          <span class="tile-art kind-art${KIND_ART.guesstimate ? '' : ' led'}">${KIND_ART.guesstimate ? `<img src="${KIND_ART.guesstimate}" alt="">` : `<span class="tile-cards">GUESSTIMATE</span>`}</span>
-          <span class="tile-body"><span class="tile-name">Guesstimate</span><span class="tile-status">${EST.length ? 'Play' : 'Soon'}</span></span>
-        </a>${kindCard('guess', GAMES.guess)}
-        <a class="tile" href="#ringer" aria-label="Impostor. Party game on one phone, 3 to 12 players. Everyone knows the secret except the impostor. Find them.">
-          <span class="tile-art kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">IMPOSTOR</span>`}</span>
-          <span class="tile-body"><span class="tile-name">Impostor</span><span class="tile-status">Play</span></span>
-        </a></div>
-      <p class="legal-line">© ${new Date().getFullYear()} Sportrankle · <a href="/legal">Legal notice &amp; privacy</a></p>`;
-  if (!kind && FLAG) flagCount();
-}
-// How many have played today's flagship so far (the same histogram call the results screen uses)
-async function flagCount(){
-  if (!SB) return;
-  try {
-    const rows = await sb('rpc/daily_stats', {p_day: today(), p_game: `rankle-${FLAG}`});
-    const n = rows.reduce((a, r) => a + Number(r.n), 0), el = $('flag-n');
-    if (el && n) el.textContent = ` · ${n.toLocaleString('en-US')} played so far today`;
-  } catch (e) { /* offline: the line just stays shorter */ }
+  if (!kind) {
+    $('home').innerHTML = navTitle('How much of a sports freak are you?')
+      + navList('Games', gameRows()) + navList('Sports', sportRows())
+      + `<p class="legal-line">© ${new Date().getFullYear()} Sportrankle · <a href="/legal">Legal notice &amp; privacy</a></p>`;
+    return;
+  }
+  const flat = !sport && sportsFor(kind).every(s => poolsFor(kind, s).length === 1);   // one topic per sport: skip the sport level
+  const topic = m => navRow(`#${kind}-${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, `${GAMES[kind].name}, ${DATA[m].tab}`);
+  const sportRow = s => { const sp = poolsFor(kind, s);
+    return navRow(sp.length > 1 ? `#${kind}/${s}` : `#${kind}-${sp[0]}`, SPORTS[s].name, SPORTS[s].icon, `${GAMES[kind].name}, ${SPORTS[s].name}`, sp.length > 1 ? `${sp.length} topics` : ''); };
+  $('home').innerHTML = navTitle(`${GAMES[kind].name}${sport ? ` · ${SPORTS[sport].name}` : ''}`) + `<p class="nlead">${GAMES[kind].blurb}</p>`
+    + (sport || flat ? navList('Topics', poolsFor(kind, sport).map(topic)) : navList('Sports', sportsFor(kind).map(sportRow)));
 }
 
 // ---- Ringer: a pass-the-phone party game on the same pools. Nothing daily, nothing online. ----

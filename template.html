@@ -855,7 +855,7 @@ const GAMES = {
 };
 const KIND_ART = __KINDS__;
 const GAME_ICONS = __GAME_ICONS__;
-const GAME_TILE = {rankle: {bg: '#202D39', glow: '#69B9F5'}, blind: {bg: '#202D39', glow: '#69B9F5'}, guess: {bg: '#202D39', glow: '#69B9F5'}, guesstimate: {bg: '#202D39', glow: '#69B9F5'}};   // flat colour and hover glow of a game's tile (like the sports')   // {game: icon} for the menu, like the sport icons
+const GAME_TILE = {rankle: {bg: '#202D39', glow: '#69B9F5'}, blind: {bg: '#202D39', glow: '#69B9F5'}, sort: {bg: '#202D39', glow: '#69B9F5'}, guess: {bg: '#202D39', glow: '#69B9F5'}, ringer: {bg: '#202D39', glow: '#69B9F5'}, guesstimate: {bg: '#202D39', glow: '#69B9F5'}};   // flat colour and hover glow of a game's tile (like the sports')   // {game: icon} for the menu, like the sport icons
 const SPORTS = __SPORTS__;   // sport groups on the home page: {key: {name, cover?}}
 const ROUTE = __ROUTE__;   // the view a real URL opens on (e.g. "#t/nfl" on /nfl-teams), "" on the home page
 const SB = __SUPABASE__;   // {url, key} or null: results go online only with a key
@@ -1220,7 +1220,7 @@ const gameTile = (k, name, label, note = '') => navTile(`#${k}`, name, GAME_ICON
 const gameRows = () => [...Object.keys(GAMES).filter(k => k !== 'guess').map(k => gameTile(k, GAMES[k].name, `${GAMES[k].name}. ${GAMES[k].blurb}`)),
   navTile('#guesstimate', 'Guesstimate', GAME_ICONS.guesstimate, KIND_ART.guesstimate, 'Guesstimate. Surprising number questions from the world of sport.', '', true, GAME_TILE.guesstimate.bg, GAME_TILE.guesstimate.glow),
   gameTile('guess', GAMES.guess.name, `${GAMES.guess.name}. ${GAMES.guess.blurb}`),
-  navTile('#ringer', 'Impostor', GAME_ICONS.ringer, KIND_ART.ringer, 'Impostor. Party game on one phone, 3 to 12 players.', 'Party', true)];
+  navTile('#ringer', 'Impostor', GAME_ICONS.ringer, KIND_ART.ringer, 'Impostor. Party game on one phone, 3 to 12 players.', '', true, GAME_TILE.ringer.bg, GAME_TILE.ringer.glow)];
 const sportRows = (only = s => true) => Object.keys(SPORTS).filter(s => (topicsOf(s).length || SOON(s)) && only(s)).map(s => navTile(sportHref(s), SPORTS[s].name, SPORTS[s].icon, sportImg(s), SPORTS[s].name, '', false, SPORTS[s].bg, SPORTS[s].glow));
 const topicRow = m => navTile(`#t/${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, games(DATA[m].kinds.length));
 

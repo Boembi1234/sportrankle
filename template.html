@@ -722,7 +722,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
     </div>
     <div class="top-mid">
       <a class="logo" href="#">Sport Minigames</a>
-      <nav class="sportnav" id="sportnav" aria-label="Sports"></nav>
+      <nav class="sportnav" id="sportnav" aria-label="Games"></nav>
       <div class="counter" id="counter"><span id="round">1/8</span><i id="csep"></i><span id="cpts"><span id="score">0</span> pts</span></div>
     </div>
     <div class="top-right">
@@ -1362,13 +1362,15 @@ const sportHref = s => { const t = topicsOf(s); return t.length === 1 && !SOON(s
 // Wide screens: the sports as links in the middle of the header. Up to 5 fit; with more, the first 4 show and a
 // "More" button opens the rest in a dropdown underneath (the button is marked when the current sport is in there)
 const NAV_MAX = 5;
+// The header's middle: the games (the sports are the home page's first choice), in the menu's order
 function sportNav(){
-  const {sport} = here(), all = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s));
-  const link = s => `<a href="${sportHref(s)}"${s === sport ? ' aria-current="page"' : ''}>`
-    + `${SPORTS[s].icon ? `<img src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}</a>`;
+  const {kind} = here();
+  const all = [...Object.keys(GAMES).filter(k => k !== 'guess').map(k => [k, GAMES[k].name]), ['guesstimate', 'Guesstimate'], ['guess', GAMES.guess.name], ['ringer', 'Impostor']];
+  const link = ([k, name]) => `<a href="#${k}"${k === kind ? ' aria-current="page"' : ''}>`
+    + `${GAME_ICONS[k] ? `<img src="${GAME_ICONS[k]}" alt="">` : ''}${name}</a>`;
   const shown = all.length > NAV_MAX ? all.slice(0, NAV_MAX - 1) : all, rest = all.slice(shown.length);
   $('sportnav').innerHTML = shown.map(link).join('') + (rest.length ? `<div class="nav-more">
-    <button type="button" class="nav-more-btn${rest.includes(sport) ? ' on' : ''}" id="more-btn" aria-expanded="false" aria-controls="more-list">More</button>
+    <button type="button" class="nav-more-btn${rest.some(([k]) => k === kind) ? ' on' : ''}" id="more-btn" aria-expanded="false" aria-controls="more-list">More</button>
     <div class="nav-more-list" id="more-list" hidden>${rest.map(link).join('')}</div></div>` : '');
 }
 // Dropdowns in the header (More, language): open and close them, only one at a time

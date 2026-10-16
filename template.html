@@ -133,6 +133,8 @@ a{color:inherit}
 .nrow:active{background:var(--surface-edge)}
 @media (prefers-reduced-motion:reduce){.nrow{transition:none}}
 .nsec+.tiles{margin-top:0}
+.ncard+.tiles{margin-top:16px}
+.home .tiles+.ncard{margin-top:40px}
 .ntile .nrow{min-height:56px;border-radius:0;background:none}
 .tile-chip{position:absolute;top:10px;right:10px}   /* "2 topics", "Party": a chip in the picture's corner */   /* the tile's foot: the menu row, the whole tile is the link */
 @media (hover:hover){.ntile:hover .nrow{background:none}}
@@ -1229,8 +1231,9 @@ function renderTopic(m){
 // One game and sport: its topics.
 function renderHome(kind, sport){
   if (!kind) {
-    $('home').innerHTML = navTitle('How much of a sports freak are you?')
-      + navTiles('Sports', sportRows()) + navTiles('Games', gameRows())
+    // two parts, each under its own name card: the sports, then the games
+    $('home').innerHTML = `<h1 class="ncard">Choose a sport</h1><div class="tiles">${sportRows().join('')}</div>`
+      + `<h2 class="ncard">Choose a game</h2><div class="tiles">${gameRows().join('')}</div>`
       + `<p class="legal-line">© ${new Date().getFullYear()} Sportrankle · <a href="/legal">Legal notice &amp; privacy</a></p>`;
     return;
   }

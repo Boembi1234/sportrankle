@@ -136,14 +136,11 @@ a{color:inherit}
 .ncard+.tiles{margin-top:var(--tile-gap)}   /* under a name card as far as the tiles are apart */
 .home .tiles+.ncard{margin-top:40px}
 .ntile .nrow{min-height:56px;border-radius:0;background:none}
-.tile-art .chip.tile-chip{position:absolute;top:10px;right:10px;box-shadow:none;   /* "2 topics", "Party": a flat chip in the picture's corner, */
-  background:color-mix(in srgb,var(--tile-art),#fff 9%);color:color-mix(in srgb,var(--tile-glow,#fff) 55%,#fff)}   /* tinted like its tile */
 /* Hover: a soft glow in a lighter shade of the tile's colour rises behind the picture, which zooms in a little and lifts */
 .ntile .tile-art{overflow:hidden}
 .ntile .tile-art::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .35s ease;
   background:radial-gradient(ellipse 48% 44% at 50% 60%,color-mix(in srgb,var(--tile-glow,#fff) 22%,transparent) 0%,color-mix(in srgb,var(--tile-glow,#fff) 9%,transparent) 55%,transparent 100%)}   /* the sport's glow colour, faint, behind the picture only */
 .ntile .tile-art img{transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-.ntile .tile-chip{z-index:1}
 @media (hover:hover){
   .ntile:hover .tile-art::before{opacity:1}
   .ntile:hover .tile-art img{transform:scale(1.03) translateY(-1%)}
@@ -1212,7 +1209,7 @@ function finishFooter(){
 // A title card like the games' name card, then sections with a small heading (like the menu's) and tiles
 // Tiles: the picture on top, the menu row (icon, name, note, arrow) at its foot
 const navTile = (href, name, icon, img, label = name, note = '', kind = false, bg = '', glow = '') => `<a class="tile ntile" href="${href}" aria-label="${label}">`
-  + `<span class="tile-art${kind ? ' kind-art' : ''}"${bg || glow ? ` style="${bg ? `--tile-art:${bg};` : ''}${glow ? `--tile-glow:${glow}` : ''}"` : ''}>${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}${note ? `<span class="chip tile-chip">${note}</span>` : ''}</span>`
+  + `<span class="tile-art${kind ? ' kind-art' : ''}"${bg || glow ? ` style="${bg ? `--tile-art:${bg};` : ''}${glow ? `--tile-glow:${glow}` : ''}"` : ''}>${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>`
   + `<span class="nrow">${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}</span></span></a>`;
 const navTiles = (title, tiles) => `<p class="nsec">${title}</p><div class="tiles">${tiles.join('')}</div>`;
 const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);

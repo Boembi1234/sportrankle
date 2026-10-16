@@ -48,7 +48,7 @@ a{color:inherit}
 /* The header spans the window (24px side margin); the content is centred and at most 1032px wide, with at least that
    24px to the window edge; the play screens are narrower still */
 .page>main{width:100%;max-width:760px;margin-inline:auto}
-.page.at-home>main{max-width:760px}
+.page.at-home>main{max-width:1032px}
 .page.done,.page.at-home{height:auto;min-height:100dvh}
 
 /* Header */
@@ -135,6 +135,9 @@ a{color:inherit}
 @media (hover:hover){.nrow:hover{background:var(--surface)}}
 .nrow:active{background:var(--surface-edge)}
 @media (prefers-reduced-motion:reduce){.nrow{transition:none}}
+.nsec+.tiles{margin-top:0}
+.ntile .nrow{min-height:56px;border-radius:0;background:none}   /* the tile's foot: the menu row, the whole tile is the link */
+@media (hover:hover){.ntile:hover .nrow{background:none}}
 .home h1{font-weight:800;font-stretch:80%;font-size:44px;line-height:1;margin:0}
 .home .today{margin:8px 0 0;color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums;max-width:60ch}
 /* Hero: one question, one line of facts, one button to the next open game */
@@ -601,7 +604,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 /* Tablet and phone */
 @media (max-width:1023px){
   .page>main{max-width:560px}
-  .page.at-home>main{max-width:760px}
+  .page.at-home>main{max-width:1032px}
   .game{padding-block:12px 0}
   .question{font-size:24px;margin-top:10px}
   .right{margin-top:10px}
@@ -1198,44 +1201,52 @@ function finishFooter(){
 const navRow = (href, name, icon, label = name, note = '') => `<li><a class="nrow" href="${href}" aria-label="${label}">`
   + `${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}</span>${note ? `<span class="nrow-note">${note}</span>` : ''}</a></li>`;
 const navList = (title, rows) => `<p class="nsec">${title}</p><ul class="nlist">${rows.join('')}</ul>`;
+// Tiles: the picture on top, the menu row (icon, name, note, arrow) at its foot
+const navTile = (href, name, icon, img, label = name, note = '', kind = false) => `<a class="tile ntile" href="${href}" aria-label="${label}">`
+  + `<span class="tile-art${kind ? ' kind-art' : ''}">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>`
+  + `<span class="nrow">${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}</span>${note ? `<span class="nrow-note">${note}</span>` : ''}</span></a>`;
+const navTiles = (title, tiles) => `<p class="nsec">${title}</p><div class="tiles">${tiles.join('')}</div>`;
+const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
+const topicImg = m => DATA[m].cover || SPORTS[DATA[m].sport].cover || '';
 const navTitle = (title, chips = []) => `<h1 class="ncard">${title}</h1>${chips.length ? `<div class="title-sub">${chips.map(c => `<span class="chip">${c}</span>`).join('')}</div>` : ''}`;
 const games = n => `${n} game${n === 1 ? '' : 's'}`;
 // The games in the menu's order: Guesstimate before Guess the Record, Impostor last
-const gameRows = () => [...Object.keys(GAMES).filter(k => k !== 'guess').map(k => navRow(`#${k}`, GAMES[k].name, GAME_ICONS[k], `${GAMES[k].name}. ${GAMES[k].blurb}`)),
-  navRow('#guesstimate', 'Guesstimate', GAME_ICONS.guesstimate, 'Guesstimate. Surprising number questions from the world of sport.', EST.length ? '' : 'Soon'),
-  navRow('#guess', GAMES.guess.name, GAME_ICONS.guess, `${GAMES.guess.name}. ${GAMES.guess.blurb}`),
-  navRow('#ringer', 'Impostor', GAME_ICONS.ringer, 'Impostor. Party game on one phone, 3 to 12 players.', 'Party')];
-const sportRows = (only = s => true) => Object.keys(SPORTS).filter(s => (topicsOf(s).length || SOON(s)) && only(s)).map(s => navRow(sportHref(s), SPORTS[s].name, SPORTS[s].icon));
-const topicRow = m => navRow(`#t/${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, games(DATA[m].kinds.length));
+const gameTile = (k, name, label, note = '') => navTile(`#${k}`, name, GAME_ICONS[k], KIND_ART[k], label, note, true);
+const gameRows = () => [...Object.keys(GAMES).filter(k => k !== 'guess').map(k => gameTile(k, GAMES[k].name, `${GAMES[k].name}. ${GAMES[k].blurb}`)),
+  navTile('#guesstimate', 'Guesstimate', GAME_ICONS.guesstimate, KIND_ART.guesstimate, 'Guesstimate. Surprising number questions from the world of sport.', EST.length ? '' : 'Soon', true),
+  gameTile('guess', GAMES.guess.name, `${GAMES.guess.name}. ${GAMES.guess.blurb}`),
+  navTile('#ringer', 'Impostor', GAME_ICONS.ringer, KIND_ART.ringer, 'Impostor. Party game on one phone, 3 to 12 players.', 'Party', true)];
+const sportRows = (only = s => true) => Object.keys(SPORTS).filter(s => (topicsOf(s).length || SOON(s)) && only(s)).map(s => navTile(sportHref(s), SPORTS[s].name, SPORTS[s].icon, sportImg(s)));
+const topicRow = m => navTile(`#t/${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, games(DATA[m].kinds.length));
 
 // Sport page: its topics (a sport still to come says so and lists the others)
 function renderSport(s){
   $('home').innerHTML = SOON(s)
     ? navTitle(SPORTS[s].name, ['Coming soon']) + `<p class="nlead">We're building the ${SPORTS[s].name.toLowerCase()} topics for every game. Until then, try another sport.</p>`
-      + navList('Sports', sportRows(x => !SOON(x)))
-    : navTitle(SPORTS[s].name) + navList('Topics', topicsOf(s).map(topicRow));
+      + navTiles('Sports', sportRows(x => !SOON(x)))
+    : navTitle(SPORTS[s].name) + navTiles('Topics', topicsOf(s).map(topicRow));
 }
 // Topic page: its games
 function renderTopic(m){
   const g = DATA[m], kinds = Object.keys(GAMES).filter(k => poolsFor(k).includes(m));
   $('home').innerHTML = navTitle(g.tab, [SPORTS[g.sport].name, `${g.items.length} ${g.plural}`, ...(g.cats.length ? [`${g.cats.length} categories`] : [])])
-    + navList('Games', kinds.map(k => navRow(`#${k}-${m}`, GAMES[k].name, GAME_ICONS[k], `${GAMES[k].name}, ${g.tab}`)));
+    + navTiles('Games', kinds.map(k => navTile(`#${k}-${m}`, GAMES[k].name, GAME_ICONS[k], KIND_ART[k], `${GAMES[k].name}, ${g.tab}`, '', true)));
 }
 // Home: the games, then the sports. One game: its sports (or straight its topics when each sport has one).
 // One game and sport: its topics.
 function renderHome(kind, sport){
   if (!kind) {
     $('home').innerHTML = navTitle('How much of a sports freak are you?')
-      + navList('Games', gameRows()) + navList('Sports', sportRows())
+      + navTiles('Games', gameRows()) + navTiles('Sports', sportRows())
       + `<p class="legal-line">© ${new Date().getFullYear()} Sportrankle · <a href="/legal">Legal notice &amp; privacy</a></p>`;
     return;
   }
   const flat = !sport && sportsFor(kind).every(s => poolsFor(kind, s).length === 1);   // one topic per sport: skip the sport level
-  const topic = m => navRow(`#${kind}-${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, `${GAMES[kind].name}, ${DATA[m].tab}`);
+  const topic = m => navTile(`#${kind}-${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${GAMES[kind].name}, ${DATA[m].tab}`);
   const sportRow = s => { const sp = poolsFor(kind, s);
-    return navRow(sp.length > 1 ? `#${kind}/${s}` : `#${kind}-${sp[0]}`, SPORTS[s].name, SPORTS[s].icon, `${GAMES[kind].name}, ${SPORTS[s].name}`, sp.length > 1 ? `${sp.length} topics` : ''); };
+    return navTile(sp.length > 1 ? `#${kind}/${s}` : `#${kind}-${sp[0]}`, SPORTS[s].name, SPORTS[s].icon, sportImg(s), `${GAMES[kind].name}, ${SPORTS[s].name}`, sp.length > 1 ? `${sp.length} topics` : ''); };
   $('home').innerHTML = navTitle(`${GAMES[kind].name}${sport ? ` · ${SPORTS[sport].name}` : ''}`) + `<p class="nlead">${GAMES[kind].blurb}</p>`
-    + (sport || flat ? navList('Topics', poolsFor(kind, sport).map(topic)) : navList('Sports', sportsFor(kind).map(sportRow)));
+    + (sport || flat ? navTiles('Topics', poolsFor(kind, sport).map(topic)) : navTiles('Sports', sportsFor(kind).map(sportRow)));
 }
 
 // ---- Ringer: a pass-the-phone party game on the same pools. Nothing daily, nothing online. ----

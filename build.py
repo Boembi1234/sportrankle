@@ -147,7 +147,7 @@ SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "s
 
 # Pictures on the game-type cards of the home page (cropped 3:2 like every tile picture)
 # Home page pictures per game type; a dict entry overrides the crop (see cover())
-KIND_COVERS = {"rankle": {"file": "covers/rankle.png", "width": 0.75, "cy": 0.5}, "blind": "covers/blind.png", "sort": "covers/sort.png",
+KIND_COVERS = {"rankle": {"file": "covers/rankle.png", "width": 0.75, "cy": 0.5}, "blind": {"file": "covers/blind.png", "width": 0.75, "cy": 0.5}, "sort": "covers/sort.png",
                "guess": {"file": "covers/records.png", "pad": True},
                "guesstimate": {"file": "covers/guesstimate.png", "width": 0.75, "cy": 0.5},   # framed like the sport pictures
                "ringer": {"file": "covers/ringer.png", "width": 1.0, "cy": 0.45}}

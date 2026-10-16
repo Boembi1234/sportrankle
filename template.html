@@ -1222,7 +1222,7 @@ const gameRows = () => [...Object.keys(GAMES).filter(k => k !== 'guess').map(k =
   gameTile('guess', GAMES.guess.name, `${GAMES.guess.name}. ${GAMES.guess.blurb}`),
   navTile('#ringer', 'Impostor', GAME_ICONS.ringer, KIND_ART.ringer, 'Impostor. Party game on one phone, 3 to 12 players.', '', true, GAME_TILE.ringer.bg, GAME_TILE.ringer.glow)];
 const sportRows = (only = s => true) => Object.keys(SPORTS).filter(s => (topicsOf(s).length || SOON(s)) && only(s)).map(s => navTile(sportHref(s), SPORTS[s].name, SPORTS[s].icon, sportImg(s), SPORTS[s].name, '', false, SPORTS[s].bg, SPORTS[s].glow));
-const topicRow = m => navTile(`#t/${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, games(DATA[m].kinds.length));
+const topicRow = m => navTile(`#t/${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, '', false, SPORTS[DATA[m].sport].bg, SPORTS[DATA[m].sport].glow);
 
 // Sport page: its topics (a sport still to come says so and lists the others)
 function renderSport(s){
@@ -1234,7 +1234,7 @@ function renderSport(s){
 function renderTopic(m){
   const g = DATA[m], kinds = Object.keys(GAMES).filter(k => poolsFor(k).includes(m));
   $('home').innerHTML = navTitle(g.tab)
-    + navTiles('Games', kinds.map(k => navTile(`#${k}-${m}`, GAMES[k].name, GAME_ICONS[k], KIND_ART[k], `${GAMES[k].name}, ${g.tab}`, '', true)));
+    + navTiles('Games', kinds.map(k => navTile(`#${k}-${m}`, GAMES[k].name, GAME_ICONS[k], KIND_ART[k], `${GAMES[k].name}, ${g.tab}`, '', true, GAME_TILE[k]?.bg, GAME_TILE[k]?.glow)));
 }
 // Home: the sports, then the games. One game: its sports (or straight its topics when each sport has one).
 // One game and sport: its topics.
@@ -1247,7 +1247,7 @@ function renderHome(kind, sport){
     return;
   }
   const flat = !sport && sportsFor(kind).every(s => poolsFor(kind, s).length === 1);   // one topic per sport: skip the sport level
-  const topic = m => navTile(`#${kind}-${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${GAMES[kind].name}, ${DATA[m].tab}`);
+  const topic = m => navTile(`#${kind}-${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${GAMES[kind].name}, ${DATA[m].tab}`, '', false, SPORTS[DATA[m].sport].bg, SPORTS[DATA[m].sport].glow);
   const sportRow = s => { const sp = poolsFor(kind, s);
     return navTile(sp.length > 1 ? `#${kind}/${s}` : `#${kind}-${sp[0]}`, SPORTS[s].name, SPORTS[s].icon, sportImg(s), `${GAMES[kind].name}, ${SPORTS[s].name}`, sp.length > 1 ? `${sp.length} topics` : '', false, SPORTS[s].bg, SPORTS[s].glow); };
   $('home').innerHTML = navTitle(`${GAMES[kind].name}${sport ? ` · ${SPORTS[sport].name}` : ''}`)

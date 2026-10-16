@@ -53,12 +53,10 @@ a{color:inherit}
 
 /* Header */
 .top{position:sticky;top:0;z-index:30;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:64px}
-/* The header's background and divider run the full width of the window, over the body's 24px side margins. The
-   background is see-through glass: the page colour at 70 %, what scrolls underneath blurred */
-.top::before,.top::after{content:"";position:absolute;left:-24px;right:-24px}
-.top::before{z-index:-1;top:0;bottom:0;background:color-mix(in srgb,var(--bg) 70%,transparent);
-  -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
-.top::after{bottom:0;height:1px;background:var(--line)}
+/* The header's background and divider run the full width of the window, past the page's side margins */
+.top::before,.top::after{content:"";position:absolute;left:0;right:0;clip-path:inset(0 -100vmax)}
+.top::before{z-index:-1;top:0;bottom:0;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg)}
+.top::after{bottom:0;height:1px;background:var(--line);box-shadow:0 0 0 100vmax var(--line)}
 .top-mid{display:flex;align-items:center;justify-content:center}
 .top-left{display:flex;align-items:center;gap:6px}
 .top-right{display:flex;align-items:center;justify-content:flex-end;gap:14px}

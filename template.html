@@ -136,7 +136,8 @@ a{color:inherit}
 .ncard+.tiles{margin-top:var(--tile-gap)}   /* under a name card as far as the tiles are apart */
 .home .tiles+.ncard{margin-top:40px}
 .ntile .nrow{min-height:56px;border-radius:0;background:none}
-.tile-chip{position:absolute;top:10px;right:10px}   /* "2 topics", "Party": a chip in the picture's corner */
+.tile-art .chip.tile-chip{position:absolute;top:10px;right:10px;box-shadow:none;   /* "2 topics", "Party": a flat chip in the picture's corner, */
+  background:color-mix(in srgb,var(--tile-art),#fff 9%);color:color-mix(in srgb,var(--tile-glow,#fff) 55%,#fff)}   /* tinted like its tile */
 /* Hover: a soft glow in a lighter shade of the tile's colour rises behind the picture, which zooms in a little and lifts */
 .ntile .tile-art{overflow:hidden}
 .ntile .tile-art::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .35s ease;

@@ -882,6 +882,7 @@ GAME_PAGES = {
 }
 GAME_ROUTE = {"rankle": "#rankle", "blind-ranking": "#blind", "sort-it": "#sort", "guess-the-record": "#guess", "guesstimate": "#guesstimate", "impostor": "#ringer"}   # Impostor was called Ringer; its route keeps the old name
 KIND_NAMES = {"rankle": "Rankle", "blind": "Blind Ranking", "sort": "Sort It", "guess": "Guess the Record"}
+ONLINE_KINDS = {"rankle", "blind", "sort", "guess", "guesstimate"}   # game types the Supabase insert policy accepts
 
 
 def slug(text):
@@ -1180,16 +1181,12 @@ def main():
         pics = sum(1 for it in g["items"] if "img" in it)
         print(f"{key}: {len(g['items'])} items, {len(g['cats'])} categories, {pics} images ({own} own photos) from {g['source']}")
     print(f"{len(urls)} pages, sitemap, robots, og.jpg, icons")
-    # The seed job in Supabase (supabase/migrations/*_seed_results.sql) fills each daily game with plausible results;
-    # it needs the list of games. supabase/seed_games.txt is that list as of the last migration.
-    seed_now = {f"{k}-{key}" for k, g in KIND_NAMES.items() for key, cfg in GAMES.items()
-                if not SPORTS[cfg["sport"]].get("soon") and k in (cfg.get("kinds") or ["rankle", "blind", "sort"])}
-    seed_now.add("guesstimate-all")   # Guesstimate: one game key for all its questions
-    seed_file = HERE / "supabase" / "seed_games.txt"
-    seed_known = {line.split("	")[0] for line in seed_file.read_text(encoding="utf-8").splitlines() if line.strip()} if seed_file.exists() else set()
-    if seed_now != seed_known:
-        print(f"  seed job: games changed ({', '.join(sorted(seed_now ^ seed_known))}); add a migration that upserts public.seed_games "
-              f"and update supabase/seed_games.txt")
+    # Online results take any topic of the game types the insert policy knows (supabase/migrations/*_seed_any_game.sql),
+    # and the seed job picks up new topics by itself. A new game type needs a migration: the policy and seed_score().
+    new_kinds = (set(KIND_NAMES) | {"guesstimate"}) - ONLINE_KINDS
+    if new_kinds:
+        print(f"  online results: game type(s) {', '.join(sorted(new_kinds))} unknown to Supabase; add a migration that "
+              f"widens the insert policy and gives seed_score() a shape, then add them to ONLINE_KINDS")
 
 
 if __name__ == "__main__":

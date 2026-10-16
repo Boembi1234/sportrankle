@@ -104,8 +104,9 @@ a{color:inherit}
 /* Each entry: no dividers, an arrow on the right in the text colour. Under the pointer a rounded box in the card colour
    appears behind it; the current entry has the same box and blue text */
 .drawer ul{display:flex;flex-direction:column;gap:6px}
-.drawer li a{display:flex;align-items:center;min-height:48px;margin-inline:-12px;padding-inline:12px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;
+.drawer li a,.drawer .menu-soon{display:flex;align-items:center;min-height:48px;margin-inline:-12px;padding-inline:12px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;
   transition:background-color .15s,color .15s}
+.drawer .menu-soon{cursor:default}
 .drawer li a::after{content:"";flex:none;margin-left:auto;margin-right:4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;
   transform:rotate(45deg)}
 .drawer .menu-ic{flex:none;width:24px;height:24px;margin-right:12px;object-fit:contain}
@@ -136,13 +137,9 @@ a{color:inherit}
 .ntile .nrow{min-height:56px;border-radius:0;background:none}
 /* Hover: a soft glow in a lighter shade of the tile's colour rises behind the picture, which zooms in a little and lifts */
 .ntile .tile-art{overflow:hidden}
-/* coming soon: the picture greyed and dimmed, the tile not a link (no hover, no arrow) */
+/* coming soon: the tile as it is, only not a link (no hover, no arrow) */
 .ntile.soon{cursor:default}
-.ntile.soon .tile-art img{filter:grayscale(1) brightness(.6);opacity:.7}
-.ntile.soon .tile-art{background:var(--surface-faint)!important}
-.ntile.soon .nrow{color:var(--muted)}
 .ntile.soon .nrow::after{display:none}
-.ntile.soon .nrow-ic{filter:grayscale(1);opacity:.6}
 @media (hover:hover){.tile.ntile.soon:hover{transform:none;box-shadow:0 3px 0 var(--surface-edge);filter:none}
   .ntile.soon:hover .tile-art::before{opacity:0}.ntile.soon:hover .tile-art img{transform:none}}
 .ntile .tile-art::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .35s ease;
@@ -1226,7 +1223,7 @@ const gameRows = () => [...Object.keys(GAMES).filter(k => k !== 'guess').map(k =
   navTile('#guesstimate', 'Guesstimate', GAME_ICONS.guesstimate, KIND_ART.guesstimate, 'Guesstimate. Surprising number questions from the world of sport.', '', true, GAME_TILE.guesstimate.bg, GAME_TILE.guesstimate.glow),
   gameTile('guess', GAMES.guess.name, `${GAMES.guess.name}. ${GAMES.guess.blurb}`),
   navTile('#ringer', 'Impostor', GAME_ICONS.ringer, KIND_ART.ringer, 'Impostor. Party game on one phone, 3 to 12 players.', '', true, GAME_TILE.ringer.bg, GAME_TILE.ringer.glow)];
-// A sport still to come: the same tile, its picture greyed, not a link
+// A sport still to come: the same tile in its colours, just not a link
 const soonTile = s => navTile('', SPORTS[s].name, SPORTS[s].icon, sportImg(s), `${SPORTS[s].name}, coming soon`, '', false, SPORTS[s].bg)
   .replace(/^<a class="tile ntile" href="" /, '<div class="tile ntile soon" aria-disabled="true" ').replace(/<\/a>$/, '</div>');
 const sportRows = (only = s => true) => Object.keys(SPORTS).filter(s => (topicsOf(s).length || SOON(s)) && only(s))
@@ -1427,7 +1424,9 @@ setLang(LANG);
 function menuHTML(){
   const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;
-  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
+  const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => SOON(s)   // still to come: shown, not a link
+    ? `<li><span class="menu-soon">${SPORTS[s].icon ? `<img class="menu-ic" src="${SPORTS[s].icon}" alt="">` : ''}${SPORTS[s].name}</span></li>`
+    : link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
   // the games in the order of the home page: Guesstimate before Guess the Record
   const games = [...Object.entries(GAMES).filter(([k]) => k !== 'guess').map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])),
     link('#guesstimate', 'Guesstimate', kind === 'guesstimate', GAME_ICONS.guesstimate), link('#guess', GAMES.guess.name, kind === 'guess', GAME_ICONS.guess),

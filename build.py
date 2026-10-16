@@ -557,19 +557,24 @@ def cover(pattern, ratio=1.5, width=0.6, cy=0.53, size=800, pad=False):
     path = next(HERE.glob(pattern))
     out_dir = IMG_OUT / "covers"
     out_dir.mkdir(parents=True, exist_ok=True)
-    # name: <stem>-<crop>-<version>.jpg; a new version of the same crop replaces the old one, other crops stay
+    # name: <stem>-<crop>-<version>.jpg (.png for a transparent picture: the tile's own colour shows through);
+    # a new version of the same crop replaces the old one, other crops stay
+    src = Image.open(path)
+    clear = src.mode in ("RGBA", "LA", "PA") or "transparency" in src.info
+    clear = clear and src.convert("RGBA").getchannel("A").getextrema()[0] < 255
     crop = hashlib.sha1(f"{ratio}-{width}-{cy}-{size}-{pad}".encode()).hexdigest()[:6]
     version = hashlib.sha1(str(path.stat().st_mtime_ns).encode()).hexdigest()[:6]
-    target = out_dir / f"{path.stem}-{crop}-{version}.jpg"
+    ext = "png" if clear else "jpg"
+    target = out_dir / f"{path.stem}-{crop}-{version}.{ext}"
     if not target.exists():
-        for stale in out_dir.glob(f"{path.stem}-{crop}-*.jpg"):
+        for stale in [*out_dir.glob(f"{path.stem}-{crop}-*.jpg"), *out_dir.glob(f"{path.stem}-{crop}-*.png")]:
             stale.unlink()
-        img = Image.open(path).convert("RGB")
+        img = src.convert("RGBA" if clear else "RGB")
         w, h = img.size
-        if pad:   # the whole picture, widened to the ratio with its own edge colour
+        if pad:   # the whole picture, widened to the ratio with its own edge colour (or transparent)
             edge = [img.getpixel((x, y)) for x in range(0, w, 16) for y in (0, h - 1)]
-            bg = tuple(sum(c[i] for c in edge) // len(edge) for i in range(3))
-            canvas = Image.new("RGB", (round(h * ratio), h), bg)
+            bg = (0, 0, 0, 0) if clear else tuple(sum(c[i] for c in edge) // len(edge) for i in range(3))
+            canvas = Image.new(img.mode, (round(h * ratio), h), bg)
             canvas.paste(img, ((canvas.width - w) // 2, 0))
             img = canvas
         else:
@@ -577,7 +582,10 @@ def cover(pattern, ratio=1.5, width=0.6, cy=0.53, size=800, pad=False):
             x0, y0 = (w - cw) // 2, max(0, min(h - ch, round(h * cy - ch / 2)))
             img = img.crop((x0, y0, x0 + cw, y0 + ch))
         img.thumbnail((size, size))
-        img.save(target, "JPEG", quality=80, optimize=True, progressive=True)
+        if clear:
+            img.save(target, "PNG", optimize=True)
+        else:
+            img.save(target, "JPEG", quality=80, optimize=True, progressive=True)
     return f"img/covers/{target.name}"
 
 

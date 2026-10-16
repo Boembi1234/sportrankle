@@ -25,7 +25,7 @@
 :root{
   color-scheme:dark;
   --bg:#121210; --surface:#22282A; --surface-faint:#161816;   /* a quarter of the way from the background to the card colour */ --surface-edge:#191D1F; /* 27 % darker, like --signal-edge to --signal */ --line:#2A2A27; --line-strong:#34332F; --text:#EDEBE4; --muted:#9A968C;
-  --card:#6B6667; --card-edge:#4E4A4B; --card-stack:#3A3738; --card-mini:#3A3839; --card-open:#45443F;
+  --tile-art:#191D1F; --card:#6B6667; --card-edge:#4E4A4B; --card-stack:#3A3738; --card-mini:#3A3839; --card-open:#45443F;
   --glyph:#FAFAF7; --ring:#A9ADB2;
   --signal:#4FB3F6; --signal-edge:#2A86C4; --selected-bg:#151A1E;
   --led-ok:#4CE07A; --led-no:#FF6B5A;
@@ -219,7 +219,7 @@ a{color:inherit}
 @media (hover:hover){.tile:hover,.grow:hover{transform:translateY(-3px);box-shadow:0 6px 0 var(--surface-edge);filter:brightness(1.05)}}
 .tile:active,.grow:active{transform:translateY(1px);box-shadow:0 1px 0 var(--surface-edge)}
 @media (prefers-reduced-motion:reduce){.tile,.grow{transition:none}}
-.tile-art{position:relative;aspect-ratio:3 / 2;background:var(--card-stack)}
+.tile-art{position:relative;aspect-ratio:3 / 2;background:var(--tile-art)}   /* one flat colour; transparent pictures sit on it */
 .tile-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 /* Title and button share one line under the picture */
 .tile-body{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px 16px}

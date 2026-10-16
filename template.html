@@ -1295,11 +1295,11 @@ function renderHome(kind, sport){
       <p class="sec">Pick a sport</p>
       <div class="tiles">${Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(sportCard).join('')}</div>
       <p class="sec">The games</p>
-      <div class="tiles">${Object.entries(GAMES).map(([k, g]) => kindCard(k, g)).join('')}
+      <div class="tiles">${Object.entries(GAMES).filter(([k]) => k !== 'guess').map(([k, g]) => kindCard(k, g)).join('')}
         <a class="tile" href="#guesstimate" aria-label="Guesstimate. Surprising number questions from the world of sport. How many times off are you?">
           <span class="tile-art kind-art${KIND_ART.guesstimate ? '' : ' led'}">${KIND_ART.guesstimate ? `<img src="${KIND_ART.guesstimate}" alt="">` : `<span class="tile-cards">GUESSTIMATE</span>`}</span>
           <span class="tile-body"><span class="tile-name">Guesstimate</span><span class="tile-status">${EST.length ? 'Play' : 'Soon'}</span></span>
-        </a>
+        </a>${kindCard('guess', GAMES.guess)}
         <a class="tile" href="#ringer" aria-label="Impostor. Party game on one phone, 3 to 12 players. Everyone knows the secret except the impostor. Find them.">
           <span class="tile-art kind-art${KIND_ART.ringer ? '' : ' led'}">${KIND_ART.ringer ? `<img src="${KIND_ART.ringer}" alt="">` : `<span class="tile-cards">IMPOSTOR</span>`}</span>
           <span class="tile-body"><span class="tile-name">Impostor</span><span class="tile-status">Play</span></span>
@@ -1481,7 +1481,9 @@ function menuHTML(){
   const {kind, sport} = here();
   const link = (href, name, on, icon) => `<li><a href="${href}"${on ? ' aria-current="page"' : ''}>${icon ? `<img class="menu-ic" src="${icon}" alt="">` : ''}${name}</a></li>`;
   const sports = Object.keys(SPORTS).filter(s => topicsOf(s).length || SOON(s)).map(s => link(sportHref(s), SPORTS[s].name, s === sport, SPORTS[s].icon));
-  const games = [...Object.entries(GAMES).map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])), link('#guesstimate', 'Guesstimate', kind === 'guesstimate', GAME_ICONS.guesstimate),
+  // the games in the order of the home page: Guesstimate before Guess the Record
+  const games = [...Object.entries(GAMES).filter(([k]) => k !== 'guess').map(([k, g]) => link(`#${k}`, g.name, k === kind, GAME_ICONS[k])),
+    link('#guesstimate', 'Guesstimate', kind === 'guesstimate', GAME_ICONS.guesstimate), link('#guess', GAMES.guess.name, kind === 'guess', GAME_ICONS.guess),
     link('#ringer', 'Impostor', kind === 'ringer', GAME_ICONS.ringer)];
   return `<p class="sec">Sports</p><ul>${sports.join('')}</ul><p class="sec">Games</p><ul>${games.join('')}</ul>`;
 }

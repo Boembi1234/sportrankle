@@ -35,18 +35,19 @@ PHOTO_RATIO = 1.6   # own photos taller than this (w:h) are cropped to a centred
 # The spreadsheets are German; the page is English. Rows and categories are
 # translated through the tables below (missing entries fall back to German).
 # The home page goes game -> sport -> pool. Every pool names its "sport" (a key of SPORTS below).
-# The order of every sport list (home page, menu, game pages, site map); "All sports" always comes first
+# The order of every sport list (home page, menu, game pages, site map); "All sports" always comes first.
+# "bg": the flat colour behind the sport's (transparent) tile picture
 SPORTS = {
-    "mixed": {"name": "All Sports", "cover": "covers/sport-mixed.png"},
-    "soccer": {"name": "Soccer", "cover": "covers/sport-soccer.png"},
-    "hockey": {"name": "Hockey", "cover": "covers/sport-hockey.png"},
+    "mixed": {"bg": "#202B36", "name": "All Sports", "cover": "covers/sport-mixed.png"},
+    "soccer": {"bg": "#202D24", "name": "Soccer", "cover": "covers/sport-soccer.png"},
+    "hockey": {"bg": "#202D39", "name": "Hockey", "cover": "covers/sport-hockey.png"},
     # "soon": the sport shows like the others, its page says "Coming soon"; its topics are not playable or crawlable yet
-    "basketball": {"name": "Basketball", "cover": "covers/sport-basketball.png", "soon": True},
-    "football": {"name": "Football", "cover": "covers/sport-football.png"},
-    "baseball": {"name": "Baseball", "cover": "covers/sport-baseball.png", "soon": True},
-    "tennis": {"name": "Tennis", "cover": "covers/sport-tennis.png", "soon": True},
-    "motorsport": {"name": "Motorsports", "cover": "covers/sport-motorsport.png", "soon": True},
-    "winter": {"name": "Winter Sports", "cover": "covers/sport-winter.png", "soon": True},
+    "basketball": {"bg": "#32271F", "name": "Basketball", "cover": "covers/sport-basketball.png", "soon": True},
+    "football": {"bg": "#2D2922", "name": "Football", "cover": "covers/sport-football.png"},
+    "baseball": {"bg": "#302921", "name": "Baseball", "cover": "covers/sport-baseball.png", "soon": True},
+    "tennis": {"bg": "#2A3020", "name": "Tennis", "cover": "covers/sport-tennis.png", "soon": True},
+    "motorsport": {"bg": "#302222", "name": "Motorsports", "cover": "covers/sport-motorsport.png", "soon": True},
+    "winter": {"bg": "#202E3B", "name": "Winter Sports", "cover": "covers/sport-winter.png", "soon": True},
 }
 
 GAMES = {
@@ -1086,7 +1087,7 @@ def main():
             kinds[k] = cover(opts["file"], ratio=1.5, width=opts.get("width", 0.8), cy=opts.get("cy", 0.52), size=1000, pad=opts.get("pad", False))   # 3:2 like every tile picture
     # Sport groups: a picture of their own if covers/sport-<key>.png exists, otherwise the page uses a pool's;
     # a menu icon if covers/icon-<key>.png exists (a transparent PNG)
-    sports = {k: {"name": s["name"], **({"soon": True} if s.get("soon") else {}),
+    sports = {k: {"name": s["name"], **({"soon": True} if s.get("soon") else {}), **({"bg": s["bg"]} if s.get("bg") else {}),
                   **({"cover": cover(s["cover"], width=0.75, cy=0.5)} if next(HERE.glob(s["cover"]), None) else {}),
                   **({"icon": icon(f"covers/icon-{k}.png")} if (HERE / "covers" / f"icon-{k}.png").exists() else {})}
               for k, s in SPORTS.items()}

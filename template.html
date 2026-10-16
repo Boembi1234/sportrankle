@@ -123,7 +123,6 @@ a{color:inherit}
    a name and an arrow (a faint box, the full card colour under the pointer) */
 .home .ncard{margin:0;min-height:52px;padding:15px 16px;border-radius:8px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);
   font-weight:800;font-stretch:100%;font-size:20px;line-height:22px;text-align:center;text-wrap:balance}
-.nsec{margin:24px 0 8px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .nrow{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 16px 0 14px;border-radius:10px;background:var(--surface-faint);
   color:var(--text);text-decoration:none;font-weight:700;font-size:17px;transition:background-color .15s}
 .nrow::after{content:"";flex:none;margin:0 2px 0 4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;transform:rotate(45deg)}
@@ -132,7 +131,6 @@ a{color:inherit}
 @media (hover:hover){.nrow:hover{background:var(--surface)}}
 .nrow:active{background:var(--surface-edge)}
 @media (prefers-reduced-motion:reduce){.nrow{transition:none}}
-.nsec+.tiles{margin-top:0}
 .ncard+.tiles{margin-top:var(--tile-gap)}   /* under a name card as far as the tiles are apart */
 .home .tiles+.ncard{margin-top:40px}
 .ntile .nrow{min-height:56px;border-radius:0;background:none}
@@ -1211,7 +1209,7 @@ function finishFooter(){
 const navTile = (href, name, icon, img, label = name, note = '', kind = false, bg = '', glow = '') => `<a class="tile ntile" href="${href}" aria-label="${label}">`
   + `<span class="tile-art${kind ? ' kind-art' : ''}"${bg || glow ? ` style="${bg ? `--tile-art:${bg};` : ''}${glow ? `--tile-glow:${glow}` : ''}"` : ''}>${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>`
   + `<span class="nrow">${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}</span></span></a>`;
-const navTiles = (title, tiles) => `<p class="nsec">${title}</p><div class="tiles">${tiles.join('')}</div>`;
+const navTiles = (title, tiles) => `<div class="tiles" aria-label="${title}">${tiles.join('')}</div>`;   // no heading: the name card says it
 const sportImg = s => SPORTS[s].cover || topicsOf(s).map(m => DATA[m].cover).find(Boolean);
 const topicImg = m => DATA[m].cover || SPORTS[DATA[m].sport].cover || '';
 const navTitle = (title, chips = []) => `<h1 class="ncard">${title}</h1>${chips.length ? `<div class="title-sub">${chips.map(c => `<span class="chip">${c}</span>`).join('')}</div>` : ''}`;

@@ -133,7 +133,7 @@ a{color:inherit}
 .nrow:active{background:var(--surface-edge)}
 @media (prefers-reduced-motion:reduce){.nrow{transition:none}}
 .nsec+.tiles{margin-top:0}
-.ncard+.tiles{margin-top:16px}
+.ncard+.tiles{margin-top:var(--tile-gap)}   /* under a name card as far as the tiles are apart */
 .home .tiles+.ncard{margin-top:40px}
 .ntile .nrow{min-height:56px;border-radius:0;background:none}
 .tile-chip{position:absolute;top:10px;right:10px}   /* "2 topics", "Party": a chip in the picture's corner */
@@ -226,7 +226,7 @@ a{color:inherit}
 /* A game without a picture: its name as an LED board */
 .kind-art.led{background:#080A0C radial-gradient(circle,#171B1F 1px,transparent 1.4px) 0 0/7px 7px}
 .kind-art .tile-cards{font-family:var(--font);font-weight:900;font-size:56px;line-height:1;letter-spacing:.08em;color:var(--signal);text-shadow:0 0 14px rgba(79,179,246,.55),0 0 3px rgba(79,179,246,.9)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px;margin-top:28px}
+.tiles{--tile-gap:28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:var(--tile-gap);margin-top:28px}
 .tile{display:flex;flex-direction:column;text-decoration:none;border-radius:10px;background:var(--surface);box-shadow:0 3px 0 var(--surface-edge);overflow:hidden}
 /* Clickable cards: the same key as the buttons, they rise on their edge under the pointer and sink when pressed */
 .tile,.grow{transition:transform .12s,box-shadow .12s,filter .12s}
@@ -642,7 +642,7 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
   .flag-name{font-size:26px}
   .sec{margin-top:26px}
   .kind-art .tile-cards{font-size:44px}
-  .tiles{grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+  .tiles{--tile-gap:16px;grid-template-columns:1fr 1fr;margin-top:22px}
   /* Narrow tiles: title on top, button underneath, the same on every tile */
   /* Narrow tiles: name on top, button at the bottom; the body stretches, so buttons line up across a row */
   .tile-body{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;flex:1;gap:8px;padding:12px}

@@ -136,6 +136,15 @@ a{color:inherit}
 .ntile .nrow{min-height:56px;border-radius:0;background:none}
 /* Hover: a soft glow in a lighter shade of the tile's colour rises behind the picture, which zooms in a little and lifts */
 .ntile .tile-art{overflow:hidden}
+/* coming soon: the picture greyed and dimmed, the tile not a link (no hover, no arrow) */
+.ntile.soon{cursor:default}
+.ntile.soon .tile-art img{filter:grayscale(1) brightness(.6);opacity:.7}
+.ntile.soon .tile-art{background:var(--surface-faint)!important}
+.ntile.soon .nrow{color:var(--muted)}
+.ntile.soon .nrow::after{display:none}
+.ntile.soon .nrow-ic{filter:grayscale(1);opacity:.6}
+@media (hover:hover){.tile.ntile.soon:hover{transform:none;box-shadow:0 3px 0 var(--surface-edge);filter:none}
+  .ntile.soon:hover .tile-art::before{opacity:0}.ntile.soon:hover .tile-art img{transform:none}}
 .ntile .tile-art::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .35s ease;
   background:radial-gradient(ellipse 48% 44% at 50% 60%,color-mix(in srgb,var(--tile-glow,#fff) 22%,transparent) 0%,color-mix(in srgb,var(--tile-glow,#fff) 9%,transparent) 55%,transparent 100%)}   /* the sport's glow colour, faint, behind the picture only */
 .ntile .tile-art img{transition:transform .45s cubic-bezier(.2,.7,.2,1)}
@@ -1221,7 +1230,11 @@ const gameRows = () => [...Object.keys(GAMES).filter(k => k !== 'guess').map(k =
   navTile('#guesstimate', 'Guesstimate', GAME_ICONS.guesstimate, KIND_ART.guesstimate, 'Guesstimate. Surprising number questions from the world of sport.', '', true, GAME_TILE.guesstimate.bg, GAME_TILE.guesstimate.glow),
   gameTile('guess', GAMES.guess.name, `${GAMES.guess.name}. ${GAMES.guess.blurb}`),
   navTile('#ringer', 'Impostor', GAME_ICONS.ringer, KIND_ART.ringer, 'Impostor. Party game on one phone, 3 to 12 players.', '', true, GAME_TILE.ringer.bg, GAME_TILE.ringer.glow)];
-const sportRows = (only = s => true) => Object.keys(SPORTS).filter(s => (topicsOf(s).length || SOON(s)) && only(s)).map(s => navTile(sportHref(s), SPORTS[s].name, SPORTS[s].icon, sportImg(s), SPORTS[s].name, '', false, SPORTS[s].bg, SPORTS[s].glow));
+// A sport still to come: the same tile, its picture greyed, not a link
+const soonTile = s => navTile('', SPORTS[s].name, SPORTS[s].icon, sportImg(s), `${SPORTS[s].name}, coming soon`, '', false, SPORTS[s].bg)
+  .replace(/^<a class="tile ntile" href="" /, '<div class="tile ntile soon" aria-disabled="true" ').replace(/<\/a>$/, '</div>');
+const sportRows = (only = s => true) => Object.keys(SPORTS).filter(s => (topicsOf(s).length || SOON(s)) && only(s))
+  .map(s => SOON(s) ? soonTile(s) : navTile(sportHref(s), SPORTS[s].name, SPORTS[s].icon, sportImg(s), SPORTS[s].name, '', false, SPORTS[s].bg, SPORTS[s].glow));
 const topicRow = m => navTile(`#t/${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${DATA[m].tab}, ${SPORTS[DATA[m].sport].name}`, '', false, SPORTS[DATA[m].sport].bg, SPORTS[DATA[m].sport].glow);
 
 // Sport page: its topics (a sport still to come says so and lists the others)

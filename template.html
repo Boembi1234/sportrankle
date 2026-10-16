@@ -598,10 +598,8 @@ img.row-ic{height:24px;object-fit:contain}   /* the emoji as the row's icon, the
 .today-bars{position:relative;display:flex;align-items:flex-end;gap:3px;height:96px;padding-top:12px}
 .today-bars i.me{background:var(--signal)}
 .today-bars i.ok{background:var(--led-ok)}
+.today-bars i.avg{background:#E8B04B}   /* the average: amber, next to your blue */
 .today-bars i{flex:1;min-height:3px;height:calc(var(--v) * 100%);background:color-mix(in srgb,var(--text) 22%,transparent);border-radius:3px 3px 0 0}
-.today-avg,.today-me{position:absolute;bottom:0;left:var(--x);width:0}
-.today-avg{top:12px;border-left:2px dashed color-mix(in srgb,var(--text) 70%,transparent)}
-.today-me{top:4px;border-left:2px solid var(--signal)}
 .today-axis{position:relative;display:flex;justify-content:space-between;height:18px;margin-top:6px;font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
 .seg{display:flex;gap:20px;margin-top:12px}
 .segbtn{background:none;border:0;padding:0;min-height:40px;font:inherit;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;text-decoration:underline 2px transparent;text-underline-offset:6px}
@@ -1177,23 +1175,21 @@ async function reportResult(score, max){
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 // The histogram under the results from the score counts of everyone today ([{score, n}])
-function showStats(rows, score, max, el = $('today'), lines = true, ends = [0, max], right = null){   // lines: false colours your bar blue instead; ends: the axis labels; right: the score of the right answer (its bar green)
+// Your bar blue; the right answer's bar green when there is one (Guesstimate), otherwise the average's bar amber
+function showStats(rows, score, max, el = $('today'), ends = [0, max], right = null){   // ends: the axis labels
   const total = rows.reduce((a, r) => a + Number(r.n), 0);
   const below = rows.filter(r => r.score < score).reduce((a, r) => a + Number(r.n), 0);
   if (!total) return;
-  // Histogram in up to twenty equal score buckets; a perfect score gets the last one. Positions on the axis run
-  // over the same 0 to max + 1 span as the buckets, so the lines sit over the right bar
-  const nb = Math.min(20, max + 1), width = (max + 1) / nb, at = v => `${(v + .5) / (max + 1) * 100}%`;
+  // Histogram in up to twenty equal score buckets; a perfect score gets the last one
+  const nb = Math.min(20, max + 1), width = (max + 1) / nb, bin = v => Math.min(nb - 1, Math.floor(v / width));
   const bins = Array(nb).fill(0);
   rows.forEach(r => { bins[Math.min(nb - 1, Math.floor(r.score / width))] += Number(r.n); });
   const top = Math.max(...bins), avg = rows.reduce((a, r) => a + r.score * Number(r.n), 0) / total;
   const pct = Math.round(100 * below / (total - 1));
   if (el === $('today')) G.stat = total < 10 ? null : {pct, total};
   const bars = el.querySelector('.today-bars');
-  const mine = Math.min(nb - 1, Math.floor(score / width));
-  const ok = right == null ? -1 : Math.min(nb - 1, Math.floor(right / width));
-  bars.innerHTML = bins.map((n, i) => `<i${!lines && i === mine ? ' class="me"' : i === ok ? ' class="ok"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('')
-    + (lines ? `<span class="today-avg" style="--x:${at(avg)}"></span><span class="today-me" style="--x:${at(score)}"></span>` : '');
+  const mine = bin(score), ok = right == null ? -1 : bin(right), mid = right == null ? bin(avg) : -1;
+  bars.innerHTML = bins.map((n, i) => `<i${i === mine ? ' class="me"' : i === ok ? ' class="ok"' : i === mid ? ' class="avg"' : ''} style="--v:${n / top}" title="${n}"></i>`).join('');
   bars.setAttribute('aria-label', `Today's scores: ${total} played, average ${Math.round(avg)}, you scored ${score} of ${max}${total < 10 ? '' : `, you beat ${pct} %`}`);
   const axis = el.querySelector('.today-axis');   // Guesstimate's chart has no labels
   if (axis) axis.innerHTML = `<span>${ends[0]}</span><span>${ends[1]}</span>`;
@@ -1669,7 +1665,7 @@ async function estReport(pos){
   try {
     await sb('results', {day: today(), game: 'guesstimate-all', device: deviceId(), score: pos, max: 100}, [409]);
     const rows = await sb('rpc/daily_stats', {p_day: today(), p_game: 'guesstimate-all'});
-    if (ER && ER.id === id && ER.guess != null) showStats(rows, pos, 100, el, false, undefined, 50);
+    if (ER && ER.id === id && ER.guess != null) showStats(rows, pos, 100, el, undefined, 50);
   } catch (e) { /* offline or blocked: the game works without it */ }
 }
 function estAgain(){

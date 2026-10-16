@@ -1246,12 +1246,11 @@ function renderHome(kind, sport){
       + `<p class="legal-line">© ${new Date().getFullYear()} Sportrankle · <a href="/legal">Legal notice &amp; privacy</a></p>`;
     return;
   }
-  const flat = !sport && sportsFor(kind).every(s => poolsFor(kind, s).length === 1);   // one topic per sport: skip the sport level
+  // Every step is shown, even with a single choice: the game's sports, then that sport's topics
   const topic = m => navTile(`#${kind}-${m}`, DATA[m].tab, SPORTS[DATA[m].sport].icon, topicImg(m), `${GAMES[kind].name}, ${DATA[m].tab}`, '', false, SPORTS[DATA[m].sport].bg, SPORTS[DATA[m].sport].glow);
-  const sportRow = s => { const sp = poolsFor(kind, s);
-    return navTile(sp.length > 1 ? `#${kind}/${s}` : `#${kind}-${sp[0]}`, SPORTS[s].name, SPORTS[s].icon, sportImg(s), `${GAMES[kind].name}, ${SPORTS[s].name}`, sp.length > 1 ? `${sp.length} topics` : '', false, SPORTS[s].bg, SPORTS[s].glow); };
-  $('home').innerHTML = navTitle(sport || flat ? 'Choose a topic' : 'Choose a sport')
-    + (sport || flat ? navTiles('Topics', poolsFor(kind, sport).map(topic)) : navTiles('Sports', sportsFor(kind).map(sportRow)));
+  const sportRow = s => navTile(`#${kind}/${s}`, SPORTS[s].name, SPORTS[s].icon, sportImg(s), `${GAMES[kind].name}, ${SPORTS[s].name}`, '', false, SPORTS[s].bg, SPORTS[s].glow);
+  $('home').innerHTML = navTitle(sport ? 'Choose a topic' : 'Choose a sport')
+    + (sport ? navTiles('Topics', poolsFor(kind, sport).map(topic)) : navTiles('Sports', sportsFor(kind).map(sportRow)));
 }
 
 // ---- Ringer: a pass-the-phone party game on the same pools. Nothing daily, nothing online. ----
@@ -1355,7 +1354,7 @@ function here(){
   const topic = rest.replace(/^[st]\//, '');
   return {kind, sport: SPORTS[topic] ? topic : DATA[topic]?.sport};
 }
-const sportHref = s => { const t = topicsOf(s); return t.length === 1 && !SOON(s) ? `#t/${t[0]}` : `#s/${s}`; };
+const sportHref = s => `#s/${s}`;   // always the sport's page, even with one topic: every step is a choice
 // Wide screens: the sports as links in the middle of the header. Up to 5 fit; with more, the first 4 show and a
 // "More" button opens the rest in a dropdown underneath (the button is marked when the current sport is in there)
 const NAV_MAX = 5;

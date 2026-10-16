@@ -46,11 +46,11 @@ SPORTS = {
     "football": {"bg": "#2D2922", "glow": "#B99A62", "name": "Football", "cover": "covers/sport-football.png"},
     "baseball": {"bg": "#302921", "glow": "#D6A676", "name": "Baseball", "cover": "covers/sport-baseball.png", "soon": True},
     "tennis": {"bg": "#2A3020", "glow": "#C4DF60", "name": "Tennis", "cover": "covers/sport-tennis.png", "soon": True},
-    "golf": {"bg": "#212D23", "glow": "#8ED38A", "name": "Golf", "cover": "covers/sport-golf.png", "soon": True},
-    "combat": {"bg": "#302221", "glow": "#F0675E", "name": "Combat Sports", "cover": "covers/sport-combat.png", "soon": True},
+    "golf": {"bg": "#263321", "glow": "#9DD85B", "name": "Golf", "cover": "covers/sport-golf.png", "soon": True},
+    "combat": {"bg": "#352222", "glow": "#F06464", "name": "Combat Sports", "cover": "covers/sport-combat.png", "soon": True},
     "motorsport": {"bg": "#302222", "glow": "#EE6565", "name": "Motorsports", "cover": "covers/sport-motorsport.png", "soon": True},
     "winter": {"bg": "#202E3B", "glow": "#75C5FA", "name": "Winter Sports", "cover": "covers/sport-winter.png", "soon": True},
-    "esports": {"bg": "#20263A", "glow": "#7C8EF5", "name": "Esports", "cover": "covers/sport-esports.png", "soon": True},
+    "esports": {"bg": "#202B40", "glow": "#438FF5", "name": "Esports", "cover": "covers/sport-esports.png", "soon": True},
 }
 
 GAMES = {

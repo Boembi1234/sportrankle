@@ -150,9 +150,10 @@ SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "s
 
 # Daily puzzles: puzzle #1 of every game is on this day (a pool may set its own "puzzle_start" when it opens later).
 PUZZLE_START = "2026-10-15"
-# Plausible analytics: the site's domain there. Events are only sent from that domain (local builds log to the console);
-# PLAUSIBLE_DOMAIN="" turns analytics off.
-PLAUSIBLE_DOMAIN = os.environ.get("PLAUSIBLE_DOMAIN", "sport-minigames.com").strip() or None
+# Umami Cloud analytics (no cookies): the website id from umami.is (Settings > Websites) and the domain it counts.
+# Data is only sent from that domain (local builds log to the console). UMAMI_WEBSITE_ID="" turns analytics off.
+UMAMI_WEBSITE_ID = os.environ.get("UMAMI_WEBSITE_ID", "").strip() or None
+ANALYTICS = {"id": UMAMI_WEBSITE_ID, "domain": "sport-minigames.com"} if UMAMI_WEBSITE_ID else None
 # Shared page logic, inlined into the page in this order (see lib/)
 LIBS = ["lib/streak.js", "lib/share.js", "lib/analytics.js"]
 
@@ -1116,7 +1117,7 @@ def main():
         g["url"] = f"{SITE}/{slug(g['tab'])}"
     base = (TEMPLATE.read_text(encoding="utf-8")
             .replace("/*__LIB__*/", "\n".join((HERE / p).read_text(encoding="utf-8") for p in LIBS))
-            .replace("__PLAUSIBLE__", json.dumps(PLAUSIBLE_DOMAIN))
+            .replace("__ANALYTICS__", json.dumps(ANALYTICS))
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__SPORTS__", json.dumps(sports, ensure_ascii=False))
             .replace("__KINDS__", json.dumps(kinds))
@@ -1159,9 +1160,9 @@ def main():
     keep, drop = ("ADS", "NOADS") if ADS["network"] else ("NOADS", "ADS")
     legal = re.sub(rf"<!--{drop}-->.*?<!--/{drop}-->", "", legal, flags=re.S)
     legal = legal.replace(f"<!--{keep}-->", "").replace(f"<!--/{keep}-->", "")
-    # The visitor-statistics parts (<!--PLAUSIBLE-->...<!--/PLAUSIBLE-->) only while analytics is on
-    legal = (legal.replace("<!--PLAUSIBLE-->", "").replace("<!--/PLAUSIBLE-->", "") if PLAUSIBLE_DOMAIN
-             else re.sub(r"<!--PLAUSIBLE-->.*?<!--/PLAUSIBLE-->", "", legal, flags=re.S))
+    # The visitor-statistics parts (<!--STATS-->...<!--/STATS-->) only while analytics is on
+    legal = (legal.replace("<!--STATS-->", "").replace("<!--/STATS-->", "") if ANALYTICS
+             else re.sub(r"<!--STATS-->.*?<!--/STATS-->", "", legal, flags=re.S))
     legal = (legal.replace("__ADS_NETWORK__", esc(ADS["network"]))
              .replace("__ANALYTICS_SENTENCE__", f", and {esc(ADS['analytics'])} for anonymous usage statistics" if ADS["analytics"] else ""))
     (DIST.parent / "legal.html").write_text(legal.replace("__DATE__", time.strftime("%d %B %Y").lstrip("0")), encoding="utf-8")

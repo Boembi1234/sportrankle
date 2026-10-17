@@ -129,7 +129,7 @@ a{color:inherit}
 .nrow::after{content:"";flex:none;margin:0 2px 0 4px;width:7px;height:7px;border-top:2px solid;border-right:2px solid;transform:rotate(45deg)}
 .nrow-ic{flex:none;width:24px;height:24px;object-fit:contain}
 .nrow-name{flex:1;min-width:0}
-.nrow-note{flex:none;color:var(--muted);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}   /* today's puzzle done: ✓ and the score */
+.nrow-note{display:block;margin-top:2px;color:var(--muted);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}   /* today's puzzle done: a check and the score, under the name */
 @media (hover:hover){.nrow:hover{background:var(--surface)}}
 .nrow:active{background:var(--surface-edge)}
 @media (prefers-reduced-motion:reduce){.nrow{transition:none}}
@@ -1316,7 +1316,7 @@ function finishFooter(){
 // Tiles: the picture on top, the menu row (icon, name, note, arrow) at its foot
 const navTile = (href, name, icon, img, label = name, note = '', kind = false, bg = '', glow = '') => `<a class="tile ntile" href="${href}" aria-label="${label}">`
   + `<span class="tile-art${kind ? ' kind-art' : ''}"${bg || glow ? ` style="${bg ? `--tile-art:${bg};` : ''}${glow ? `--tile-glow:${glow}` : ''}"` : ''}>${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}</span>`
-  + `<span class="nrow">${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}</span>${note ? `<span class="nrow-note">${note}</span>` : ''}</span></a>`;
+  + `<span class="nrow">${icon ? `<img class="nrow-ic" src="${icon}" alt="">` : ''}<span class="nrow-name">${name}${note ? `<span class="nrow-note">${note}</span>` : ''}</span></span></a>`;
 // The note on a game's tile once today's daily puzzle is done: a check and the score
 const doneNote = k => { const h = dailyDone(k) && dailyScore(k); return h ? `✓ ${h[0]}/${h[1]}` : ''; };
 const navTiles = (title, tiles) => `<div class="tiles" aria-label="${title}">${tiles.join('')}</div>`;   // no heading: the name card says it

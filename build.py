@@ -151,8 +151,8 @@ SUPABASE = {"url": "https://ofvilwphyyqfverzqole.supabase.co", "key": (HERE / "s
 # Daily puzzles: puzzle #1 of every game is on this day (a pool may set its own "puzzle_start" when it opens later).
 PUZZLE_START = "2026-10-15"
 # Umami Cloud analytics (no cookies): the website id from umami.is (Settings > Websites) and the domain it counts.
-# Data is only sent from that domain (local builds log to the console). UMAMI_WEBSITE_ID="" turns analytics off.
-UMAMI_WEBSITE_ID = os.environ.get("UMAMI_WEBSITE_ID", "").strip() or None
+# Data is only sent from that domain (local builds log to the console). UMAMI_WEBSITE_ID="" in the environment turns it off.
+UMAMI_WEBSITE_ID = os.environ.get("UMAMI_WEBSITE_ID", "33e6ded0-d9f9-487b-9991-53633b8beab8").strip() or None
 ANALYTICS = {"id": UMAMI_WEBSITE_ID, "domain": "sport-minigames.com"} if UMAMI_WEBSITE_ID else None
 # Shared page logic, inlined into the page in this order (see lib/)
 LIBS = ["lib/streak.js", "lib/share.js", "lib/analytics.js"]
